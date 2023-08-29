@@ -1,0 +1,40 @@
+#ifndef STYLES_H
+#define STYLES_H
+
+#include <QObject>
+#include <QProxyStyle>
+
+class Style : public QProxyStyle
+{
+    Q_OBJECT
+public:
+
+    void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+    void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+    Style(QColor *background, QColor *panel, QColor *text, QColor *highlight, QColor *button);
+    QPalette standardPalette() const override;
+
+private:
+
+    QColor m_background;
+    QColor m_panel;
+    QColor m_text;
+    QColor m_highlight;
+    QColor m_button;
+
+};
+
+class HPRCLightStyle : public Style
+{
+    Q_OBJECT
+public:
+    HPRCLightStyle();
+};
+class HPRCDarkStyle : public Style
+{
+    Q_OBJECT
+public:
+    HPRCDarkStyle();
+};
+
+#endif // STYLES_H
