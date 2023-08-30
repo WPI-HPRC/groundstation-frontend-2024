@@ -1,5 +1,7 @@
 #include "styles.h"
+#include "hprcdisplaywidget.h"
 #include "stylepainters.h"
+#include <iostream>
 
 //<--------------------Style Color Definitions--------------------->//
 
@@ -43,6 +45,14 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
     HPRCStyle drawer;
     switch(element)
     {
+    case QStyle::PE_CustomBase:
+        std::cerr << "found a widget \n";
+        if(const hprcDisplayWidget* w = dynamic_cast<const hprcDisplayWidget*>(widget))
+        {
+            std::cerr << "found a cool widget \n";
+            std::cerr << w->getType();
+        }
+        return;
     case QStyle::PE_Frame:
         drawer.drawFrame(painter, option);
         return;

@@ -312,6 +312,12 @@
 	"HEADERS" : 
 	[
 		[
+			"C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/hprcdisplaywidget.h",
+			"MU",
+			"EWIEGA46WW/moc_hprcdisplaywidget.cpp",
+			null
+		],
+		[
 			"C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/mainwindow.h",
 			"MU",
 			"EWIEGA46WW/moc_mainwindow.cpp",
@@ -384,6 +390,11 @@
 	"SETTINGS_FILE" : "C:/Users/benpe/Documents/ground-station-2024/build-QT-GroundStation2024-Desktop_Qt_6_4_3_MSVC2019_64bit-Debug/CMakeFiles/QT-GroundStation2024_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[
+			"C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/hprcdisplaywidget.cpp",
+			"MU",
+			null
+		],
 		[
 			"C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/main.cpp",
 			"MU",

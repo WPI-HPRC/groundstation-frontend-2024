@@ -109,6 +109,7 @@ QT-GroundStation2024_autogen/timestamp: \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/QCommonStyle \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/QMainWindow \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/QProxyStyle \
+	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/QWidget \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/qcommonstyle.h \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/qmainwindow.h \
 	C:/Qt/6.4.3/msvc2019_64/include/QtWidgets/qproxystyle.h \
@@ -334,6 +335,8 @@ QT-GroundStation2024_autogen/timestamp: \
 	C:/Qt/Tools/CMake_64/share/cmake-3.24/Modules/Platform/Windows.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.24/Modules/Platform/WindowsPaths.cmake \
 	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/CMakeLists.txt \
+	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/hprcdisplaywidget.cpp \
+	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/hprcdisplaywidget.h \
 	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/main.cpp \
 	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/mainwindow.cpp \
 	C:/Users/benpe/Documents/ground-station-2024/QT-GroundStation2024/mainwindow.h \
