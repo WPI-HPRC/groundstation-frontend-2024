@@ -16,9 +16,22 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,11,2">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,6">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,6">
+        <item>
+         <widget class="QWidget" name="widget_2" native="true"/>
+        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -51,6 +64,17 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,1">
+           <item>
+            <widget class="hprcGauge" name="widget_4" native="true"/>
+           </item>
+           <item>
+            <widget class="hprcGauge" name="widget_3" native="true"/>
+           </item>
+           <item>
+            <widget class="hprcGauge" name="widget" native="true"/>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -72,6 +96,22 @@
            <height>1061</height>
           </rect>
          </property>
+         <widget class="QSlider" name="verticalSlider">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>10</y>
+            <width>16</width>
+            <height>91</height>
+           </rect>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -86,8 +126,34 @@
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>updateFilled(int)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>hprcGauge</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>timeline</receiver>
+   <slot>updateFilled(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1878</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1721</x>
+     <y>540</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

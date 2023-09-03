@@ -5,17 +5,17 @@
 
 //<--------------------Style Color Definitions--------------------->//
 
-QColor darkBackground("#141414");
-QColor darkPanel("#212121");
-QColor darkText("#ffffff");
-QColor darkHighlight("#AF283A");
-QColor darkButton("#212121");
+QColor darkBackground(20, 20, 20); //#141414
+QColor darkPanel(33, 33, 33); // #212121
+QColor darkText(255, 255, 255); // #FFFFFF
+QColor darkHighlight(175, 40, 58); // #AF283A
+QColor darkButton(33, 33, 33); // #212121
 
-QColor lightBackground("#607d8b");
-QColor lightPanel("#E0E0E0");
-QColor lightText("#000000");
-QColor lightHighlight("#AF283A");
-QColor lightButton("#BDBDBD");
+QColor lightBackground(96, 125, 139); //607D8B
+QColor lightPanel(224, 224, 244); // #E0E0E0
+QColor lightText(0, 0, 0); // #000000
+QColor lightHighlight(175, 40, 58); // #AF283A
+QColor lightButton(189, 189, 189); // #BDBDBD
 
 Style::Style(QColor *background, QColor *panel, QColor *text, QColor *highlight, QColor *button)
 {
@@ -24,15 +24,15 @@ Style::Style(QColor *background, QColor *panel, QColor *text, QColor *highlight,
     m_text = *text;
     m_highlight = *highlight;
     m_button = *button;
+    m_drawer = new HPRCStyle(this);
 }
 
 void Style::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
-    HPRCStyle drawer;
     switch(element)
     {
     case QStyle::CE_PushButtonBevel:
-        drawer.drawPushButton(painter, option);
+        m_drawer->drawPushButton(painter, option);
         return;
     default:
         QProxyStyle::drawControl(element, option, painter, widget);
@@ -42,19 +42,26 @@ void Style::drawControl(QStyle::ControlElement element, const QStyleOption *opti
 
 void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
-    HPRCStyle drawer;
     switch(element)
     {
     case QStyle::PE_CustomBase:
-        std::cerr << "found a widget \n";
         if(const hprcDisplayWidget* w = dynamic_cast<const hprcDisplayWidget*>(widget))
         {
-            std::cerr << "found a cool widget \n";
-            std::cerr << w->getType();
+            switch(w->getType())
+            {
+            case hprcDisplayWidget::HPRC_Timeline:
+                m_drawer->drawHPRCTimeline(painter, w);
+                return;
+            case hprcDisplayWidget::HPRC_Gauge:
+                m_drawer->drawHPRCGauge(painter, w);
+                return;
+            default:
+                return;
+            }
         }
         return;
     case QStyle::PE_Frame:
-        drawer.drawFrame(painter, option);
+        m_drawer->drawFrame(painter, option);
         return;
     default:
         QProxyStyle::drawPrimitive(element, option, painter, widget);
