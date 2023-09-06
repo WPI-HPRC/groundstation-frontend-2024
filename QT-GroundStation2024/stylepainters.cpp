@@ -61,6 +61,8 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
     // <------------------- math --------------------->//
 
+
+
     p->setRenderHint(QPainter::Antialiasing);
 
     p->setFont(m_widgetLarge);
@@ -74,7 +76,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     QPen tickPen(m_textBrush, 20);
     tickPen.setCapStyle(Qt::FlatCap);
 
-    double aspect = 3; // height / width
+    double aspect = 4; // height / width
 
     QRect widgetBox = w->rect();
 
@@ -92,10 +94,16 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     drawHeight *= 0.85;
     drawWidth  *= 0.85;
 
-    double drawX = (widgetBox.width() - drawWidth) / 2.0;
-    double drawY = (widgetBox.height() - drawHeight) / 4.0; // I dunno but it works
+    m_widgetLarge.setPointSize(drawHeight/30);
+    m_widgetMedium.setPointSize(drawHeight/30 * 0.75);
 
-    double scaleF = 0.3;
+    fgPen.setWidth(drawHeight/40 + 1);
+    bgPen.setWidth(drawHeight/40);
+
+    double drawX = (widgetBox.width() - drawWidth) / 2.0;
+    double drawY = (widgetBox.height() - drawHeight) / 2.0; // I dunno but it works
+
+    double scaleF = 0.03;
 
     QRect drawBox(drawX, drawY, drawWidth, drawHeight);
     QPoint bottomRight(drawX + (0.9 - scaleF) * drawWidth, drawBox.bottom());
@@ -144,7 +152,7 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     QRectF boundingBox(w->rect().adjusted(15, 15, -15, -15));
 
-    double scaleF = 0.5;
+    double scaleF = 0.85;
 
     int oWidth = boundingBox.width();
 
