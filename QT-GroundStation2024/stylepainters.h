@@ -30,9 +30,14 @@ public:
     QFont m_widgetMedium;
 
     std::map<double, QString> m_stateMap;
+    std::map<int, int> m_dataMap1;
+    std::map<int, int> m_dataMap2;
+    std::map<int, int> m_dataMap3;
 
 
 private:
+
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap);
 
 };
 

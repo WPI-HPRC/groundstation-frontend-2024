@@ -97,7 +97,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     m_widgetLarge.setPointSize(drawHeight/30);
     m_widgetMedium.setPointSize(drawHeight/30 * 0.75);
 
-    fgPen.setWidth(drawHeight/40 + 1);
+    fgPen.setWidth(drawHeight/40 - 5);
     bgPen.setWidth(drawHeight/40);
 
     double drawX = (widgetBox.width() - drawWidth) / 2.0;
@@ -198,20 +198,111 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
+
+
+
+    int data1[20] = {0, 1, 5, 6, 12, 11, 10, 9, 8, 7, 5, 14, 16, 17, 15, 12, 10, 5, 4, 3};
+    int data2[20] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int data3[20] = {0, 1, 2, 4, 6, 9, 12, 16, 21, 16, 12, 8, 4, 5, 6, 7, 8, 9, 10, 11};
+
+    for(int i = 0; i < 20; i++)
+    {
+        m_dataMap1.insert(std::make_pair(i, data1[i]));
+        m_dataMap2.insert(std::make_pair(i, data2[i]));
+        m_dataMap3.insert(std::make_pair(i, data3[i]));
+
+    }
+
+
     p->setRenderHint(QPainter::Antialiasing);
-    p->setBrush(m_backgroundBrush);
+    QPen textPen(m_textBrush, 3);
 
     int width= w->rect().width();
     int height = w->rect().height();
 
-    double scaleF = 0.85;
-    double padding = (1-scaleF) / 2.0;
+    double scaleF = 0.75;
+    double paddingRatio = (1-scaleF) / 2.0;
 
-    QRectF drawBox = w->rect().adjusted(width * padding, height * padding, -width * padding, -height * padding);
+    int margin = fmin(paddingRatio * width, paddingRatio * height);
 
-    p->drawRect(drawBox);
+    QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+
+    // label padding = 7.5%
+    int lMargin = drawBox.height() * 0.075;
+    drawBox.adjust(lMargin, 0, 0, -lMargin);
+
+    QPointF topRightTop = drawBox.topRight();
+    QPointF bottomLeftBottom = drawBox.bottomLeft();
+
+    int row2Top = drawBox.y() + drawBox.height()/3;
+    int row3Top = drawBox.y() + 2 * drawBox.height()/3;
+
+    QPointF bottomLeftTop(drawBox.left(), row2Top);
+    QPointF topRightMiddle(drawBox.right(), row2Top);
+    QPointF bottomLeftMiddle(drawBox.left(), row3Top);
+    QPointF topRightBottom(drawBox.right(), row3Top);
+
+    QRectF top(topRightTop, bottomLeftTop);
+    QRectF middle(topRightMiddle, bottomLeftMiddle);
+    QRectF bottom(topRightBottom, bottomLeftBottom);
+
+    // <---- draw ----> //
+
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_dataMap1);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_dataMap2);
+    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_dataMap3);
+
+
+
+    p->setBrush(m_transparentBrush);
+    p->setPen(textPen);
+    p->drawLine(top.topRight(), bottom.bottomRight());
+    p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
 
 
 }
 
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap)
+{
+    double range = 20;
+    double start = 0;
+    double scale = 25;
+
+    QPointF bottomPt = rect.bottomLeft();
+//    bottomPt.setY(rect.bottom() + rect.height()/3);
+    QLinearGradient gradient(bottomPt, rect.topLeft());
+//    gradient.setColorAt(0, m_transparentBrush.color());
+//    gradient.setColorAt(1, bg);
+    gradient.setColorAt(0, bg);
+    gradient.setColorAt(1, m_transparentBrush.color());
+
+//    p->setPen(QPen(m_transparentBrush, 3));
+    p->setPen(QPen(bg, 3));
+    QList<QPointF> pointsToDraw;
+    double max = 9999;
+    for(const auto& [timestamp, value] : dataMap)
+    {
+        double valX = 0;
+        double valY = 0;
+        if(timestamp < start)
+        {
+            dataMap.erase(timestamp);
+        } else {
+            valX = -(timestamp - start) / (range - 1) * (rect.width()) + rect.right();
+            valY = -(value / scale) * (rect.height()) + rect.bottom();
+            if(valY < max)
+                max = valY;
+            pointsToDraw.append(QPointF(valX, valY));
+        }
+
+
+    }
+    QPointF newTop(gradient.finalStop());
+    newTop.setY(max);
+    gradient.setFinalStop(newTop);
+    pointsToDraw.append(rect.bottomLeft());
+    pointsToDraw.append(rect.bottomRight());
+    p->setBrush(QBrush(gradient));
+    p->drawPolygon(QPolygonF(pointsToDraw));
+}
 
