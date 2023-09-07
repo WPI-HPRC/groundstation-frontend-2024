@@ -55,6 +55,9 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_Gauge:
                 m_drawer->drawHPRCGauge(painter, w);
                 return;
+            case hprcDisplayWidget::HPRC_Graph:
+                m_drawer->drawHPRCGraph(painter, w);
+                return;
             default:
                 return;
             }

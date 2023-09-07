@@ -63,12 +63,12 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="3,2">
            <item>
-            <widget class="QWidget" name="widget_5" native="true"/>
+            <widget class="hprcGraph" name="widget_5" native="true"/>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="hprcGauge" name="gauge3" native="true">
+              <widget class="hprcAltitudeGauge" name="gauge3" native="true">
                <layout class="QFormLayout" name="formLayout">
                 <item row="0" column="0">
                  <widget class="QSlider" name="h3">
@@ -81,7 +81,7 @@
               </widget>
              </item>
              <item>
-              <widget class="hprcGauge" name="gauge1" native="true">
+              <widget class="hprcAccelerationGauge" name="gauge1" native="true">
                <layout class="QFormLayout" name="formLayout_3">
                 <item row="0" column="0">
                  <widget class="QSlider" name="h1">
@@ -94,7 +94,7 @@
               </widget>
              </item>
              <item>
-              <widget class="hprcGauge" name="gauge2" native="true">
+              <widget class="hprcVelocityGauge" name="gauge2" native="true">
                <layout class="QFormLayout" name="formLayout_2">
                 <item row="0" column="0">
                  <widget class="QSlider" name="h2">
@@ -163,13 +163,28 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>hprcGauge</class>
+   <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
-   <slots>
-    <slot>updateFilled(int)</slot>
-   </slots>
+  </customwidget>
+  <customwidget>
+   <class>hprcVelocityGauge</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcAccelerationGauge</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcGraph</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -173,13 +173,15 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     progressGradient.setColorAt(0, m_highlightBrush.color());
 
 
-    QPen fgPen(QBrush(progressGradient), 5);
+//    QPen fgPen(QBrush(progressGradient), 5);
+    QPen fgPen(m_highlightBrush, 5);
+
     fgPen.setCapStyle(Qt::RoundCap);
 
     bgPen.setWidth(sizeMin/10);
     fgPen.setWidth(sizeMin/10 -5);
 
-    m_widgetLarge.setPointSize(sizeMin/11);
+    m_widgetLarge.setPointSize(sizeMin/13);
     p->setFont(m_widgetLarge);
 
 
@@ -190,7 +192,25 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     p->setPen(fgPen);
     p->drawArc(boundingBox, (180 * 16 + extraArc*16), (180 + 2 * extraArc)*-16 * (w->m_filledPercent/100.0));
     p->setPen(textPen);
-    p->drawText(boundingBox.adjusted(0, 50, 0, 50), Qt::AlignCenter, w->m_label);
+    p->drawText(boundingBox.adjusted(0, 30, 0, 30), Qt::AlignCenter, w->m_label);
+
+}
+
+void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
+{
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setBrush(m_backgroundBrush);
+
+    int width= w->rect().width();
+    int height = w->rect().height();
+
+    double scaleF = 0.85;
+    double padding = (1-scaleF) / 2.0;
+
+    QRectF drawBox = w->rect().adjusted(width * padding, height * padding, -width * padding, -height * padding);
+
+    p->drawRect(drawBox);
+
 
 }
 

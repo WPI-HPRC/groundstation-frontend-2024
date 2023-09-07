@@ -57,3 +57,27 @@ int hprcDisplayWidget::fillChanged()
 
     return m_filledPercent;
 }
+
+hprcAltitudeGauge::hprcAltitudeGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "ALTITUDE";
+}
+
+hprcVelocityGauge::hprcVelocityGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "VELOCITY";
+}
+
+hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "ACCELERATION";
+}
+
+hprcGraph::hprcGraph(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_Graph;
+}

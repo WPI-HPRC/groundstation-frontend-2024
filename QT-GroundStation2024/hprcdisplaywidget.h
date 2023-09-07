@@ -15,6 +15,7 @@ public:
     {
         HPRC_Timeline,
         HPRC_Gauge,
+        HPRC_Graph,
         HPRC_Hidden,
     };
 
@@ -36,7 +37,8 @@ public:
 
     QString m_label;
 
-    hprcWidgetType getType() const { return m_widgetType; };
+    hprcWidgetType getType() const { return m_widgetType; }
+    hprcDataType getDataType() const { return m_dataType; }
 
     void paintEvent(QPaintEvent *e);
 
@@ -47,6 +49,7 @@ public slots:
 protected:
 
     hprcWidgetType m_widgetType;
+    hprcDataType m_dataType;
 
 signals:
 
@@ -70,6 +73,43 @@ public:
     explicit hprcGauge(QWidget *parent = nullptr);
 
 signals:
+};
+
+class hprcAltitudeGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcAltitudeGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcVelocityGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcVelocityGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcAccelerationGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcAccelerationGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcGraph : public hprcDisplayWidget
+{
+public:
+
+    explicit hprcGraph(QWidget *parent = nullptr);
 };
 
 #endif // HPRCDISPLAYWIDGET_H

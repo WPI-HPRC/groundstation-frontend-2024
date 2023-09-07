@@ -17,6 +17,7 @@ public:
     // draw custom widgets
     void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
 
     QBrush m_backgroundBrush;
     QBrush m_panelBrush;
