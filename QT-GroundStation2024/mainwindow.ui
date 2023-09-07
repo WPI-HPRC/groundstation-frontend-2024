@@ -28,10 +28,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,6">
-        <item>
-         <widget class="QWidget" name="widget_2" native="true"/>
-        </item>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,6">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -71,13 +68,43 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="hprcGauge" name="widget_4" native="true"/>
+              <widget class="hprcGauge" name="gauge3" native="true">
+               <layout class="QFormLayout" name="formLayout">
+                <item row="0" column="0">
+                 <widget class="QSlider" name="h3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
              <item>
-              <widget class="hprcGauge" name="widget" native="true"/>
+              <widget class="hprcGauge" name="gauge1" native="true">
+               <layout class="QFormLayout" name="formLayout_3">
+                <item row="0" column="0">
+                 <widget class="QSlider" name="h1">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
              <item>
-              <widget class="hprcGauge" name="widget_3" native="true"/>
+              <widget class="hprcGauge" name="gauge2" native="true">
+               <layout class="QFormLayout" name="formLayout_2">
+                <item row="0" column="0">
+                 <widget class="QSlider" name="h2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </item>
@@ -140,6 +167,9 @@
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>updateFilled(int)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -157,6 +187,54 @@
     <hint type="destinationlabel">
      <x>1721</x>
      <y>540</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>h1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gauge1</receiver>
+   <slot>updateFilled(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>701</x>
+     <y>883</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>892</x>
+     <y>883</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>h2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gauge2</receiver>
+   <slot>updateFilled(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1190</x>
+     <y>883</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1380</x>
+     <y>883</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>h3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gauge3</receiver>
+   <slot>updateFilled(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>213</x>
+     <y>883</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>883</y>
     </hint>
    </hints>
   </connection>

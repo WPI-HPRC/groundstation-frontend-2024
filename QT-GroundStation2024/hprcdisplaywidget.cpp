@@ -11,7 +11,7 @@ hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
 {
     m_widgetType = HPRC_Hidden;
     m_filledPercent = 0;
-
+    m_label = QString("TESTING");
 }
 
 void hprcDisplayWidget::paintEvent(QPaintEvent *e)

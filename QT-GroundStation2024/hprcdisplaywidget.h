@@ -18,10 +18,23 @@ public:
         HPRC_Hidden,
     };
 
+    enum hprcDataType // TODO
+    {
+        HPRC_Altitude,
+        HPRC_Velocity,
+        HPRC_Acceleration,
+        HPRC_Other,
+    };
+
+    bool imperial; // TODO
+    bool msl; // TODO
+
     int m_filledPercent;
     int fillChanged();
     int getFilled();
     void setFilled(int input);
+
+    QString m_label;
 
     hprcWidgetType getType() const { return m_widgetType; };
 
@@ -52,6 +65,8 @@ class hprcGauge : public hprcDisplayWidget
 {
     Q_OBJECT
 public:
+
+
     explicit hprcGauge(QWidget *parent = nullptr);
 
 signals:

@@ -144,11 +144,13 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 {
     p->setRenderHint(QPainter::Antialiasing);
-    p->setFont(m_widgetLarge);
     p->setBrush(m_backgroundBrush);
-    QPen bgPen(m_backgroundBrush, 15);
+    QPen bgPen(m_backgroundBrush, 5);
     bgPen.setCapStyle(Qt::RoundCap);
-    p->setPen(bgPen);
+
+    QPen textPen(m_textBrush, 5);
+
+
 
     QRectF boundingBox(w->rect().adjusted(15, 15, -15, -15));
 
@@ -163,15 +165,32 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     boundingBox.setHeight(sizeMin);
     boundingBox.setWidth(sizeMin);
 
-
     int extraArc = 35;
 
+
+    QConicalGradient progressGradient(boundingBox.center(), (180 + extraArc - 5) - (w->m_filledPercent/100.0) * (180 + 2*extraArc));
+    progressGradient.setColorAt(1, m_panelBrush.color());
+    progressGradient.setColorAt(0, m_highlightBrush.color());
+
+
+    QPen fgPen(QBrush(progressGradient), 5);
+    fgPen.setCapStyle(Qt::RoundCap);
+
+    bgPen.setWidth(sizeMin/10);
+    fgPen.setWidth(sizeMin/10 -5);
+
+    m_widgetLarge.setPointSize(sizeMin/11);
+    p->setFont(m_widgetLarge);
+
+
+    // <---- draw ----> //
+
+    p->setPen(bgPen);
     p->drawArc(boundingBox, -extraArc*16, (180 + 2 * extraArc)*16);
-
-
-
-//    p->drawRect(drawRect);
-
+    p->setPen(fgPen);
+    p->drawArc(boundingBox, (180 * 16 + extraArc*16), (180 + 2 * extraArc)*-16 * (w->m_filledPercent/100.0));
+    p->setPen(textPen);
+    p->drawText(boundingBox.adjusted(0, 50, 0, 50), Qt::AlignCenter, w->m_label);
 
 }
 
