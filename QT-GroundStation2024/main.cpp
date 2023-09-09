@@ -6,11 +6,12 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyle(new HPRCDarkStyle);
+    a.setStyle(new HPRCDarkStyle(nullptr));
     MainWindow w;
+    a.setStyle(new HPRCDarkStyle(w.getCurrentData()));
     w.centralWidget()->setBackgroundRole(QPalette::Window);
     w.show();
     w.showMaximized();
-
+    w.update();
     return a.exec();
 }

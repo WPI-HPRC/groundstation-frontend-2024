@@ -13,7 +13,7 @@ public:
     QPalette standardPalette() const override;
     void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
-    Style(QColor *background, QColor *panel, QColor *text, QColor *highlight, QColor *button);
+    Style(QColor *background, QColor *panel, QColor *text, QColor *highlight, QColor *button, MainWindow::dataPoint *d);
 
 
 private:
@@ -31,13 +31,13 @@ class HPRCLightStyle : public Style
 {
     Q_OBJECT
 public:
-    HPRCLightStyle();
+    HPRCLightStyle(MainWindow::dataPoint *d);
 };
 class HPRCDarkStyle : public Style
 {
     Q_OBJECT
 public:
-    HPRCDarkStyle();
+    HPRCDarkStyle(MainWindow::dataPoint *d);
 };
 
 #endif // STYLES_H

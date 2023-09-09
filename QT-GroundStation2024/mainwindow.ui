@@ -37,13 +37,18 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QFrame" name="uTime">
+           <widget class="QFrame" name="frame_2">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="hprcClock" name="clockUTC" native="true"/>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -54,6 +59,11 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QWidget" name="clockMET" native="true"/>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -193,6 +203,12 @@
   </customwidget>
   <customwidget>
    <class>hprcAlarmPanel</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcClock</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

@@ -4,11 +4,15 @@
 #include "hprcdisplaywidget.h"
 #include <QStyle>
 #include <QPainter>
+#include "mainwindow.h"
 
 class HPRCStyle
 {
 public:
-    HPRCStyle(const QStyle *style);
+
+    MainWindow::dataPoint* m_latest;
+
+    HPRCStyle(const QStyle *style, MainWindow::dataPoint *d);
 
     enum HPRCAlarmType
     {
@@ -38,6 +42,7 @@ public:
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
+    void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
 
     QBrush m_backgroundBrush;
     QBrush m_panelBrush;

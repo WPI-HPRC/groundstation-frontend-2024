@@ -17,6 +17,7 @@ public:
         HPRC_Gauge,
         HPRC_Graph,
         HPRC_Alarm,
+        HPRC_Clock,
         HPRC_Hidden,
     };
 
@@ -119,5 +120,13 @@ public:
 
     explicit hprcAlarmPanel(QWidget *parent = nullptr);
 };
+
+class hprcClock : public hprcDisplayWidget
+{
+public:
+
+    explicit hprcClock(QWidget *parent = nullptr);
+};
+
 
 #endif // HPRCDISPLAYWIDGET_H

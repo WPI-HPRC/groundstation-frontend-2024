@@ -5,8 +5,9 @@
 #include <QStyleOption>
 #include <iostream>
 #include <QFontDatabase>
+#include "mainwindow.h"
 
-HPRCStyle::HPRCStyle(const QStyle *style)
+HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
     m_backgroundBrush = widgetPalette.brush(QPalette::Window);
@@ -46,6 +47,9 @@ HPRCStyle::HPRCStyle(const QStyle *style)
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, false));
 
 
+    // get a pointer to the current data's location
+
+    m_latest = d;
 }
 
 void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o)
@@ -440,4 +444,17 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     case ALARM_Unknown:
         break;
     }
+}
+
+void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
+{
+    p->setFont(m_widgetLarge);
+    p->setPen(QPen(m_textBrush, 3));
+    double t = m_latest->utcTime / 100;
+//    long h = (int)(t + 0.5) % 3600000;
+//    long m = ((int)(t+0.5) - h * 3600000) % 60000;
+//    long s = ((int)(t+0.5) - h * 3600000 - m * 60000);
+//    std::string timeString = std::to_string(h) + ":" + std::to_string(m) + ":" + std::to_string(s);
+    std::string timeString = std::to_string(t);
+    p->drawText(w->rect(), QString::fromStdString(timeString));
 }

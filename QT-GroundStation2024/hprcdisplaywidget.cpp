@@ -1,4 +1,5 @@
 #include "hprcdisplaywidget.h"
+#include "mainwindow.h"
 #include "qapplication.h"
 #include "qpainter.h"
 #include "qstyle.h"
@@ -86,4 +87,18 @@ hprcAlarmPanel::hprcAlarmPanel(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_Alarm;
+}
+
+hprcClock::hprcClock(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    // subscribe to any data that needs to cause an update
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(utcTimeUpdated()), this, SLOT(repaint()));
+        }
+
+
+    m_widgetType = HPRC_Clock;
 }
