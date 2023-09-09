@@ -81,3 +81,9 @@ hprcGraph::hprcGraph(QWidget *parent) :
 {
     m_widgetType = HPRC_Graph;
 }
+
+hprcAlarmPanel::hprcAlarmPanel(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_Alarm;
+}

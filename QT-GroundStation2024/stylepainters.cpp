@@ -33,6 +33,19 @@ HPRCStyle::HPRCStyle(const QStyle *style)
 
     }
     m_stateMap.insert(std::make_pair(ticks[sizeof(ticks)/sizeof(ticks[0]) - 1], QString("-")));
+
+    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_MasterAbort, true));
+    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_Pitch, true));
+
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MasterWarn, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_PowerLoss, false));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_LowPower, false));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_SignalLoss, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_EarlyChute, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_Ballistic, false));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, false));
+
+
 }
 
 void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o)
@@ -101,7 +114,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     bgPen.setWidth(drawHeight/40);
 
     double drawX = (widgetBox.width() - drawWidth) / 2.0;
-    double drawY = (widgetBox.height() - drawHeight) / 2.0; // I dunno but it works
+    double drawY = (widgetBox.height() - drawHeight) / 2.0;
 
     double scaleF = 0.03;
 
@@ -246,11 +259,18 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     QRectF middle(topRightMiddle, bottomLeftMiddle);
     QRectF bottom(topRightBottom, bottomLeftBottom);
 
+    double range = 20;
+    double start = 0;
+    double scale = 25;
+
     // <---- draw ----> //
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_dataMap1);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_dataMap2);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_dataMap3);
+    p->setBrush(m_backgroundBrush);
+    p->drawRect(drawBox);
+
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_dataMap1, range, start, scale);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_dataMap2, range, start, scale);
+    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_dataMap3, range, start, scale);
 
 
 
@@ -259,14 +279,11 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     p->drawLine(top.topRight(), bottom.bottomRight());
     p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
 
-
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap, double range, double start, double scale)
 {
-    double range = 20;
-    double start = 0;
-    double scale = 25;
+
 
     QPointF bottomPt = rect.bottomLeft();
 //    bottomPt.setY(rect.bottom() + rect.height()/3);
@@ -306,3 +323,121 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<i
     p->drawPolygon(QPolygonF(pointsToDraw));
 }
 
+void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
+{
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setBrush(m_transparentBrush);
+    QPen linePen(m_backgroundBrush, 4);
+    linePen.setCapStyle(Qt::RoundCap);
+    p->setPen(linePen);
+
+
+    int abortConditions = m_alarmMapA.size();
+    int warnConditions = m_alarmMapW.size();
+
+    int total = abortConditions + warnConditions + 1;
+
+    double width = w->rect().width() * 0.9;
+    double height = w->rect().height() * 0.9;
+
+    double aspectRatio = (1.0/total);
+    if(width / height > aspectRatio)
+    {
+        width = height * aspectRatio;
+    } else {
+        height = width / aspectRatio;
+    }
+
+    double wPadding = (w->rect().width() - width) / 2.0;
+    double hPadding = (w->rect().height() - height) / 2.0;
+
+    int i = 0;
+    int size = width;
+    int x = w->rect().x() + wPadding;
+
+    int startX = x + size * 0.05;
+    int startYA = w->rect().y() + hPadding + size * 0.5;
+
+    p->drawLine(startX, startYA, startX, w->rect().y() + hPadding + (height * (abortConditions - 1) / total + size * 0.5));
+
+    for(const auto& [type, active] : m_alarmMapA)
+    {
+        int y = w->rect().y() + hPadding + (height * i / total);
+        drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYA);
+
+        i++;
+    }
+    i++;
+    p->setPen(linePen);
+    int startYW = w->rect().y() + hPadding + (height * i / total + size * 0.5);
+    p->drawLine(startX, startYW, startX, startYW + (size * (warnConditions - 1)));
+
+
+    for(const auto& [type, active] : m_alarmMapW)
+    {
+        int y = w->rect().y() + hPadding + (height * i / total);
+        drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYW);
+
+        i++;
+    }
+    p->setPen(linePen);
+}
+
+void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY)
+{
+    p->setBrush(m_panelBrush);
+    if(active)
+    {
+        QPen hPen(m_highlightBrush, 4);
+        hPen.setCapStyle(Qt::RoundCap);
+        p->setPen(hPen);
+        p->drawLine(x + size * 0.05, y + size * 0.5, startX, startY);
+    } else {
+        QPen hPen(m_backgroundBrush, 4);
+        hPen.setCapStyle(Qt::RoundCap);
+        p->setPen(hPen);
+    }
+
+    // <---- draw the "causation" line ----> //
+
+    double radius = 0.05;
+
+    p->drawLine(x + size * 0.05, y + size * 0.5, x + size * 0.25, y + size * 0.5);
+    QRectF circleRect(x + size * 0.25, y + size * (0.5-radius), radius * 2 * size, radius * 2 * size);
+    p->drawEllipse(circleRect);
+
+    // <---- draw the icon ----> //
+
+    double iconScale = 0.5;
+    double iconSize = iconScale * size;
+    double iconX = x + (size - iconSize) / 1.15; // shifted right to account for space used by "causation line"
+    double iconY = y + (size - iconSize) / 2.0;
+
+    QRectF iRect(iconX, iconY, iconSize, iconSize);
+
+    p->drawRect(iRect);
+
+
+    switch(t)
+    {
+    case ALARM_MasterAbort:
+    {
+
+        return;
+    }
+    case ALARM_Pitch:
+    case ALARM_MasterWarn:
+    case ALARM_LowPower:
+    case ALARM_SignalLoss:
+    case ALARM_PowerLoss:
+    case ALARM_MainDeployFail:
+    case ALARM_DrogueDeployFail:
+    case ALARM_PayloadDeployFail:
+    case ALARM_Ballistic:
+    case ALARM_LowTrack:
+    case ALARM_HighTrack:
+    case ALARM_EarlyChute:
+    case ALARM_Unknown:
+        break;
+    }
+}

@@ -10,6 +10,24 @@ class HPRCStyle
 public:
     HPRCStyle(const QStyle *style);
 
+    enum HPRCAlarmType
+    {
+        ALARM_MasterAbort,
+        ALARM_Pitch,
+        ALARM_MasterWarn,
+        ALARM_LowPower,
+        ALARM_SignalLoss,
+        ALARM_PowerLoss,
+        ALARM_MainDeployFail,
+        ALARM_DrogueDeployFail,
+        ALARM_PayloadDeployFail,
+        ALARM_Ballistic,
+        ALARM_LowTrack,
+        ALARM_HighTrack,
+        ALARM_EarlyChute,
+        ALARM_Unknown,
+    };
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
@@ -18,6 +36,8 @@ public:
     void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
 
     QBrush m_backgroundBrush;
     QBrush m_panelBrush;
@@ -29,15 +49,21 @@ public:
     QFont m_widgetLarge;
     QFont m_widgetMedium;
 
+
+    // data maps
     std::map<double, QString> m_stateMap;
     std::map<int, int> m_dataMap1;
     std::map<int, int> m_dataMap2;
     std::map<int, int> m_dataMap3;
+    std::map<HPRCAlarmType, bool> m_alarmMapW;
+    std::map<HPRCAlarmType, bool> m_alarmMapA;
+
+
 
 
 private:
 
-    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap);
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap, double range, double start, double scale);
 
 };
 

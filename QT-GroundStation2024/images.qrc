@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/abort_warning_active.png</file>
+        <file>images/pitch_warning_active.png</file>
+        <file>images/abort_warning_inactive.png</file>
+        <file>images/pitch_warning_inactive.png</file>
+    </qresource>
+</RCC>
