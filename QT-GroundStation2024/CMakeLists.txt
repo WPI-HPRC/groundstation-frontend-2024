@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(QT-GroundStation2024 VERSION 0.1 LANGUAGES CXX)
 
+
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -76,3 +78,6 @@ install(TARGETS QT-GroundStation2024
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(QT-GroundStation2024)
 endif()
+
+find_package(Qt6 REQUIRED COMPONENTS WebSockets)
+target_link_libraries(QT-GroundStation2024 PRIVATE Qt6::WebSockets)

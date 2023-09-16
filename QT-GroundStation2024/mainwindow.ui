@@ -46,7 +46,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="hprcClock" name="clockUTC" native="true"/>
+              <widget class="hprcUTCClock" name="clockUTC" native="true"/>
              </item>
             </layout>
            </widget>
@@ -61,7 +61,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
-              <widget class="QWidget" name="clockMET" native="true"/>
+              <widget class="hprcMETClock" name="clockMET" native="true"/>
              </item>
             </layout>
            </widget>
@@ -208,7 +208,13 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>hprcClock</class>
+   <class>hprcUTCClock</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcMETClock</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

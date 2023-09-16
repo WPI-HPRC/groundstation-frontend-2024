@@ -62,25 +62,48 @@ int hprcDisplayWidget::fillChanged()
 hprcAltitudeGauge::hprcAltitudeGauge(QWidget *parent) :
     hprcGauge{parent}
 {
+    m_max = 12000.0;
     m_label = "ALTITUDE";
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(altUpdated(int)), this, SLOT(updateFilled(int)));
+        }
 }
 
 hprcVelocityGauge::hprcVelocityGauge(QWidget *parent) :
     hprcGauge{parent}
 {
+    m_max = 1000.0;
     m_label = "VELOCITY";
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(velUpdated(int)), this, SLOT(updateFilled(int)));
+        }
 }
 
 hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
     hprcGauge{parent}
 {
     m_label = "ACCELERATION";
+    m_max = 400;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(accUpdated(int)), this, SLOT(updateFilled(int)));
+        }
 }
 
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_Graph;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
+        }
 }
 
 hprcAlarmPanel::hprcAlarmPanel(QWidget *parent) :
@@ -96,7 +119,7 @@ hprcClock::hprcClock(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            connect(mainWin, SIGNAL(utcTimeUpdated()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
         }
 
 

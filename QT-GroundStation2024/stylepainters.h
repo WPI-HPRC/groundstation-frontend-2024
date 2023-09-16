@@ -68,7 +68,7 @@ public:
 
 private:
 
-    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap, double range, double start, double scale);
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, double range, double start);
 
 };
 

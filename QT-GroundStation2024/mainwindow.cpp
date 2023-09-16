@@ -14,7 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
 //    setupCentralWidget();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(10);
+    timer->start(1);
+
+    connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
+    connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    m_webSocket.open(QUrl(QString("ws://127.0.0.1:3005")));
 }
 
 MainWindow::~MainWindow()
@@ -24,10 +28,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateData(dataPoint p)
 {
+
+
     if(p.acceleration != m_currentData.acceleration)
     {
         m_currentData.acceleration = p.acceleration;
-        emit accUpdated(p.acceleration);
+
+        emit accUpdated(p.acceleration * 32.2);
+
     }
     if(p.velocity != m_currentData.velocity)
     {
@@ -41,25 +49,85 @@ void MainWindow::updateData(dataPoint p)
     }
     if(p.state != m_currentData.state)
     {
+        if(p.state == 2)
+        {
+            m_groundLaunchTime = QDateTime::currentDateTimeUtc();
+            m_rocketLaunchTime = p.rocketTime;
+        }
         m_currentData.state = p.state;
         emit stateUpdated(p.state);
     }
     if(p.rocketTime != m_currentData.rocketTime)
     {
+        if(p.state > 1)
+        {
+            m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
+        }
         m_currentData.rocketTime = p.rocketTime;
+        m_currentData.accData.append(graphPoint {p.acceleration, p.rocketTime});
+        while(m_currentData.accData.first().time < p.rocketTime - 5000)
+            m_currentData.accData.removeFirst();
+        m_currentData.velData.append(graphPoint {p.velocity, p.rocketTime});
+        while(m_currentData.velData.first().time < p.rocketTime - 5000)
+            m_currentData.velData.removeFirst();
+        m_currentData.altData.append(graphPoint {p.altitude, p.rocketTime});
+        while(m_currentData.altData.first().time < p.rocketTime - 5000)
+            m_currentData.altData.removeFirst();
         emit rocketTimeUpdated(p.rocketTime);
     }
-    if(p.utcTime != m_currentData.utcTime)
+    if(p.groundTime != m_currentData.groundTime)
     {
-        m_currentData.utcTime = p.utcTime;
-        emit utcTimeUpdated();
+        m_currentData.groundTime = p.groundTime;
+        emit groundTimeUpdated();
     }
+    emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 
 }
 
 void MainWindow::update()
 {
-    dataPoint newData(m_currentData);
-    newData.utcTime += 1;
-    updateData(newData);
+    if(m_dataBuffer.state > 1)
+    {
+        m_dataBuffer.groundTime = m_groundLaunchTime.msecsTo(QDateTime::currentDateTimeUtc());
+    }
+    pts += 1;
+    updateData(m_dataBuffer);
+}
+
+void MainWindow::onConnected()
+{
+    connect(&m_webSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(onTextMessageReceived(QString)));
+
+}
+
+void MainWindow::onDisconnected() {}
+
+void MainWindow::onTextMessageReceived(QString message)
+{
+    QStringList messageSplit = message.split(",");
+    for(QString e : messageSplit.toList())
+    {
+        e.remove("\"");
+        QStringList elementSplit = e.split(":");
+        if(elementSplit.at(0) == QString("Altitude"))
+        {
+            QString altData = elementSplit.at(1);
+            altData.remove("}");
+            m_dataBuffer.altitude = altData.toFloat();
+        } else if(elementSplit.at(0) == QString("Velocity"))
+        {
+            m_dataBuffer.velocity = elementSplit.at(1).toFloat();
+        } else if(elementSplit.at(0) == QString("AccelZ"))
+        {
+            m_dataBuffer.acceleration = elementSplit.at(1).toDouble();
+        } else if(elementSplit.at(0) == QString("Timestamp"))
+        {
+            m_dataBuffer.rocketTime = elementSplit.at(1).toFloat();
+        }
+        else if(elementSplit.at(0) == QString("State"))
+        {
+            m_dataBuffer.state = elementSplit.at(1).toInt();
+        }
+    }
+
 }

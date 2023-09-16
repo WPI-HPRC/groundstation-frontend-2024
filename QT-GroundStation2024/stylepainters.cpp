@@ -3,9 +3,11 @@
 #include <QStyle>
 #include <QPalette>
 #include <QStyleOption>
+#include <iomanip>
 #include <iostream>
 #include <QFontDatabase>
 #include "mainwindow.h"
+#include <QDateTime>
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -185,7 +187,7 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     int extraArc = 35;
 
 
-    QConicalGradient progressGradient(boundingBox.center(), (180 + extraArc - 5) - (w->m_filledPercent/100.0) * (180 + 2*extraArc));
+    QConicalGradient progressGradient(boundingBox.center(), (180 + extraArc - 5) - (w->m_filledPercent/w->m_max) * (180 + 2*extraArc));
     progressGradient.setColorAt(1, m_panelBrush.color());
     progressGradient.setColorAt(0, m_highlightBrush.color());
 
@@ -198,8 +200,23 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     bgPen.setWidth(sizeMin/10);
     fgPen.setWidth(sizeMin/10 -5);
 
+    QString dataString = QString::number(w->m_filledPercent);
+    bool negative = false;
+    if(dataString.contains("-"))
+    {
+        dataString.remove("-");
+        negative = true;
+    }
+    while(dataString.size() < 4)
+    {
+        dataString.prepend("0");
+    }
+    if(negative)
+        dataString.prepend("-");
+
     m_widgetLarge.setPointSize(sizeMin/13);
     p->setFont(m_widgetLarge);
+
 
 
     // <---- draw ----> //
@@ -207,9 +224,14 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     p->setPen(bgPen);
     p->drawArc(boundingBox, -extraArc*16, (180 + 2 * extraArc)*16);
     p->setPen(fgPen);
-    p->drawArc(boundingBox, (180 * 16 + extraArc*16), (180 + 2 * extraArc)*-16 * (w->m_filledPercent/100.0));
+    p->drawArc(boundingBox, (180 * 16 + extraArc*16), (180 + 2 * extraArc)*-16 * (fmax(0, fmin(w->m_filledPercent/w->m_max, 1))));
     p->setPen(textPen);
     p->drawText(boundingBox.adjusted(0, 30, 0, 30), Qt::AlignCenter, w->m_label);
+
+    m_widgetLarge.setPointSize(sizeMin/7);
+    p->setFont(m_widgetLarge);
+
+    p->drawText(boundingBox.adjusted(0, -30, 0, -30), Qt::AlignCenter, dataString);
 
 }
 
@@ -218,17 +240,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 
 
-    int data1[20] = {0, 1, 5, 6, 12, 11, 10, 9, 8, 7, 5, 14, 16, 17, 15, 12, 10, 5, 4, 3};
-    int data2[20] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-    int data3[20] = {0, 1, 2, 4, 6, 9, 12, 16, 21, 16, 12, 8, 4, 5, 6, 7, 8, 9, 10, 11};
 
-    for(int i = 0; i < 20; i++)
-    {
-        m_dataMap1.insert(std::make_pair(i, data1[i]));
-        m_dataMap2.insert(std::make_pair(i, data2[i]));
-        m_dataMap3.insert(std::make_pair(i, data3[i]));
-
-    }
 
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -263,18 +275,17 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     QRectF middle(topRightMiddle, bottomLeftMiddle);
     QRectF bottom(topRightBottom, bottomLeftBottom);
 
-    double range = 20;
-    double start = 0;
-    double scale = 25;
+    double range = 5000;
+    double start = m_latest->rocketTime - range;
 
     // <---- draw ----> //
 
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_dataMap1, range, start, scale);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_dataMap2, range, start, scale);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_dataMap3, range, start, scale);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, range, start);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, range, start);
+    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, range, start);
 
 
 
@@ -285,7 +296,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<int, int> dataMap, double range, double start, double scale)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start)
 {
 
 
@@ -301,23 +312,40 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, std::map<i
     p->setPen(QPen(bg, 3));
     QList<QPointF> pointsToDraw;
     double max = 9999;
-    for(const auto& [timestamp, value] : dataMap)
+    double scaleMax = 1;
+    double scaleMin = 999999;
+    for(int i = 0; i < data.size(); i++)
+    {
+////        if(!(data.at(i).time < (start - range)))
+////        {
+            if(data.at(i).value > scaleMax)
+            {
+                scaleMax = data.at(i).value;
+            }
+            if(data.at(i).value < scaleMin)
+            {
+                scaleMin = data.at(i).value;
+            }
+
+////        }
+    }
+
+    double scale = fmax(1.0, scaleMax - scaleMin);
+
+    for(MainWindow::graphPoint g : data)
     {
         double valX = 0;
         double valY = 0;
-        if(timestamp < start)
-        {
-            dataMap.erase(timestamp);
-        } else {
-            valX = -(timestamp - start) / (range - 1) * (rect.width()) + rect.right();
-            valY = -(value / scale) * (rect.height()) + rect.bottom();
-            if(valY < max)
-                max = valY;
-            pointsToDraw.append(QPointF(valX, valY));
-        }
-
+        if(valY < max)
+            max = valY;
+        valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
+        valY = -((g.value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
+        pointsToDraw.append(QPointF(valX, valY));
 
     }
+
+
+
     QPointF newTop(gradient.finalStop());
     newTop.setY(max);
     gradient.setFinalStop(newTop);
@@ -448,13 +476,75 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
 
 void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 {
+    m_widgetLarge.setPointSize(w->height()/5);
     p->setFont(m_widgetLarge);
     p->setPen(QPen(m_textBrush, 3));
-    double t = m_latest->utcTime / 100;
-//    long h = (int)(t + 0.5) % 3600000;
-//    long m = ((int)(t+0.5) - h * 3600000) % 60000;
-//    long s = ((int)(t+0.5) - h * 3600000 - m * 60000);
-//    std::string timeString = std::to_string(h) + ":" + std::to_string(m) + ":" + std::to_string(s);
-    std::string timeString = std::to_string(t);
-    p->drawText(w->rect(), QString::fromStdString(timeString));
+    if(w->getDataType() == hprcDisplayWidget::HPRC_MET)
+    {
+        double t = m_latest->groundTime / 1000.0;
+
+        int wholeNumSecs = t;
+        int hours = wholeNumSecs / 60 / 60;
+        int minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+        double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+        int rseconds = seconds * 100;
+        seconds = rseconds/100.0;
+
+        using namespace std;
+
+        string hourString(to_string(hours));
+        string minuteString(to_string(minutes));
+        string secondString(to_string(seconds));
+
+        if(hourString.length() == 1)
+            hourString.insert(0, "0");
+        if(minuteString.length() == 1)
+            minuteString.insert(0, "0");
+        if(secondString.at(1) == *".")
+            secondString.insert(0, "0");
+        secondString = secondString.substr(0, 5);
+        string timeString = "Ground Time: T + " + hourString + ":" + minuteString + ":" + secondString;
+        p->drawText(w->rect().adjusted(0,0,0,w->rect().height()/-2.0), QString::fromStdString(timeString));
+
+        // rocket internal time //
+
+        t = m_latest->rocketTimeSinceLaunch / 1000.0;
+
+        wholeNumSecs = t;
+        hours = wholeNumSecs / 60 / 60;
+        minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+        seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+        rseconds = seconds * 100;
+        seconds = rseconds/100.0;
+
+        using namespace std;
+
+        string hourString2(to_string(hours));
+        string minuteString2(to_string(minutes));
+        string secondString2(to_string(seconds));
+
+        if(hourString2.length() == 1)
+            hourString2.insert(0, "0");
+        if(minuteString2.length() == 1)
+            minuteString2.insert(0, "0");
+        if(secondString2.at(1) == *".")
+            secondString2.insert(0, "0");
+        secondString2 = secondString2.substr(0, 5);
+        string timeString2 = "Rocket Time: T + " + hourString2 + ":" + minuteString2 + ":" + secondString2;
+        p->drawText(w->rect().adjusted(0,w->rect().height()/2.0, 0, 0), QString::fromStdString(timeString2));
+    } else if(w->getDataType() == hprcDisplayWidget::HPRC_UTC){
+
+
+        QDateTime currentUTC = QDateTime::currentDateTimeUtc();
+        p->drawText(w->rect(), currentUTC.toString("hh:mm:ss dddd, MMMM dd yyyy"));
+
+
+
+    }
+
+
+
 }
+
