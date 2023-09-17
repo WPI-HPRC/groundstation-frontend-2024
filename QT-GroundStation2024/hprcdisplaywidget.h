@@ -39,6 +39,8 @@ public:
     int getFilled();
     void setFilled(int input);
 
+    QPoint m_mousePos;
+
     QString m_label;
 
     hprcWidgetType getType() const { return m_widgetType; }
@@ -114,6 +116,7 @@ class hprcGraph : public hprcDisplayWidget
 public:
 
     explicit hprcGraph(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget

@@ -143,6 +143,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
     for(const auto& [position, label] : m_stateMap)
     {
+        p->setFont(m_widgetLarge);
         QTransform rPt(1, 0, 0, 1, topLeftSlot.x() - (p->font().pointSize()) * label.length(), position * drawHeight + drawY + p->font().pointSize() * 0.3);
         p->setTransform(rPt);
         p->drawText(0, 0, label);
@@ -217,8 +218,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     m_widgetLarge.setPointSize(sizeMin/13);
     p->setFont(m_widgetLarge);
 
-
-
     // <---- draw ----> //
 
     p->setPen(bgPen);
@@ -237,12 +236,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
-
-
-
-
-
-
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
 
@@ -278,14 +271,20 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     double range = 5000;
     double start = m_latest->rocketTime - range;
 
+    bool drawT = false;
+    if(drawBox.contains(w->m_mousePos))
+    {
+        drawT = true;
+    }
+
     // <---- draw ----> //
 
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, range, start);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, range, start);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, range, start);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, range, start, w, drawT);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, range, start, w, drawT);
+    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, range, start, w, drawT);
 
 
 
@@ -296,7 +295,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
 
 
@@ -346,13 +345,23 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
 
 
-    QPointF newTop(gradient.finalStop());
-    newTop.setY(max);
-    gradient.setFinalStop(newTop);
+
+
+    gradient.setFinalStop(rect.topLeft());
     pointsToDraw.append(rect.bottomLeft());
     pointsToDraw.append(rect.bottomRight());
     p->setBrush(QBrush(gradient));
     p->drawPolygon(QPolygonF(pointsToDraw));
+    p->setPen(QPen(m_highlightBrush, 3));
+    p->setBrush(m_transparentBrush);
+
+    if(drawTooltip)
+    {
+        p->drawLine(w->m_mousePos.x(), rect.top(), w->m_mousePos.x(), rect.bottom());
+
+    }
+
+
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)

@@ -6,6 +6,7 @@
 #include "qstyleoption.h"
 #include <iostream>
 #include "QPropertyAnimation"
+#include <QMouseEvent>
 
 hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     : QWidget{parent}
@@ -98,12 +99,19 @@ hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
+    setMouseTracking(true);
     m_widgetType = HPRC_Graph;
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
             connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
         }
+}
+
+void hprcGraph::mouseMoveEvent(QMouseEvent *e)
+{
+    m_mousePos = e->pos();
+
 }
 
 hprcAlarmPanel::hprcAlarmPanel(QWidget *parent) :
