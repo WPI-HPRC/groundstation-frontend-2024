@@ -109,6 +109,13 @@ hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
         }
 }
 
+hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_Attitude;
+    std::cout << "Test!" << std::endl;
+}
+
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {

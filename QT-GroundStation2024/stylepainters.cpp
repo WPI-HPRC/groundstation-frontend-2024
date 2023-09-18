@@ -8,6 +8,11 @@
 #include <QFontDatabase>
 #include "mainwindow.h"
 #include <QDateTime>
+#include <math.h>
+#include <QQuaternion>
+
+#define NUM_ATTITUDE_TICKS 3
+#define ATTITUDE_LINE_PADDING 0.1
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -220,6 +225,8 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     // <---- draw ----> //
 
+//    p->fillRect(boundingBox, m_highlightBrush);
+
     p->setPen(bgPen);
     p->drawArc(boundingBox, -extraArc*16, (180 + 2 * extraArc)*16);
     p->setPen(fgPen);
@@ -232,6 +239,90 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     p->drawText(boundingBox.adjusted(0, -30, 0, -30), Qt::AlignCenter, dataString);
 
+
+
+}
+
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
+{
+    QQuaternion quat(0, 0, 0, 0);
+
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setBrush(m_backgroundBrush);
+
+    QPen bgPen(m_backgroundBrush, 5);
+    QPen textPen(m_textBrush, 5);
+
+    bgPen.setCapStyle(Qt::RoundCap);
+
+    QRectF boundingBox(w->rect().adjusted(15, -15, -15, -15));
+
+    double scaleF = 0.85;
+
+    int oWidth = boundingBox.width();
+
+    int sizeMin = fmin(boundingBox.height(), boundingBox.width() * scaleF);
+
+    boundingBox.adjust(oWidth/2 - sizeMin/2, 0, oWidth/2 - sizeMin/2, 0);
+
+    boundingBox.setHeight(sizeMin);
+    boundingBox.setWidth(sizeMin);
+
+    bgPen.setWidth(sizeMin/10);
+
+    p->setPen(bgPen);
+
+    float yawX1 = boundingBox.x() + sizeMin/10;
+    float yawX2=  boundingBox.x() + boundingBox.width() - sizeMin/10;
+    float yawWidth = yawX2 - yawX1;
+
+    float pitchY1 = boundingBox.y() + sizeMin/10;
+    float pitchY2 =  boundingBox.y() + boundingBox.height() - sizeMin/5;
+    float pitchHeight = pitchY2 - pitchY1;
+
+    pitchHeight = fminf(yawWidth, pitchHeight);
+    yawWidth = pitchHeight;
+
+    yawX1 = boundingBox.x() + (boundingBox.width() - yawWidth)/2;
+    pitchY1 = boundingBox.y() + (boundingBox.height() - pitchHeight)/2;
+
+    float pitch, yaw, roll;
+    quat.getEulerAngles(&pitch, &yaw, &roll);
+
+    pitch = fminf(90, fmaxf(-90, pitch));
+    yaw = fminf(90, fmaxf(-90, yaw));
+
+    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * pitch/90;
+    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yaw/90;
+
+
+    p->drawLine(yawX1,
+                yawY,
+                yawX1 + yawWidth,
+                yawY);
+
+    p->drawLine(pitchX,
+                pitchY1,
+                pitchX,
+                pitchY1 + pitchHeight);
+
+    p->setPen(QPen(m_highlightBrush, 10));
+    QPoint center((int)pitchX, (int)yawY);
+    p->drawEllipse(center, 5, 5);
+
+    p->setPen(textPen);
+    p->setFont(m_widgetLarge);
+
+    p->drawText(QRect(
+                    boundingBox.x(),
+                    boundingBox.y() + boundingBox.height() - 30,
+                    boundingBox.width(),
+                    30),
+                Qt::AlignCenter,
+                "Attitude");
+
+    p->setPen(QPen(m_textBrush, 2));
+    p->drawEllipse(QPoint(center.x() + 6*cosf(roll), center.y() + 6*sinf(roll)), 1, 1);
 }
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)

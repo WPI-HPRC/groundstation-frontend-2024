@@ -17,6 +17,7 @@ public:
     {
         HPRC_Timeline,
         HPRC_Gauge,
+        HPRC_Attitude,
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
@@ -112,6 +113,16 @@ class hprcAccelerationGauge : public hprcGauge
 public:
 
     explicit hprcAccelerationGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcAttitudeWidget: public hprcDisplayWidget
+{
+
+    Q_OBJECT
+public:
+
+    explicit hprcAttitudeWidget(QWidget *parent = nullptr);
 
 };
 
