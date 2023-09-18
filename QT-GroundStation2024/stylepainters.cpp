@@ -11,7 +11,8 @@
 #include <math.h>
 #include <QQuaternion>
 
-#define NUM_NAVBALL_CIRCLES 7
+#define NUM_ATTITUDE_TICKS 3
+#define ATTITUDE_LINE_PADDING 0.1
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -243,9 +244,9 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 {
-    // -- Pen Setup --
+    QQuaternion quat(0, 0, 0, 0);
 
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_backgroundBrush);
@@ -255,11 +256,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     bgPen.setCapStyle(Qt::RoundCap);
 
-    // -- Create bounding box --
+    QRectF boundingBox(w->rect().adjusted(15, -15, -15, -15));
 
-    QRectF boundingBox(w->rect().adjusted(15, 30, -15, 30));
-
-    double scaleF = 0.5;
+    double scaleF = 0.85;
 
     int oWidth = boundingBox.width();
 
