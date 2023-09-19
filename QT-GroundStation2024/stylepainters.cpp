@@ -241,13 +241,8 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 {
-    // These will be updated dynamically
-    const float maxDegreeRange = 90;
-    const float degreeOffsetYaw = 0;
-    const float degreeOffsetPitch = 0;
-
     // -- Pen Setup --
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -300,9 +295,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
     float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
-
-    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * -1 * pitchNormalized;
-    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yawNormalized;
 
     // -- Draw the info --
 
