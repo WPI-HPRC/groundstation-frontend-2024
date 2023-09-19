@@ -11,9 +11,6 @@
 #include <math.h>
 #include <QQuaternion>
 
-#define NUM_ATTITUDE_TICKS 3
-#define ATTITUDE_LINE_PADDING 0.1
-
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
@@ -28,6 +25,7 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     QString overpassMono = QFontDatabase::applicationFontFamilies(id).at(0);
     m_widgetLarge = QFont(overpassMono, 20, 5, false);
     m_widgetMedium = QFont(overpassMono, 15, 5, false);
+    m_widgetSmall = QFont(overpassMono, 10, 5, false);
 
     double ticks[5] = {1, 0.85, 0.5, 0.25, 0}; // these need to be ordered bottom to top.  the system draws from top-left so "1" is the bottom (top - 1 * height)
     QString states[4] = {"BOOST", "CRUISE", "DROGUE", "MAIN"}; // will be associated with the space between [n] and [n+1] eg BOOST is between 1 and 0.85
@@ -245,7 +243,12 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 {
-    QQuaternion quat(0, 0, 0, 0);
+    // These will be updated dynamically
+    const float maxDegreeRange = 90;
+    const float degreeOffsetYaw = 0;
+    const float degreeOffsetPitch = 0;
+
+    // -- Pen Setup --
 
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_backgroundBrush);
@@ -255,6 +258,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     bgPen.setCapStyle(Qt::RoundCap);
 
+    // -- Create bounding box --
+
+    // Move the entire box 15 up to stay inline with other arc-style gauges
     QRectF boundingBox(w->rect().adjusted(15, -15, -15, -15));
 
     double scaleF = 0.85;
@@ -268,9 +274,15 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
     boundingBox.setHeight(sizeMin);
     boundingBox.setWidth(sizeMin);
 
+    // For testing purposes
+    QQuaternion quat(1, ((w->m_mousePos.y() - boundingBox.y()) / boundingBox.height() - 0.5) * 2,
+                     ((w->m_mousePos.x() - boundingBox.x()) /boundingBox.width() - 0.5) * 2, 0);
+
     bgPen.setWidth(sizeMin/10);
 
     p->setPen(bgPen);
+
+    // -- Create the lines for the pitch and yaw indicators --
 
     float yawX1 = boundingBox.x() + sizeMin/10;
     float yawX2=  boundingBox.x() + boundingBox.width() - sizeMin/10;
@@ -286,26 +298,37 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
     yawX1 = boundingBox.x() + (boundingBox.width() - yawWidth)/2;
     pitchY1 = boundingBox.y() + (boundingBox.height() - pitchHeight)/2;
 
+    // -- Get the angles and use them --
+
     float pitch, yaw, roll;
     quat.getEulerAngles(&pitch, &yaw, &roll);
 
-    pitch = fminf(90, fmaxf(-90, pitch));
-    yaw = fminf(90, fmaxf(-90, yaw));
+    // Clamp to values
+    pitch = fminf(degreeOffsetPitch + maxDegreeRange, fmaxf(degreeOffsetPitch - maxDegreeRange, pitch));
+    yaw = fminf(degreeOffsetYaw + maxDegreeRange, fmaxf(degreeOffsetYaw - maxDegreeRange, yaw));
 
-    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * pitch/90;
-    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yaw/90;
+    // Normalize between -1 -> +1
+    float pitchNormalized = (pitch - degreeOffsetPitch)/maxDegreeRange;
+    float yawNormalized = (yaw - degreeOffsetYaw)/maxDegreeRange;
 
+    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * -1 * pitchNormalized;
+    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yawNormalized;
 
+    // -- Draw the info --
+
+    // Yaw indicator line
     p->drawLine(yawX1,
                 yawY,
                 yawX1 + yawWidth,
                 yawY);
 
+    // Pitch indicator line
     p->drawLine(pitchX,
                 pitchY1,
                 pitchX,
                 pitchY1 + pitchHeight);
 
+    // Red dot where lines intersect
     p->setPen(QPen(m_highlightBrush, 10));
     QPoint center((int)pitchX, (int)yawY);
     p->drawEllipse(center, 5, 5);
@@ -321,7 +344,36 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
                 Qt::AlignCenter,
                 "Attitude");
 
-    p->setPen(QPen(m_textBrush, 2));
+    // Draw the degree markers
+    p->setFont(m_widgetSmall);
+    p->drawText(QRect(boundingBox.x(),
+                       yawY-sizeMin/20,
+                       100,
+                       sizeMin/10),
+                Qt::AlignCenter,
+                QString::asprintf("%.0lfº", -1*maxDegreeRange + degreeOffsetYaw));
+
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() - 100,
+                      yawY-sizeMin/20,
+                      100,
+                      sizeMin/10),
+                Qt::AlignCenter,
+                QString::asprintf("%.0lfº", 1*maxDegreeRange + degreeOffsetYaw));
+
+    p->drawText(QRect(pitchX - sizeMin/20 + 2,
+                      boundingBox.y(),
+                      50,
+                      sizeMin/2.5),
+                Qt::AlignVCenter,
+                QString::asprintf("%.0lfº", 1*maxDegreeRange + degreeOffsetPitch));
+
+    p->drawText(QRect(pitchX - sizeMin/20,
+                      boundingBox.y() + boundingBox.height() - sizeMin/2.5,
+                      50,
+                      sizeMin/2.5),
+                Qt::AlignVCenter,
+                QString::asprintf("%.0lfº", -1*maxDegreeRange + degreeOffsetPitch));
+
 //    p->drawEllipse(QPoint(center.x() + 6*cosf(roll), center.y() + 6*sinf(roll)), 1, 1);
 }
 

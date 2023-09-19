@@ -119,10 +119,10 @@ public:
 class hprcAttitudeWidget: public hprcDisplayWidget
 {
 
-    Q_OBJECT
 public:
 
     explicit hprcAttitudeWidget(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
 
 };
 
