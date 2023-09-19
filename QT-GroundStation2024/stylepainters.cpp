@@ -273,18 +273,21 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     QQuaternion quat(1, ((w->m_mousePos.y() - boundingBox.y()) / boundingBox.height() - 0.5) * 2,
                      ((w->m_mousePos.x() - boundingBox.x()) /boundingBox.width() - 0.5) * 2, 0);
 
-    bgPen.setWidth(sizeMin/10);
+    float crossWidth = sizeMin/10;
+    crossWidth /= 2;
+
+    bgPen.setWidth(crossWidth);
 
     p->setPen(bgPen);
 
     // -- Create the lines for the pitch and yaw indicators --
 
-    float yawX1 = boundingBox.x() + sizeMin/10;
-    float yawX2=  boundingBox.x() + boundingBox.width() - sizeMin/10;
+    float yawX1 = boundingBox.x() + crossWidth;
+    float yawX2=  boundingBox.x() + boundingBox.width() - crossWidth;
     float yawWidth = yawX2 - yawX1;
 
-    float pitchY1 = boundingBox.y() + sizeMin/10;
-    float pitchY2 =  boundingBox.y() + boundingBox.height() - sizeMin/5;
+    float pitchY1 = boundingBox.y() + crossWidth;
+    float pitchY2 =  boundingBox.y() + boundingBox.height() - crossWidth*2;
     float pitchHeight = pitchY2 - pitchY1;
 
     pitchHeight = fminf(yawWidth, pitchHeight);
@@ -306,8 +309,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     float pitchNormalized = (pitch - w->m_degreeOffsetPitch)/w->m_maxDegreeRange;
     float yawNormalized = (yaw - w->m_degreeOffsetYaw)/w->m_maxDegreeRange;
 
-    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * -1 * pitchNormalized;
-    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yawNormalized;
+    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
+    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
 
     // -- Draw the info --
 
@@ -324,9 +327,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                 pitchY1 + pitchHeight);
 
     // Red dot where lines intersect
-    p->setPen(QPen(m_highlightBrush, 10));
+    p->setPen(QPen(m_highlightBrush, crossWidth/2 - 2));
     QPoint center((int)pitchX, (int)yawY);
-    p->drawEllipse(center, 5, 5);
+    p->drawEllipse(center, (int)(crossWidth/4), (int)(crossWidth/4));
 
     p->setPen(textPen);
     p->setFont(m_widgetLarge);
@@ -342,30 +345,30 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     // Draw the degree markers
     p->setFont(m_widgetSmall);
     p->drawText(QRect(boundingBox.x(),
-                       yawY-sizeMin/20,
+                       yawY-crossWidth/2,
                        100,
-                       sizeMin/10),
+                       crossWidth),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
     p->drawText(QRect(boundingBox.x() + boundingBox.width() - 100,
-                      yawY-sizeMin/20,
+                      yawY-crossWidth/2,
                       100,
-                      sizeMin/10),
+                      crossWidth),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
-    p->drawText(QRect(pitchX - sizeMin/20 + 2,
+    p->drawText(QRect(pitchX - crossWidth/2 + 2,
                       boundingBox.y(),
                       50,
-                      sizeMin/2.5),
+                      crossWidth*6),
                 Qt::AlignVCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
-    p->drawText(QRect(pitchX - sizeMin/20,
-                      boundingBox.y() + boundingBox.height() - sizeMin/2.5,
+    p->drawText(QRect(pitchX - crossWidth/2,
+                      boundingBox.y() + boundingBox.height() - crossWidth*6,
                       50,
-                      sizeMin/2.5),
+                      crossWidth*6),
                 Qt::AlignVCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
