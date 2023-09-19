@@ -241,13 +241,8 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 {
-    // These will be updated dynamically
-    const float maxDegreeRange = 90;
-    const float degreeOffsetYaw = 0;
-    const float degreeOffsetPitch = 0;
-
     // -- Pen Setup --
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -304,12 +299,12 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
     quat.getEulerAngles(&pitch, &yaw, &roll);
 
     // Clamp to values
-    pitch = fminf(degreeOffsetPitch + maxDegreeRange, fmaxf(degreeOffsetPitch - maxDegreeRange, pitch));
-    yaw = fminf(degreeOffsetYaw + maxDegreeRange, fmaxf(degreeOffsetYaw - maxDegreeRange, yaw));
+    pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
+    yaw = fminf(w->m_degreeOffsetYaw + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetYaw - w->m_maxDegreeRange, yaw));
 
     // Normalize between -1 -> +1
-    float pitchNormalized = (pitch - degreeOffsetPitch)/maxDegreeRange;
-    float yawNormalized = (yaw - degreeOffsetYaw)/maxDegreeRange;
+    float pitchNormalized = (pitch - w->m_degreeOffsetPitch)/w->m_maxDegreeRange;
+    float yawNormalized = (yaw - w->m_degreeOffsetYaw)/w->m_maxDegreeRange;
 
     float yawY = boundingBox.center().y() + (boundingBox.height()/2 - sizeMin/5) * -1 * pitchNormalized;
     float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - sizeMin/5) * yawNormalized;
@@ -351,28 +346,28 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
                        100,
                        sizeMin/10),
                 Qt::AlignCenter,
-                QString::asprintf("%.0lfº", -1*maxDegreeRange + degreeOffsetYaw));
+                QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
     p->drawText(QRect(boundingBox.x() + boundingBox.width() - 100,
                       yawY-sizeMin/20,
                       100,
                       sizeMin/10),
                 Qt::AlignCenter,
-                QString::asprintf("%.0lfº", 1*maxDegreeRange + degreeOffsetYaw));
+                QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
     p->drawText(QRect(pitchX - sizeMin/20 + 2,
                       boundingBox.y(),
                       50,
                       sizeMin/2.5),
                 Qt::AlignVCenter,
-                QString::asprintf("%.0lfº", 1*maxDegreeRange + degreeOffsetPitch));
+                QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
     p->drawText(QRect(pitchX - sizeMin/20,
                       boundingBox.y() + boundingBox.height() - sizeMin/2.5,
                       50,
                       sizeMin/2.5),
                 Qt::AlignVCenter,
-                QString::asprintf("%.0lfº", -1*maxDegreeRange + degreeOffsetPitch));
+                QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
 //    p->drawEllipse(QPoint(center.x() + 6*cosf(roll), center.y() + 6*sinf(roll)), 1, 1);
 }
