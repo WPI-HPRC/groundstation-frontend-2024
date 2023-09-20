@@ -257,10 +257,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // -- Create bounding box --
 
-    // Move the entire box 15 up to stay inline with other arc-style gauges
-    QRectF boundingBox(w->rect().adjusted(15, -15, -15, -15));
+    QRectF boundingBox(w->rect().adjusted(15, 30, -15, 30));
 
-    double scaleF = 0.85;
+    double scaleF = 0.5;
 
     int oWidth = boundingBox.width();
 
@@ -286,6 +285,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     float pitch, yaw, roll;
     quat.getEulerAngles(&pitch, &yaw, &roll);
+
 
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
@@ -314,6 +314,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     std::reverse(vec.begin(), vec.end());
 
+        float distSquared = yaw * yaw + pitch * pitch;
 
     QColor bgCol = bgPen.color();
     bgCol.setAlphaF(0.5);
