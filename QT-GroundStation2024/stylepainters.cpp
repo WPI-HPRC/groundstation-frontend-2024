@@ -11,6 +11,8 @@
 #include <math.h>
 #include <QQuaternion>
 
+#define NUM_NAVBALL_CIRCLES 7
+
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
@@ -278,7 +280,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     bgPen.setWidth(crossWidth);
 
-    p->setPen(bgPen);
 
     // -- Create the lines for the pitch and yaw indicators --
 
@@ -312,7 +313,67 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
     float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
 
+
+
     // -- Draw the info --
+
+    // Center dot
+
+    p->setPen(QPen(m_textBrush, 1));
+
+    p->setOpacity(0.9);
+
+    p->drawArc(roundf(boundingBox.center().x()-crossWidth/2), roundf(boundingBox.center().y()-crossWidth/2),
+               roundf(crossWidth), roundf(crossWidth), 0, 16 * 360);
+
+    float circleLocation;
+
+    for(float circleLocationDegrees: w->circleLocationsDegrees[m_latest->state]) {
+
+            circleLocation = circleLocationDegrees / (w->m_maxDegreeRange);
+
+
+            p->setOpacity(1 - circleLocation);
+
+
+            p->drawArc(boundingBox.center().x()-boundingBox.width()/2*circleLocation,
+                       boundingBox.center().y()-boundingBox.width()/2*circleLocation,
+                       boundingBox.width()*circleLocation, boundingBox.width()*circleLocation,
+                       0, 16 * 360);
+
+            p->drawLine(QPoint(boundingBox.center().x(),
+                               roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation) - 2),
+                        QPoint(boundingBox.center().x(),
+                               roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation) + 4));
+
+            p->drawLine(QPoint(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation - 2),
+                               boundingBox.center().y()),
+                        QPoint(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation + 4),
+                               boundingBox.center().y()));
+
+            p->drawLine(QPoint(boundingBox.center().x(),
+                               roundf(boundingBox.center().y()+boundingBox.width()/2*circleLocation + 2)),
+                        QPoint(boundingBox.center().x(),
+                               roundf(boundingBox.center().y()+boundingBox.width()/2*circleLocation - 4)));
+
+            p->drawLine(QPoint(roundf(boundingBox.center().x()+boundingBox.width()/2*circleLocation + 2),
+                               boundingBox.center().y()),
+                        QPoint(roundf(boundingBox.center().x()+boundingBox.width()/2*circleLocation - 4),
+                               boundingBox.center().y()));
+        }
+
+    /*
+    for (int i = 1; i < NUM_NAVBALL_CIRCLES; i++)
+    {
+
+
+    }
+*/
+
+    /*
+
+    p->setOpacity(0.3);
+    p->setPen(bgPen);
 
     // Yaw indicator line
     p->drawLine(yawX1,
@@ -326,10 +387,15 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                 pitchX,
                 pitchY1 + pitchHeight);
 
+*/
+
     // Red dot where lines intersect
-    p->setPen(QPen(m_highlightBrush, crossWidth/2 - 2));
+    p->setOpacity(1);
+    p->setPen(QPen(m_highlightBrush, 2));
     QPoint center((int)pitchX, (int)yawY);
-    p->drawEllipse(center, (int)(crossWidth/4), (int)(crossWidth/4));
+//    p->drawEllipse(center, (int)(crossWidth/4), (int)(crossWidth/4));
+    p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
+    p->drawLine(center.x(), center.y() - 4, center.x(), center.y() + 4);
 
     p->setPen(textPen);
     p->setFont(m_widgetLarge);
@@ -344,33 +410,34 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // Draw the degree markers
     p->setFont(m_widgetSmall);
-    p->drawText(QRect(boundingBox.x(),
-                       yawY-crossWidth/2,
-                       100,
+    p->drawText(QRect(boundingBox.x() + 10,
+                      roundf(boundingBox.y() + boundingBox.height()/2-crossWidth/2),
+                       30,
                        crossWidth),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
-    p->drawText(QRect(boundingBox.x() + boundingBox.width() - 100,
-                      yawY-crossWidth/2,
-                      100,
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() - 40,
+                      roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth/2),
+                      30,
                       crossWidth),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
-    p->drawText(QRect(pitchX - crossWidth/2 + 2,
+        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*2),
                       boundingBox.y(),
-                      50,
+                      roundf(crossWidth*4),
                       crossWidth*6),
-                Qt::AlignVCenter,
+                Qt::AlignCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
-    p->drawText(QRect(pitchX - crossWidth/2,
+        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*2),
                       boundingBox.y() + boundingBox.height() - crossWidth*6,
-                      50,
+                          roundf(crossWidth*4),
                       crossWidth*6),
-                Qt::AlignVCenter,
+                Qt::AlignCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
+
 
 //    p->drawEllipse(QPoint(center.x() + 6*cosf(roll), center.y() + 6*sinf(roll)), 1, 1);
 }
