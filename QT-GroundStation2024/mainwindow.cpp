@@ -34,7 +34,7 @@ void MainWindow::updateData(dataPoint p)
     {
         m_currentData.acceleration = p.acceleration;
 
-        emit accUpdated(p.acceleration * 32.2);
+        emit accUpdated(p.acceleration);
 
     }
     if(p.velocity != m_currentData.velocity)

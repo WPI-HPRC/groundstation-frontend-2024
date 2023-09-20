@@ -84,41 +84,17 @@
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
               <widget class="hprcAltitudeGauge" name="gauge3" native="true">
-               <layout class="QFormLayout" name="formLayout">
-                <item row="0" column="0">
-                 <widget class="QSlider" name="h3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QFormLayout" name="formLayout"/>
               </widget>
              </item>
              <item>
               <widget class="hprcAccelerationGauge" name="gauge1" native="true">
-               <layout class="QFormLayout" name="formLayout_3">
-                <item row="0" column="0">
-                 <widget class="QSlider" name="h1">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QFormLayout" name="formLayout_3"/>
               </widget>
              </item>
              <item>
               <widget class="hprcVelocityGauge" name="gauge2" native="true">
-               <layout class="QFormLayout" name="formLayout_2">
-                <item row="0" column="0">
-                 <widget class="QSlider" name="h2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QFormLayout" name="formLayout_2"/>
               </widget>
              </item>
             </layout>
@@ -139,24 +115,7 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="hprcTimeline" name="timeline" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <widget class="QSlider" name="verticalSlider">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>75</height>
-               </size>
-              </property>
-              <property name="maximum">
-               <number>100</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <layout class="QVBoxLayout" name="verticalLayout"/>
           </widget>
          </item>
         </layout>
@@ -221,70 +180,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>verticalSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>timeline</receiver>
-   <slot>updateFilled(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1878</x>
-     <y>65</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1721</x>
-     <y>540</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>h1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>gauge1</receiver>
-   <slot>updateFilled(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>701</x>
-     <y>883</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>892</x>
-     <y>883</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>h2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>gauge2</receiver>
-   <slot>updateFilled(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1190</x>
-     <y>883</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1380</x>
-     <y>883</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>h3</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>gauge3</receiver>
-   <slot>updateFilled(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>213</x>
-     <y>883</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>883</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

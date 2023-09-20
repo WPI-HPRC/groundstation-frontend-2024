@@ -5,6 +5,7 @@
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QQuaternion>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,6 +33,7 @@ public:
         QList<graphPoint> accData;
         QList<graphPoint> velData;
         QList<graphPoint> altData;
+        QQuaternion orientation;
     };
 
 
