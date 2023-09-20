@@ -236,6 +236,8 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
+
+
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
 
@@ -298,6 +300,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
 
+    QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
 
     QPointF bottomPt = rect.bottomLeft();
 //    bottomPt.setY(rect.bottom() + rect.height()/3);
@@ -331,6 +334,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
+    QRectF ptHighlight(-100,0,0,0);
+    QPointF highlighted(-100,0);
+    QString ptLabel("");
+
     for(MainWindow::graphPoint g : data)
     {
         double valX = 0;
@@ -339,6 +346,16 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
             max = valY;
         valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
         valY = -((g.value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
+
+        if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data.size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data.size()))
+        {
+            ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
+            ptLabel = QString::number(g.value);
+            highlighted = QPointF(valX, valY);
+        } else {
+
+        }
+
         pointsToDraw.append(QPointF(valX, valY));
 
     }
@@ -351,14 +368,26 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     pointsToDraw.append(rect.bottomLeft());
     pointsToDraw.append(rect.bottomRight());
     p->setBrush(QBrush(gradient));
+//    p->setBrush(m_transparentBrush);
     p->drawPolygon(QPolygonF(pointsToDraw));
     p->setPen(QPen(m_highlightBrush, 3));
-    p->setBrush(m_transparentBrush);
+    p->setBrush(lightHighlighterBrush);
 
     if(drawTooltip)
     {
-        p->drawLine(w->m_mousePos.x(), rect.top(), w->m_mousePos.x(), rect.bottom());
+        p->drawRect(ptHighlight);
+        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
 
+
+
+
+        p->setBrush(m_highlightBrush);
+        p->drawEllipse(highlighted, 5, 5);
+
+        p->setPen(QPen(m_textBrush, 3));
+        p->setFont(m_widgetMedium);
+        p->drawText(ptHighlight, ptLabel);
+        p->setPen(QPen(m_highlightBrush, 3));
     }
 
 
