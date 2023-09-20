@@ -19,6 +19,7 @@ public:
         HPRC_Alarm,
         HPRC_Clock,
         HPRC_Hidden,
+        HPRC_AIRBRAKES
     };
 
     enum hprcDataType // TODO
@@ -143,6 +144,11 @@ class hprcMETClock : public hprcClock
 public:
 
     explicit hprcMETClock(QWidget *parent = nullptr) : hprcClock{parent} { m_dataType = HPRC_MET; }
+};
+
+class hprcAirbrakes : public hprcDisplayWidget {
+public:
+    explicit hprcAirbrakes(QWidget* parent = nullptr);
 };
 
 

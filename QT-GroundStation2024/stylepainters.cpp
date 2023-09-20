@@ -557,3 +557,22 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
+void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
+{
+    m_widgetLarge.setPointSize(w->height()/20);
+    p->setFont(m_widgetLarge);
+    p->setPen(QPen(m_textBrush, 3));
+    p->drawText(w->rect().adjusted(0, w->rect().height() / 2, 0, 0), Qt::AlignCenter, QString::fromStdString("Current: " + std::to_string(m_latest->currentAirbrakes) + "\n" + "Desired: " + std::to_string(m_latest->desiredAirbrakes)));
+
+    QPointF circlePosition = QPointF(w->rect().width() / 2.0, w->rect().height() / 3.0);
+    float circleRadius = w->rect().height() / 4.5;
+    p->drawEllipse(circlePosition, circleRadius, circleRadius);
+
+    QList<QRect> airbrakeRectangles = {
+        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
+        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
+        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
+        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2)
+    };
+    p->drawRects(airbrakeRectangles);
+}

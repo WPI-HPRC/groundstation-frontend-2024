@@ -80,6 +80,14 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.groundTime = p.groundTime;
         emit groundTimeUpdated();
     }
+    if(p.currentAirbrakes != m_currentData.currentAirbrakes) {
+        m_currentData.currentAirbrakes = p.currentAirbrakes;
+        emit currentAirbrakesUpdated(p.currentAirbrakes);
+    }
+    if(p.desiredAirbrakes != m_currentData.desiredAirbrakes) {
+        m_currentData.desiredAirbrakes = p.desiredAirbrakes;
+        emit desiredAirbrakesUpdated(p.desiredAirbrakes);
+    }
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 
 }
