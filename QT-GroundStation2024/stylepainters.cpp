@@ -11,6 +11,8 @@
 #include <math.h>
 #include <QQuaternion>
 
+#define NUM_NAVBALL_CIRCLES 7
+
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
@@ -295,6 +297,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
     float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
+
+
 
     // -- Draw the info --
 
