@@ -33,6 +33,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         hprcdisplaywidget.h hprcdisplaywidget.cpp
         fonts.qrc
         images.qrc
+        models.qrc
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT-GroundStation2024 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -81,3 +83,13 @@ endif()
 
 find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 target_link_libraries(QT-GroundStation2024 PRIVATE Qt6::WebSockets)
+
+find_package(Qt6 REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender Core Gui)
+target_link_libraries(QT-GroundStation2024 PRIVATE
+    Qt::3DCore
+    Qt::3DExtras
+    Qt::3DInput
+    Qt::3DRender
+    Qt::Core
+    Qt::Gui
+)
