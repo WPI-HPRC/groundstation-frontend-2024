@@ -124,13 +124,13 @@ public:
     explicit hprcAttitudeWidget(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
 
-    float m_maxDegreeRange = 90;
+    float m_maxDegreeRange = 15;
     float m_degreeOffsetYaw = 0;
     float m_degreeOffsetPitch = 0;
 
     std::vector<std::vector<float>> circleLocationsDegrees {
                                                            std::vector<float> {
-            30.0, 45.0, 80.0
+            3.0, 7.0, 12.0, 15.0
         }
     };
 };
