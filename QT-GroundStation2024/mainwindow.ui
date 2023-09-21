@@ -37,6 +37,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
+           <widget class="hprcAirbrakes" name="widget" native="true"/>
+          </item>
+          <item>
            <widget class="QFrame" name="frame_2">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -83,7 +86,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="hprcAirbrakes" name="widget" native="true"/>
+              <widget class="hprcAirbrakes" name="widget_2" native="true"/>
              </item>
              <item>
               <widget class="hprcAltitudeGauge" name="gauge3" native="true">

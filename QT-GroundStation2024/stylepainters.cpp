@@ -559,20 +559,49 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 {
+    p->setRenderHint(QPainter::Antialiasing);
+
+    QPen textPen = QPen(m_textBrush, 3);
+    QPen rectPen = QPen(m_textBrush, 4);
+    rectPen.setCapStyle(Qt::RoundCap);
+    QPen rectLightPen = QPen(m_highlightBrush, 4);
+    rectLightPen.setCapStyle(Qt::RoundCap);
+    QBrush circleDarkBrush = QBrush(QColor(m_backgroundBrush.color().red(), m_backgroundBrush.color().green(), m_backgroundBrush.color().blue(), 200)); //half opacity
+
     m_widgetLarge.setPointSize(w->height()/20);
     p->setFont(m_widgetLarge);
-    p->setPen(QPen(m_textBrush, 3));
+    p->setPen(textPen);
     p->drawText(w->rect().adjusted(0, w->rect().height() / 2, 0, 0), Qt::AlignCenter, QString::fromStdString("Current: " + std::to_string(m_latest->currentAirbrakes) + "\n" + "Desired: " + std::to_string(m_latest->desiredAirbrakes)));
 
     QPointF circlePosition = QPointF(w->rect().width() / 2.0, w->rect().height() / 3.0);
     float circleRadius = w->rect().height() / 4.5;
-    p->drawEllipse(circlePosition, circleRadius, circleRadius);
 
-    QList<QRect> airbrakeRectangles = {
-        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
-        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
-        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2),
-        QRect(circlePosition.x() - circleRadius / 4, circlePosition.y() - circleRadius / 2, circleRadius / 2, circleRadius / 2)
+    float airbrakeSquareLength = circleRadius / 1.6; //The square length is the length such that the corners of all the squares are touching at the zero position (the 1.6 is just a guess)
+    float brakeZeroPosition = sin(acos((airbrakeSquareLength / 2) / circleRadius)) * circleRadius; //Distance from center of circle where the squares should be when airbrakes are zero
+    float currentPosition = 0.25 * airbrakeSquareLength; //m_latest->currentAirbrakes * airbrakeSquareLength
+    float desiredPosition = 0.5 * airbrakeSquareLength; //m_latest->desiredAirbrakes * airbrakeSquareLength
+    QList<QRect> airbrakeRectanglesCurrent = {
+        QRect(circlePosition.x() - airbrakeSquareLength / 2.0, circlePosition.y() - brakeZeroPosition - currentPosition, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - brakeZeroPosition - currentPosition, circlePosition.y() - airbrakeSquareLength / 2.0, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - airbrakeSquareLength / 2.0, circlePosition.y() - airbrakeSquareLength + brakeZeroPosition + currentPosition, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - airbrakeSquareLength + brakeZeroPosition + currentPosition, circlePosition.y() - airbrakeSquareLength / 2.0, airbrakeSquareLength, airbrakeSquareLength)
     };
-    p->drawRects(airbrakeRectangles);
+
+    QList<QRect> airbrakeRectanglesDesired = {
+        QRect(circlePosition.x() - airbrakeSquareLength / 2.0, circlePosition.y() - brakeZeroPosition - desiredPosition, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - brakeZeroPosition - desiredPosition, circlePosition.y() - airbrakeSquareLength / 2.0, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - airbrakeSquareLength / 2.0, circlePosition.y() - airbrakeSquareLength + brakeZeroPosition + desiredPosition, airbrakeSquareLength, airbrakeSquareLength),
+        QRect(circlePosition.x() - airbrakeSquareLength + brakeZeroPosition + desiredPosition, circlePosition.y() - airbrakeSquareLength / 2.0, airbrakeSquareLength, airbrakeSquareLength)
+    };
+
+    //Current airbrakes will be drawn on top of desired airbrakes
+    p->setPen(rectLightPen);
+    p->drawRects(airbrakeRectanglesDesired);
+    p->setPen(rectPen);
+    p->drawRects(airbrakeRectanglesCurrent);
+
+    //Circle drawn on top of airbrakes
+    p->setBrush(circleDarkBrush);
+    p->setPen(QPen(m_transparentBrush, 3));
+    p->drawEllipse(circlePosition, circleRadius, circleRadius);
 }
