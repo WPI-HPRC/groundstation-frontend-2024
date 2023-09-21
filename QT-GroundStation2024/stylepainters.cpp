@@ -314,7 +314,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     std::reverse(vec.begin(), vec.end());
 
-        float distSquared = yaw * yaw + pitch * pitch;
+        float dist = sqrt(yaw * yaw + pitch * pitch) - circleLocationDegrees;
 
     QColor bgCol = bgPen.color();
     bgCol.setAlphaF(0.5);
