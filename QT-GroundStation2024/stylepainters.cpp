@@ -351,19 +351,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
         }
         else {
             p->setPen(outline);
-            if(rocketIsWithinGraph) {
 
-                fgCol.setAlphaF(fminf(
-                    powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-                    powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
-            }
-            else
-            {
-                bgCol.setAlphaF(0);
-                p->setPen(QPen(QBrush(bgCol), 1));
-                p->setOpacity(1);
-            }
-
+            fgCol.setAlphaF(fminf(
+            powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
+            powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
 
             p->setBrush(QBrush(fgCol));
         }
@@ -436,7 +427,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
     p->drawLine(center.x(), center.y() - 4, center.x(), center.y() + 4);
 
-    p->setPen(textPen);
+    if(rocketIsWithinGraph)
+        p->setPen(QPen(m_textBrush, 2));
+    else
+        p->setPen(QPen(m_highlightBrush, 2));
     p->setFont(m_widgetLarge);
 
     p->drawText(QRect(
@@ -450,6 +444,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // Draw the degree markers
 
+    p->setPen(QPen(m_textBrush, 2));
     p->setFont(m_widgetSmall);
     p->drawText(QRect(boundingBox.x()-30,
                       roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
