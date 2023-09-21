@@ -279,7 +279,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     bgPen.setWidth(crossWidth);
 
-
     // -- Create the lines for the pitch and yaw indicators --
 
     float yawX1 = boundingBox.x() + crossWidth;
@@ -352,9 +351,15 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
         else {
             p->setPen(outline);
 
-            fgCol.setAlphaF(fminf(
-            powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-            powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
+            if(rocketIsWithinGraph){
+                fgCol.setAlphaF(fminf(
+                    powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
+                    powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
+            }
+            else {
+                fgCol.setAlphaF(1);
+            }
+
 
             p->setBrush(QBrush(fgCol));
         }
@@ -392,38 +397,11 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 */
         }
 
-    /*
-    for (int i = 1; i < NUM_NAVBALL_CIRCLES; i++)
-    {
-
-
-    }
-*/
-
-    /*
-
-    p->setOpacity(0.3);
-    p->setPen(bgPen);
-
-    // Yaw indicator line
-    p->drawLine(yawX1,
-                yawY,
-                yawX1 + yawWidth,
-                yawY);
-
-    // Pitch indicator line
-    p->drawLine(pitchX,
-                pitchY1,
-                pitchX,
-                pitchY1 + pitchHeight);
-
-*/
-
     // Crosshair
     p->setOpacity(1);
     p->setPen(QPen(m_textBrush, 2));
     QPoint center((int)pitchX, (int)yawY);
-//    p->drawEllipse(center, (int)(crossWidth/4), (int)(crossWidth/4));
+
     p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
     p->drawLine(center.x(), center.y() - 4, center.x(), center.y() + 4);
 
@@ -431,6 +409,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
         p->setPen(QPen(m_textBrush, 2));
     else
         p->setPen(QPen(m_highlightBrush, 2));
+
+    m_widgetLarge.setPointSize(crossWidth*3);
+
     p->setFont(m_widgetLarge);
 
     p->drawText(QRect(
@@ -444,36 +425,80 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // Draw the degree markers
 
+    m_widgetLarge.setPointSize(crossWidth*2);
+
     p->setPen(QPen(m_textBrush, 2));
-    p->setFont(m_widgetSmall);
-    p->drawText(QRect(boundingBox.x()-30,
+    p->setFont(m_widgetLarge);
+    p->drawText(QRect(boundingBox.x()-50,
                       roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
-                       30,
+                       50,
                        crossWidth*2),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
     p->drawText(QRect(boundingBox.x() + boundingBox.width(),
                       roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
-                      30,
+                      50,
                       crossWidth*2),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
 
-        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*2),
+        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*3),
                       boundingBox.y()-20,
-                      roundf(crossWidth*4),
+                      roundf(crossWidth*6),
                       crossWidth*3),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
 
-        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*2),
+        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*3),
                       boundingBox.y() + boundingBox.height() - crossWidth*3+20,
-                          roundf(crossWidth*4),
+                          roundf(crossWidth*6),
                       crossWidth*3),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
+            p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
+                          boundingBox.y()-30,
+                          crossWidth * 6,
+                          crossWidth * 3
+                          ),
+                    Qt::AlignCenter,
+                        "PITCH");
 
+        if(rocketIsWithinGraph)
+            p->setPen(QPen(m_textBrush, 2));
+        else
+            p->setPen(QPen(m_highlightBrush, 2));
+
+        p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
+                          boundingBox.y()-30 + crossWidth*3,
+                          crossWidth * 6,
+                          crossWidth * 3
+                          ),
+                    Qt::AlignCenter,
+                    QString::asprintf("%.0lfº", pitch));
+
+
+                p->setPen(QPen(m_textBrush, 2));
+
+                p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
+                                  boundingBox.y()-30,
+                                  crossWidth * 6,
+                                  crossWidth * 3
+                                  ),
+                            Qt::AlignCenter,
+                            "YAW");
+
+            if(rocketIsWithinGraph)
+                p->setPen(QPen(m_textBrush, 2));
+            else
+                p->setPen(QPen(m_highlightBrush, 2));
+        p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
+                              boundingBox.y()-30 + crossWidth*3,
+                              crossWidth * 6,
+                              crossWidth * 3
+                              ),
+                        Qt::AlignCenter,
+                        QString::asprintf("%.0lfº", yaw));
 
 //    p->drawEllipse(QPoint(center.x() + 6*cosf(roll), center.y() + 6*sinf(roll)), 1, 1);
 }
