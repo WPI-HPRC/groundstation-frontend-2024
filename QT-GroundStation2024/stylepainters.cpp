@@ -323,22 +323,61 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     float circleLocation;
 
-    for(float circleLocationDegrees: w->circleLocationsDegrees[m_latest->state]) {
+    std::vector<float> vec = w->circleLocationsDegrees[m_latest->state];
+\
+    bool rocketIsWithinGraph = sqrt(pitch * pitch + yaw * yaw) < vec.back();
+
+    std::reverse(vec.begin(), vec.end());
+
+
+    QColor bgCol = bgPen.color();
+    bgCol.setAlphaF(0.5);
+
+    QPen outline = QPen(QBrush(bgCol), 4);
+
+    QColor fgCol = m_highlightBrush.color();
+
+
+    for(float circleLocationDegrees: vec) {
 
         circleLocation = circleLocationDegrees / (w->m_maxDegreeRange);
 
-        float distSquared = yaw * yaw + pitch * pitch;
+        float dist = sqrt(yaw * yaw + pitch * pitch) - circleLocationDegrees;
 
-        // Don't take sqrt because it's slower
-        p->setOpacity(powf(1 - fabsf(sqrt(distSquared) - circleLocationDegrees)/w->m_maxDegreeRange, 4));
+        if(dist >= 2 && rocketIsWithinGraph) {
+            p->setPen(bgPen);
+            p->setBrush(m_backgroundBrush);
+            p->setOpacity(0.5);
+        }
+        else {
+            p->setPen(outline);
+            if(rocketIsWithinGraph) {
 
-        p->drawArc(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation),
+                fgCol.setAlphaF(fminf(
+                    powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
+                    powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
+            }
+            else
+            {
+                bgCol.setAlphaF(0);
+                p->setPen(QPen(QBrush(bgCol), 1));
+                p->setOpacity(1);
+            }
+
+
+            p->setBrush(QBrush(fgCol));
+        }
+
+
+        p->drawEllipse(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation),
                    roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation),
-                   roundf(boundingBox.width()*circleLocation), roundf(boundingBox.width()*circleLocation),
-                       0, 16 * 360);
+                   roundf(boundingBox.width()*circleLocation), roundf(boundingBox.width()*circleLocation));
+//                       0, 16 * 360);
 
 //        if(circleLocationDegrees < 4)
 //            continue;
+
+        /*
 
             p->drawLine(QPoint(roundf(boundingBox.center().x()),
                                roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation) - 2),
@@ -359,6 +398,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                                roundf(boundingBox.center().y())),
                         QPoint(roundf(boundingBox.center().x()+boundingBox.width()/2*circleLocation - 4),
                                roundf(boundingBox.center().y())));
+*/
         }
 
     /*
@@ -390,7 +430,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // Crosshair
     p->setOpacity(1);
-    p->setPen(QPen(m_highlightBrush, 2));
+    p->setPen(QPen(m_textBrush, 2));
     QPoint center((int)pitchX, (int)yawY);
 //    p->drawEllipse(center, (int)(crossWidth/4), (int)(crossWidth/4));
     p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
