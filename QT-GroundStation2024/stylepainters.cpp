@@ -561,25 +561,33 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 {
     p->setRenderHint(QPainter::Antialiasing);
 
-    QPen textPen = QPen(m_textBrush, 3);
+    QPen textPenRed = QPen(m_highlightBrush, 3);
+    QPen textPenWhite = QPen(m_textBrush, 3);
     QPen rectPen = QPen(m_textBrush, 4);
     rectPen.setCapStyle(Qt::RoundCap);
     QPen rectLightPen = QPen(m_highlightBrush, 4);
     rectLightPen.setCapStyle(Qt::RoundCap);
     QBrush circleDarkBrush = QBrush(QColor(m_backgroundBrush.color().red(), m_backgroundBrush.color().green(), m_backgroundBrush.color().blue(), 200)); //half opacity
 
+    std::string currentText = "Current: " + std::to_string(m_latest->currentAirbrakes);
+    std::string desiredText = "Desired: " + std::to_string(m_latest->desiredAirbrakes);
+
     m_widgetLarge.setPointSize(w->height()/20);
     p->setFont(m_widgetLarge);
-    p->setPen(textPen);
-    p->drawText(w->rect().adjusted(0, w->rect().height() / 2, 0, 0), Qt::AlignCenter, QString::fromStdString("Current: " + std::to_string(m_latest->currentAirbrakes) + "\n" + "Desired: " + std::to_string(m_latest->desiredAirbrakes)));
+    float currentTextHeight = QFontMetrics(p->font()).lineSpacing(); //Get height of current text
+    float desiredTextHeight = QFontMetrics(p->font()).lineSpacing();
+    p->setPen(textPenWhite);
+    p->drawText(w->rect().adjusted(0, w->rect().height() - currentTextHeight - desiredTextHeight, 0, 0), Qt::AlignHCenter, QString::fromStdString(currentText));
+    p->setPen(textPenRed);
+    p->drawText(w->rect().adjusted(0, w->rect().height() - desiredTextHeight, 0, 0), Qt::AlignHCenter, QString::fromStdString(desiredText));
 
     QPointF circlePosition = QPointF(w->rect().width() / 2.0, w->rect().height() / 3.0);
     float circleRadius = w->rect().height() / 4.5;
 
     float airbrakeSquareLength = circleRadius / 1.6; //The square length is the length such that the corners of all the squares are touching at the zero position (the 1.6 is just a guess)
     float brakeZeroPosition = sin(acos((airbrakeSquareLength / 2) / circleRadius)) * circleRadius; //Distance from center of circle where the squares should be when airbrakes are zero
-    float currentPosition = 0.25 * airbrakeSquareLength; //m_latest->currentAirbrakes * airbrakeSquareLength
-    float desiredPosition = 0.5 * airbrakeSquareLength; //m_latest->desiredAirbrakes * airbrakeSquareLength
+    float currentPosition = m_latest->currentAirbrakes * airbrakeSquareLength;
+    float desiredPosition = m_latest->desiredAirbrakes * airbrakeSquareLength;
     QList<QRect> airbrakeRectanglesCurrent = {
         QRect(circlePosition.x() - airbrakeSquareLength / 2.0, circlePosition.y() - brakeZeroPosition - currentPosition, airbrakeSquareLength, airbrakeSquareLength),
         QRect(circlePosition.x() - brakeZeroPosition - currentPosition, circlePosition.y() - airbrakeSquareLength / 2.0, airbrakeSquareLength, airbrakeSquareLength),
@@ -602,6 +610,6 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 
     //Circle drawn on top of airbrakes
     p->setBrush(circleDarkBrush);
-    p->setPen(QPen(m_transparentBrush, 3));
+    p->setPen(QPen(m_transparentBrush, 0));
     p->drawEllipse(circlePosition, circleRadius, circleRadius);
 }
