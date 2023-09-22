@@ -286,7 +286,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     float pitch, yaw, roll;
     quat.getEulerAngles(&pitch, &yaw, &roll);
 
-
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
     yaw = fminf(w->m_degreeOffsetYaw + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetYaw - w->m_maxDegreeRange, yaw));
