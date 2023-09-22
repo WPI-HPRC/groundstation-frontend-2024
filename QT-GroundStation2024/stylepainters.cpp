@@ -279,22 +279,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     bgPen.setWidth(crossWidth);
 
-    // -- Create the lines for the pitch and yaw indicators --
-
-    float yawX1 = boundingBox.x() + crossWidth;
-    float yawX2=  boundingBox.x() + boundingBox.width() - crossWidth;
-    float yawWidth = yawX2 - yawX1;
-
-    float pitchHeight = pitchY2 - pitchY1;
-
-    pitchHeight = fminf(yawWidth, pitchHeight);
-    yawWidth = pitchHeight;
-
     // -- Get the angles and use them --
 
     float pitch, yaw, roll;
     quat.getEulerAngles(&pitch, &yaw, &roll);
-
 
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
