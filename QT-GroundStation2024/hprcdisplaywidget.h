@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QWidget>
 
+#include <Qt3DCore/QTransform>
+
 class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
@@ -19,6 +21,7 @@ public:
         HPRC_Alarm,
         HPRC_Clock,
         HPRC_Hidden,
+        HPRC_Viewer
     };
 
     enum hprcDataType // TODO
@@ -144,6 +147,17 @@ public:
 
     explicit hprcMETClock(QWidget *parent = nullptr) : hprcClock{parent} { m_dataType = HPRC_MET; }
 };
+
+class hprcViewer : public hprcDisplayWidget
+{
+private:
+    Qt3DCore::QTransform *m_rocketTransform;
+
+public:
+
+    explicit hprcViewer(QWidget *parent = nullptr);
+};
+
 
 
 #endif // HPRCDISPLAYWIDGET_H

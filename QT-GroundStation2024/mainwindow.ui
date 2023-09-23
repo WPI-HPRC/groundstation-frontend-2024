@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1920</width>
-    <height>1080</height>
+    <width>266</width>
+    <height>134</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,6 +97,9 @@
                <layout class="QFormLayout" name="formLayout_2"/>
               </widget>
              </item>
+             <item>
+              <widget class="hprcViewer" name="viewer" native="true"/>
+             </item>
             </layout>
            </item>
           </layout>
@@ -174,6 +177,12 @@
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcViewer</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
