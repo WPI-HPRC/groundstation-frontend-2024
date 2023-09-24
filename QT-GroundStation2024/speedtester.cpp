@@ -34,8 +34,11 @@ void SpeedTester::tickOccurred()
         std::cout << "For last " << NUM_DURATION_FOR_AVERAGE << " ticks:\n\t"
                   << "Time between ticks: " << std::setprecision(3) << average << "ms\n\t"
                   << "Target: " << TIMER_TICK_MS << "ms\n\t"
-                  << ((average - TIMER_TICK_MS) > 5 ? "\033[1;31m" : "\033[1;32m") // Set the color
-                  << "Difference = " << (average - TIMER_TICK_MS) << "\033[0m" << std::endl;
+//                  << ((average - TIMER_TICK_MS) > 2.5 ? "\033[1;31m" : "\033[1;32m") // Set the color
+                  << "Difference: " << (average - TIMER_TICK_MS) << "\033[0m\n\t"
+                  << "Estimated FPS: "<< std::setprecision(3) << (1000/(average - TIMER_TICK_MS))
+                  << "\n" << std::endl;
+
     }
     t_last = std::chrono::high_resolution_clock::now();
 }
