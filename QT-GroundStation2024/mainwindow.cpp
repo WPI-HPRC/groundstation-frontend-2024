@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 //    setupCentralWidget();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+    timer->start(TIMER_TICK_MS);
 
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));

@@ -1,11 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define RUN_SPEED_TESTS true
+#define TIMER_TICK_MS 1
+
+#if RUN_SPEED_TESTS
+    #include "speedtester.h"
+#endif
 #include "qdatetime.h"
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
 #include <QQuaternion>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,6 +44,9 @@ public:
     };
 
 
+#if RUN_SPEED_TESTS
+    SpeedTester speedTester = SpeedTester();
+#endif
 
 
 
