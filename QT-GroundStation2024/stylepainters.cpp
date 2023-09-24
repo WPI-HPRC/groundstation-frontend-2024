@@ -285,6 +285,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     float pitch, yaw, roll;
     quat.getEulerAngles(&pitch, &yaw, &roll);
+    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
 
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
@@ -308,7 +309,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     std::vector<float> vec = w->circleLocationsDegrees[m_latest->state];
     \
-        bool rocketIsWithinGraph = sqrt(pitch * pitch + yaw * yaw) < vec.back();
+    bool rocketIsWithinGraph = sqrt(pitch * pitch + yaw * yaw) < vec.back();
 
     std::reverse(vec.begin(), vec.end());
 
@@ -375,6 +376,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     p->setFont(m_widgetLarge);
 
+    /*
     p->drawText(QRect(
                     boundingBox.x(),
                     boundingBox.y() + boundingBox.height() + 15,
@@ -382,14 +384,18 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                     30),
                 Qt::AlignCenter,
                 "ATTITUDE");
+*/
 
 
     // Draw the degree markers
 
     m_widgetLarge.setPointSize(crossWidth*2);
 
+
     p->setPen(QPen(m_textBrush, 2));
     p->setFont(m_widgetLarge);
+
+    /*
     p->drawText(QRect(boundingBox.x()-50,
                       roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
                       50,
@@ -417,6 +423,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                           crossWidth*3),
                     Qt::AlignCenter,
                     QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
+
+*/
+
         p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
                           boundingBox.y()-30,
                           crossWidth * 6,
@@ -424,6 +433,21 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
                           ),
                     Qt::AlignCenter,
                     "PITCH");
+
+        m_widgetLarge.setPointSize(crossWidth * 2);
+        p->setFont(m_widgetLarge);
+
+        p->drawText(QRect(boundingBox.x() - 20,
+                          boundingBox.y() + boundingBox.height() + 17,
+                          boundingBox.width() + 40,
+                          crossWidth * 3
+                          ),
+                    Qt::AlignCenter,
+                    QString::asprintf("ROLL RATE: %.0lf rpm", roll)); // TODO: change this to the actual value
+
+        m_widgetLarge.setPointSize(crossWidth*2);
+
+        p->setFont(m_widgetLarge);
 
     if(rocketIsWithinGraph)
         p->setPen(QPen(m_textBrush, 2));
