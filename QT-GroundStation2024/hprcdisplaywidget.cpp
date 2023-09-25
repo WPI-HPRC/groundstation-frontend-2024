@@ -133,3 +133,8 @@ hprcClock::hprcClock(QWidget *parent) :
 
     m_widgetType = HPRC_Clock;
 }
+hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_RocketVisual;
+}

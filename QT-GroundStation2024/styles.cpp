@@ -64,6 +64,8 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_Clock:
                 m_drawer->drawHPRCClock(painter, w);
                 return;
+            case hprcDisplayWidget::HPRC_RocketVisual:
+                m_drawer->drawHPRCRocketVis(painter, w);
             default:
                 return;
             }

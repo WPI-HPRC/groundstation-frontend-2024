@@ -18,6 +18,7 @@ public:
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
+        HPRC_RocketVisual,
         HPRC_Hidden,
     };
 
@@ -143,6 +144,12 @@ class hprcMETClock : public hprcClock
 public:
 
     explicit hprcMETClock(QWidget *parent = nullptr) : hprcClock{parent} { m_dataType = HPRC_MET; }
+};
+class hprcRocketVisualizer : public hprcDisplayWidget
+{
+public:
+
+    explicit hprcRocketVisualizer(QWidget *parent = nullptr);
 };
 
 
