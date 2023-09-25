@@ -28,7 +28,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateData(dataPoint p)
 {
-
+#if RUN_SPEED_TESTS
+    emit speedTick(1);
+    return;
+#endif
 
     if(p.acceleration != m_currentData.acceleration)
     {
@@ -81,7 +84,6 @@ void MainWindow::updateData(dataPoint p)
         emit groundTimeUpdated();
     }
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
-
 }
 
 void MainWindow::update()

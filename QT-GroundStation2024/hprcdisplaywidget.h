@@ -1,6 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
+#include "mainwindow.h"
 #include <QObject>
 #include <QWidget>
 
@@ -52,6 +53,7 @@ public:
 public slots:
 
     void updateFilled(int input);
+    void doSpeedTick(int input);
 
 protected:
 
