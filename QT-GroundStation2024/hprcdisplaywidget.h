@@ -1,6 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
+#include "mainwindow.h"
 #include <QObject>
 #include <QWidget>
 
@@ -8,6 +9,7 @@ class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(int filledPercent READ getFilled WRITE setFilled NOTIFY fillChanged MEMBER m_filledPercent)
+
 public:
     explicit hprcDisplayWidget(QWidget *parent = nullptr);
 
@@ -52,6 +54,7 @@ public:
 public slots:
 
     void updateFilled(int input);
+    void doSpeedTick(int input);
 
 protected:
 

@@ -14,10 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
 //    setupCentralWidget();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+    timer->start(TIMER_TICK_MS);
 
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+
     m_webSocket.open(QUrl(QString("ws://127.0.0.1:3005")));
 }
 
@@ -28,7 +29,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateData(dataPoint p)
 {
-
+#if RUN_SPEED_TESTS
+    emit speedTick(1);
+    return;
+#endif
 
     if(p.acceleration != m_currentData.acceleration)
     {
@@ -81,7 +85,6 @@ void MainWindow::updateData(dataPoint p)
         emit groundTimeUpdated();
     }
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
-
 }
 
 void MainWindow::update()

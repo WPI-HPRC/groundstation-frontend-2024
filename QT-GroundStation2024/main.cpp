@@ -19,5 +19,6 @@ int main(int argc, char *argv[])
     r.showMaximized();
     w.update();
     r.update();
+
     return a.exec();
 }
