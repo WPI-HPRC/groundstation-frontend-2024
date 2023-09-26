@@ -71,7 +71,7 @@ signals:
     void rocketTimeUpdated(float);
     void groundTimeUpdated();
     void tick();
-void speedTick(int);
+    void speedTick(int);
 
 public slots:
     void update();

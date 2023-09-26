@@ -37,9 +37,9 @@ void SpeedTester::runSpeedTests()
         double avg = std::accumulate(windowDurations.begin(), windowDurations.end(), 0.0) / windowDurations.size();
 
         windowTimeDurations.push_back(SpeedTester_TimeDuration{avg, w->objectName().toStdString()});
-
-
     }
+
+    std::sort(windowTimeDurations.begin(), windowTimeDurations.end(), compareDurations);
 
     for(SpeedTester_TimeDuration& duration : windowTimeDurations)
     {
