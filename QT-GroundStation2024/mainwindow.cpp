@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+
     m_webSocket.open(QUrl(QString("ws://127.0.0.1:3005")));
 }
 

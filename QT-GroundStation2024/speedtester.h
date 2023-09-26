@@ -17,6 +17,10 @@ protected:
     std::chrono::high_resolution_clock::time_point t_last = std::chrono::high_resolution_clock::now();
     std::vector<double> durations;
     std::vector<double> widgetDurations;
+    bool hasLoadedWidgets = false;
+
+private:
+    void loadWidgets();
 
 
 public slots:

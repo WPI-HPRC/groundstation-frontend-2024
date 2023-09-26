@@ -9,6 +9,7 @@ class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(int filledPercent READ getFilled WRITE setFilled NOTIFY fillChanged MEMBER m_filledPercent)
+
 public:
     explicit hprcDisplayWidget(QWidget *parent = nullptr);
 
