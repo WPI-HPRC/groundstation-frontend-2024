@@ -43,13 +43,9 @@ public:
         QQuaternion orientation;
     };
 
-
 #if RUN_SPEED_TESTS
     SpeedTester speedTester = SpeedTester();
 #endif
-
-
-
 
     QDateTime m_groundLaunchTime;
     float m_rocketLaunchTime;

@@ -16,13 +16,46 @@ bool SpeedTester::compareDurations(SpeedTester_TimeDuration t1, SpeedTester_Time
 
 void SpeedTester::loadWidgets()
 {
+    std::vector<SpeedTester_TimeDuration> windowTimeDurations;
+
+    std::cout << "Running speed tests for windows...\n\n" << std::endl;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+    {
+        std::vector<double> windowDurations;
+
+        for (int i = 0; i < NUM_DURATION_FOR_AVERAGE * 5; i++)
+        {
+            std::chrono::high_resolution_clock::time_point t_before = std::chrono::high_resolution_clock::now();
+
+            w->repaint();
+
+            std::chrono::high_resolution_clock::time_point t_now = std::chrono::high_resolution_clock::now();
+
+            double deltaTime_ms = std::chrono::duration<double, std::milli>(t_now-t_before).count();
+            windowDurations.push_back(deltaTime_ms);
+        }
+        double avg = std::accumulate(windowDurations.begin(), windowDurations.end(), 0.0) / windowDurations.size();
+
+        windowTimeDurations.push_back(SpeedTester_TimeDuration{avg, w->objectName().toStdString()});
+
+
+    }
+
+    for(SpeedTester_TimeDuration& duration : windowTimeDurations)
+    {
+        std::cout << "Speed test for window " << duration.name << std::endl;
+        std::cout << "\tAverage draw time: " << std::setprecision(4) << duration.duration << "ms" << std::endl;
+        std::cout << "\tEstimated fps: "  << 1000/duration.duration << "\n" << std::endl;
+    }
+
+
     QList<QWidget*> allWidgets = QApplication::allWidgets();
 
     std::vector<double> averages;
 
-    std::vector<SpeedTester_TimeDuration> timeDurations;
+    std::vector<SpeedTester_TimeDuration> widgetTimeDurations;
 
-    std::cout << "Running speed test for widgets...\n\n" << std::endl;
+    std::cout << "\nRunning speed test for widgets...\n\n" << std::endl;
     for(QWidget* w : allWidgets)
     {
         if(w->findChildren<QWidget*>().length() != 0)
@@ -44,21 +77,21 @@ void SpeedTester::loadWidgets()
         double avg = std::accumulate(widgetDurations.begin(), widgetDurations.end(), 0.0) / widgetDurations.size();
 
         averages.push_back(avg);
-        timeDurations.push_back(SpeedTester_TimeDuration {avg, w->objectName().toStdString()});
+        widgetTimeDurations.push_back(SpeedTester_TimeDuration {avg, w->objectName().toStdString()});
     }
 
-    std::sort(timeDurations.begin(), timeDurations.end(), compareDurations);
+    std::sort(widgetTimeDurations.begin(), widgetTimeDurations.end(), compareDurations);
 
-    for(SpeedTester_TimeDuration duration : timeDurations)
+    for(SpeedTester_TimeDuration& duration : widgetTimeDurations)
     {
-        std::cout << "Speed test for " << duration.name << std::endl;
-        std::cout << "\tAverage draw time: " << duration.duration << "ms" << std::endl;
-        std::cout << "\tEstimated fps: " << std::setprecision(5) << 1000/duration.duration << std::endl;
+        std::cout << "Speed test for widget " << duration.name << std::endl;
+        std::cout << "\tAverage draw time: " << std::setprecision(4) << duration.duration << "ms" << std::endl;
+        std::cout << "\tEstimated fps: "  << 1000/duration.duration << "\n" << std::endl;
     }
 
     double total = std::accumulate(averages.begin(), averages.end(), 0.0) ;
 
-    std::cout << "\n\nEstimated total time: " << total << "ms" << std::endl;
+    std::cout << "\nEstimated total time: " << total << "ms" << std::endl;
     std::cout << "Estimated fps: " << (1000/total) << "\n\n\n" << std::endl;
 }
 
@@ -99,11 +132,11 @@ void SpeedTester::tickOccurred(int _)
         durations.clear();
 
         std::cout << "For last " << NUM_DURATION_FOR_AVERAGE << " ticks:\n\t"
-                  << "Time between ticks: " << std::setprecision(3) << tickAverage << "ms\n\t"
+                  << "Time between ticks: " << std::setprecision(4) << tickAverage << "ms\n\t"
                   << "Target: " << TIMER_TICK_MS << "ms\n\t"
 //                  << ((average - TIMER_TICK_MS) > 2.5 ? "\033[1;31m" : "\033[1;32m") // Set the color
                   << "Difference: " << (tickAverage - TIMER_TICK_MS) << "ms\033[0m\n\t"
-                  << "Estimated minimum FPS: "<< std::setprecision(3) << (1000/(tickAverage))
+                  << "Estimated fps: " << (1000/(tickAverage))
                   << "\n" << std::endl;
 
     }
