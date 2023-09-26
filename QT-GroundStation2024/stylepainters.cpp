@@ -282,8 +282,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // -- Get the angles and use them --
 
-    // -- Get the angles and use them --
-
     float pitch, yaw, roll;
     m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
 
@@ -312,8 +310,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     bool rocketIsWithinGraph = sqrt(pitch * pitch + yaw * yaw) < vec.back();
 
     std::reverse(vec.begin(), vec.end());
-
-        float dist = sqrt(yaw * yaw + pitch * pitch) - circleLocationDegrees;
 
     QColor bgCol = bgPen.color();
     bgCol.setAlphaF(0.5);
