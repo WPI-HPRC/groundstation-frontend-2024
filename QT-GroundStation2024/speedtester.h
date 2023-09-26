@@ -8,6 +8,12 @@
 
 class SpeedTester : public QObject
 {
+
+    struct SpeedTester_TimeDuration {
+        double duration;
+        std::string name;
+    };
+
     Q_OBJECT
 public:
     explicit SpeedTester();
@@ -21,6 +27,7 @@ protected:
 
 private:
     void loadWidgets();
+    static bool compareDurations(SpeedTester_TimeDuration t1, SpeedTester_TimeDuration t2);
 
 
 public slots:

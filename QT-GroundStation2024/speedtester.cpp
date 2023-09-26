@@ -9,12 +9,20 @@
 #include <iostream>
 #include <iomanip>
 
+bool SpeedTester::compareDurations(SpeedTester_TimeDuration t1, SpeedTester_TimeDuration t2)
+{
+    return t1.duration > t2.duration;
+}
+
 void SpeedTester::loadWidgets()
 {
     QList<QWidget*> allWidgets = QApplication::allWidgets();
 
     std::vector<double> averages;
 
+    std::vector<SpeedTester_TimeDuration> timeDurations;
+
+    std::cout << "Running speed test for widgets...\n\n" << std::endl;
     for(QWidget* w : allWidgets)
     {
         if(w->findChildren<QWidget*>().length() != 0)
@@ -22,7 +30,6 @@ void SpeedTester::loadWidgets()
 
         std::vector<double> widgetDurations;
 
-        std::cout << "Running test for " << w->objectName().toStdString() << std::endl;
         for (int i = 0; i < NUM_DURATION_FOR_AVERAGE * 5; i++)
         {
             std::chrono::high_resolution_clock::time_point t_before = std::chrono::high_resolution_clock::now();
@@ -36,17 +43,23 @@ void SpeedTester::loadWidgets()
         }
         double avg = std::accumulate(widgetDurations.begin(), widgetDurations.end(), 0.0) / widgetDurations.size();
 
-        std::cout << "\tAverage draw time: " << avg << "ms" << std::endl;
-        std::cout << "\tEstimated fps: " << std::setprecision(5) << 1000/avg << std::endl;
-
         averages.push_back(avg);
+        timeDurations.push_back(SpeedTester_TimeDuration {avg, w->objectName().toStdString()});
+    }
+
+    std::sort(timeDurations.begin(), timeDurations.end(), compareDurations);
+
+    for(SpeedTester_TimeDuration duration : timeDurations)
+    {
+        std::cout << "Speed test for " << duration.name << std::endl;
+        std::cout << "\tAverage draw time: " << duration.duration << "ms" << std::endl;
+        std::cout << "\tEstimated fps: " << std::setprecision(5) << 1000/duration.duration << std::endl;
     }
 
     double total = std::accumulate(averages.begin(), averages.end(), 0.0) ;
 
     std::cout << "\n\nEstimated total time: " << total << "ms" << std::endl;
     std::cout << "Estimated fps: " << (1000/total) << "\n\n\n" << std::endl;
-
 }
 
 SpeedTester::SpeedTester()
