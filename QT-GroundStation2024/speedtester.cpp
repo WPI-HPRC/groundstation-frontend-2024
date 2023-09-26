@@ -14,7 +14,7 @@ bool SpeedTester::compareDurations(SpeedTester_TimeDuration t1, SpeedTester_Time
     return t1.duration > t2.duration;
 }
 
-void SpeedTester::loadWidgets()
+void SpeedTester::runSpeedTests()
 {
     std::vector<SpeedTester_TimeDuration> windowTimeDurations;
 
@@ -114,7 +114,7 @@ void SpeedTester::tickOccurred(int _)
 
     if(numTicks == 30) // Wait for the window to open and for things to settle
     {
-        loadWidgets();
+        runSpeedTests();
     }
     else if(numTicks < 30)
     {

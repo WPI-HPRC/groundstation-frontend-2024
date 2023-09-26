@@ -26,7 +26,7 @@ protected:
     bool hasLoadedWidgets = false;
 
 private:
-    void loadWidgets();
+    void runSpeedTests();
     static bool compareDurations(SpeedTester_TimeDuration t1, SpeedTester_TimeDuration t2);
 
 
