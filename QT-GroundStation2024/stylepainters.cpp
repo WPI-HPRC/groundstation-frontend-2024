@@ -225,8 +225,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     // <---- draw ----> //
 
-//    p->fillRect(boundingBox, m_highlightBrush);
-
     p->setPen(bgPen);
     p->drawArc(boundingBox, -extraArc*16, (180 + 2 * extraArc)*16);
     p->setPen(fgPen);
@@ -238,9 +236,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     p->setFont(m_widgetLarge);
 
     p->drawText(boundingBox.adjusted(0, -30, 0, -30), Qt::AlignCenter, dataString);
-
-
-
 }
 
 void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
@@ -270,10 +265,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     boundingBox.setWidth(sizeMin);
 
     // For testing purposes
-    /*
+
     QQuaternion quat(1, ((w->m_mousePos.y() - boundingBox.y()) / boundingBox.height() - 0.5) * 2,
                      ((w->m_mousePos.x() - boundingBox.x()) /boundingBox.width() - 0.5) * 2, 0);
-*/
 
     float crossWidth = sizeMin/10;
     crossWidth /= 2;
@@ -283,7 +277,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     // -- Get the angles and use them --
 
     float pitch, yaw, roll;
-    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
+//    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
+    quat.getEulerAngles(&pitch, &yaw, &roll);
 
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
@@ -306,8 +301,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     float circleLocation;
 
     std::vector<float> vec = w->circleLocationsDegrees[m_latest->state];
-    \
-    bool rocketIsWithinGraph = sqrt(pitch * pitch + yaw * yaw) < vec.back();
+
+    bool rocketIsWithinGraph = pitch * pitch + yaw * yaw < vec.back() * vec.back();
 
     std::reverse(vec.begin(), vec.end());
 
@@ -318,36 +313,28 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     QColor fgCol = m_highlightBrush.color();
 
-
     for(float circleLocationDegrees: vec) {
 
         circleLocation = circleLocationDegrees / (w->m_maxDegreeRange);
 
-        float dist = sqrt(yaw * yaw + pitch * pitch) - circleLocationDegrees;
+        float dist = hypot(yaw, pitch) - circleLocationDegrees;
 
-        if(dist >= 2 && rocketIsWithinGraph) {
-            p->setPen(bgPen);
-            p->setBrush(m_backgroundBrush);
-            p->setOpacity(0.5);
-        }
-        else {
             p->setPen(outline);
 
-            if(rocketIsWithinGraph){
-                fgCol.setAlphaF(fminf(
-                    powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-                    powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
-            }
-            else {
-                fgCol.setAlphaF(1);
-            }
-
+        if(rocketIsWithinGraph){
             fgCol.setAlphaF(fminf(
-            powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-            powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
-
-            p->setBrush(QBrush(fgCol));
+                powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
+                powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
         }
+        else {
+            fgCol.setAlphaF(1);
+        }
+
+        fgCol.setAlphaF(fminf(
+        powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
+        powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
+
+        p->setBrush(QBrush(fgCol));
 
 
         p->drawEllipse(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation),
@@ -372,55 +359,11 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     p->setFont(m_widgetLarge);
 
-    /*
-    p->drawText(QRect(
-                    boundingBox.x(),
-                    boundingBox.y() + boundingBox.height() + 15,
-                    boundingBox.width(),
-                    30),
-                Qt::AlignCenter,
-                "ATTITUDE");
-*/
-
-
-    // Draw the degree markers
-
     m_widgetLarge.setPointSize(crossWidth*2);
 
 
     p->setPen(QPen(m_textBrush, 2));
     p->setFont(m_widgetLarge);
-
-    /*
-    p->drawText(QRect(boundingBox.x()-50,
-                      roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
-                      50,
-                      crossWidth*2),
-                Qt::AlignCenter,
-                QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
-
-        p->drawText(QRect(boundingBox.x() + boundingBox.width(),
-                          roundf(boundingBox.y() + boundingBox.height()/2 - crossWidth),
-                          50,
-                          crossWidth*2),
-                    Qt::AlignCenter,
-                    QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetYaw));
-
-        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*3),
-                          boundingBox.y()-20,
-                          roundf(crossWidth*6),
-                          crossWidth*3),
-                    Qt::AlignCenter,
-                    QString::asprintf("%.0lfº", 1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
-
-        p->drawText(QRect(roundf(boundingBox.x() + boundingBox.width()/2 - crossWidth*3),
-                          boundingBox.y() + boundingBox.height() - crossWidth*3+20,
-                          roundf(crossWidth*6),
-                          crossWidth*3),
-                    Qt::AlignCenter,
-                    QString::asprintf("%.0lfº", -1*w->m_maxDegreeRange + w->m_degreeOffsetPitch));
-
-*/
 
         p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
                           boundingBox.y()-30,

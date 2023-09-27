@@ -29,6 +29,7 @@ void SpeedTester::runSpeedTests()
 
         for (int i = 0; i < NUM_DURATION_FOR_AVERAGE * 5; i++)
         {
+            std::cout << "Test #" << i << " for window " << w->objectName().toStdString() << std::endl;
             std::chrono::high_resolution_clock::time_point t_before = std::chrono::high_resolution_clock::now();
 
             w->repaint();
