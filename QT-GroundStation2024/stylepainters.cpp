@@ -319,7 +319,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
         float dist = hypot(yaw, pitch) - circleLocationDegrees;
 
-            p->setPen(outline);
+        p->setPen(outline);
 
         if(rocketIsWithinGraph){
             fgCol.setAlphaF(fminf(
@@ -329,10 +329,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
         else {
             fgCol.setAlphaF(1);
         }
-
-        fgCol.setAlphaF(fminf(
-        powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-        powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
 
         p->setBrush(QBrush(fgCol));
 
