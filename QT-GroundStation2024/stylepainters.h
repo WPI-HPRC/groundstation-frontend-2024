@@ -32,6 +32,16 @@ public:
         ALARM_Unknown,
     };
 
+    enum rocketLabel
+    {
+        LABEL_Motor,
+        LABEL_Airbrakes,
+        LABEL_PayloadBay,
+        LABEL_AvionicsBay,
+        LABEL_RecoveryBay,
+        LABEL_Other,
+    };
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
@@ -43,6 +53,8 @@ public:
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
+
 
     // draw custom widgets - data sections
     void drawHPRCGaugeData(QPainter *p, const hprcDisplayWidget *w);
@@ -72,7 +84,7 @@ public:
 private:
 
     void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
-
+    void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
 };
 
 #endif // HPRCSTYLE_H

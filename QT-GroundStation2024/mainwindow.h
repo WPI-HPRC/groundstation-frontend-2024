@@ -1,10 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define RUN_SPEED_TESTS false
+#define TIMER_TICK_MS 1
+
+#if RUN_SPEED_TESTS
+    #include "speedtester.h"
+#endif
 #include "qdatetime.h"
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QQuaternion>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,12 +40,12 @@ public:
         QList<graphPoint> accData;
         QList<graphPoint> velData;
         QList<graphPoint> altData;
+        QQuaternion orientation;
     };
 
-
-
-
-
+#if RUN_SPEED_TESTS
+    SpeedTester speedTester = SpeedTester();
+#endif
 
     QDateTime m_groundLaunchTime;
     float m_rocketLaunchTime;
@@ -63,7 +71,7 @@ signals:
     void rocketTimeUpdated(float);
     void groundTimeUpdated();
     void tick();
-
+    void speedTick(int);
 
 public slots:
     void update();

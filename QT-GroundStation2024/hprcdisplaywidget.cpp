@@ -15,6 +15,14 @@ hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     m_widgetType = HPRC_Hidden;
     m_filledPercent = 0;
     m_label = QString("TESTING");
+
+#if RUN_SPEED_TESTS
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(speedTick(int)), this, SLOT(doSpeedTick(int)));
+        }
+#endif
 }
 
 void hprcDisplayWidget::paintEvent(QPaintEvent *e)
@@ -44,11 +52,16 @@ hprcGaugeData::hprcGaugeData(QWidget *parent)
 
 void hprcDisplayWidget::updateFilled(int input)
 {
-
     QPropertyAnimation *animation = new QPropertyAnimation(this, "filledPercent");
     animation->setDuration(400);
     animation->setEndValue(input);
     animation->start();
+}
+
+void hprcDisplayWidget::doSpeedTick(int input)
+{
+    repaint();
+//    updateFilled(input);
 }
 
 int hprcDisplayWidget::getFilled()
@@ -178,4 +191,9 @@ hprcClock::hprcClock(QWidget *parent) :
 
 
     m_widgetType = HPRC_Clock;
+}
+hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_RocketVisual;
 }

@@ -1,6 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
+#include "mainwindow.h"
 #include <QObject>
 #include <QWidget>
 
@@ -8,6 +9,7 @@ class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(int filledPercent READ getFilled WRITE setFilled NOTIFY fillChanged MEMBER m_filledPercent)
+
 public:
     explicit hprcDisplayWidget(QWidget *parent = nullptr);
 
@@ -19,6 +21,7 @@ public:
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
+        HPRC_RocketVisual,
         HPRC_Hidden,
     };
 
@@ -52,6 +55,7 @@ public:
 public slots:
 
     void updateFilled(int input);
+    void doSpeedTick(int input);
 
 protected:
 
@@ -183,6 +187,12 @@ class hprcMETClock : public hprcClock
 public:
 
     explicit hprcMETClock(QWidget *parent = nullptr) : hprcClock{parent} { m_dataType = HPRC_MET; }
+};
+class hprcRocketVisualizer : public hprcDisplayWidget
+{
+public:
+
+    explicit hprcRocketVisualizer(QWidget *parent = nullptr);
 };
 
 
