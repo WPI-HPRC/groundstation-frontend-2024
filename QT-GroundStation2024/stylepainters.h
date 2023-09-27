@@ -1,5 +1,4 @@
-#ifndef HPRCSTYLE_H
-#define HPRCSTYLE_H
+#pragma once
 
 #include "hprcdisplaywidget.h"
 #include <QStyle>
@@ -83,5 +82,3 @@ private:
     void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
 };
-
-#endif // HPRCSTYLE_H

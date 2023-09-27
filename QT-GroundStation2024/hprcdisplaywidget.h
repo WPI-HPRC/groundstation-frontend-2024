@@ -1,5 +1,4 @@
-#ifndef HPRCDISPLAYWIDGET_H
-#define HPRCDISPLAYWIDGET_H
+#pragma once
 
 #include "mainwindow.h"
 #include <QObject>
@@ -154,6 +153,3 @@ public:
 
     explicit hprcRocketVisualizer(QWidget *parent = nullptr);
 };
-
-
-#endif // HPRCDISPLAYWIDGET_H

@@ -1,7 +1,6 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
-#define RUN_SPEED_TESTS false
+#define RUN_SPEED_TESTS true
 #define TIMER_TICK_MS 1
 
 #if RUN_SPEED_TESTS
@@ -85,4 +84,3 @@ private:
 
 
 };
-#endif // MAINWINDOW_H

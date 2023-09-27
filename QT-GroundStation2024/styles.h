@@ -1,5 +1,4 @@
-#ifndef STYLES_H
-#define STYLES_H
+#pragma once
 
 #include "stylepainters.h"
 #include <QObject>
@@ -39,5 +38,3 @@ class HPRCDarkStyle : public Style
 public:
     HPRCDarkStyle(MainWindow::dataPoint *d);
 };
-
-#endif // STYLES_H

@@ -1,6 +1,4 @@
-#ifndef ROCKETWINDOW_H
-#define ROCKETWINDOW_H
-
+#pragma once
 #include <QMainWindow>
 
 namespace Ui {
@@ -18,5 +16,3 @@ public:
 private:
     Ui::RocketWindow *ui;
 };
-
-#endif // ROCKETWINDOW_H

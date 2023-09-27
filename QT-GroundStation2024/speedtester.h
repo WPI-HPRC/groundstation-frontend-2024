@@ -1,5 +1,4 @@
-#ifndef SPEEDTESTER_H
-#define SPEEDTESTER_H
+#pragma once
 
 #include <QMainWindow>
 #include <chrono>
@@ -37,5 +36,3 @@ public slots:
 signals:
 
 };
-
-#endif // SPEEDTESTER_H
