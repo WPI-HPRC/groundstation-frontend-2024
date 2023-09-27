@@ -112,8 +112,7 @@ hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
 hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
     hprcDisplayWidget(parent)
 {
-    setMouseTracking(true);
-
+//    setMouseTracking(true);
     m_widgetType = HPRC_Attitude;
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))

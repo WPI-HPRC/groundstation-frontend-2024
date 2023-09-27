@@ -266,8 +266,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     // For testing purposes
 
+    /*
     QQuaternion quat(1, ((w->m_mousePos.y() - boundingBox.y()) / boundingBox.height() - 0.5) * 2,
                      ((w->m_mousePos.x() - boundingBox.x()) /boundingBox.width() - 0.5) * 2, 0);
+*/
 
     float crossWidth = sizeMin/10;
     crossWidth /= 2;
@@ -277,8 +279,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
     // -- Get the angles and use them --
 
     float pitch, yaw, roll;
-//    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
-    quat.getEulerAngles(&pitch, &yaw, &roll);
+    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
+    roll = m_latest->gyroZ;
+//    quat.getEulerAngles(&pitch, &yaw, &roll);
 
     // Clamp to values
     pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));

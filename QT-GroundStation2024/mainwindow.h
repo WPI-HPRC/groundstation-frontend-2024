@@ -41,6 +41,9 @@ public:
         QList<graphPoint> velData;
         QList<graphPoint> altData;
         QQuaternion orientation;
+        float gyroX = 0;
+        float gyroY = 0;
+        float gyroZ = 0;
     };
 
 #if RUN_SPEED_TESTS
