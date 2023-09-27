@@ -7,6 +7,7 @@
 #include <iostream>
 #include "QPropertyAnimation"
 #include <QMouseEvent>
+#include <QHBoxLayout>
 
 hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     : QWidget{parent}
@@ -33,6 +34,12 @@ hprcGauge::hprcGauge(QWidget *parent)
     : hprcDisplayWidget{parent}
 {
     m_widgetType = HPRC_Gauge;
+}
+
+hprcGaugeData::hprcGaugeData(QWidget *parent)
+    : hprcDisplayWidget{parent}
+{
+    m_widgetType = HPRC_GaugeData;
 }
 
 void hprcDisplayWidget::updateFilled(int input)
@@ -63,8 +70,20 @@ int hprcDisplayWidget::fillChanged()
 hprcAltitudeGauge::hprcAltitudeGauge(QWidget *parent) :
     hprcGauge{parent}
 {
-    m_max = 12000.0;
+    QHBoxLayout* hLayout = new QHBoxLayout;
+    this->setLayout(hLayout);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    this->setContentsMargins(0, 0, 0, 0);
+    hprcAltitudeGaugeData* dataWidget = new hprcAltitudeGaugeData(this);
+    hLayout->addWidget(dataWidget);
+
     m_label = "ALTITUDE";
+}
+
+hprcAltitudeGaugeData::hprcAltitudeGaugeData(QWidget *parent) :
+    hprcGaugeData{parent}
+{
+    m_max = 12000.0;
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
@@ -75,8 +94,21 @@ hprcAltitudeGauge::hprcAltitudeGauge(QWidget *parent) :
 hprcVelocityGauge::hprcVelocityGauge(QWidget *parent) :
     hprcGauge{parent}
 {
-    m_max = 1000.0;
+    QHBoxLayout* hLayout = new QHBoxLayout;
+    this->setLayout(hLayout);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    this->setContentsMargins(0, 0, 0, 0);
+    hprcVelocityGaugeData* dataWidget = new hprcVelocityGaugeData(this);
+    hLayout->addWidget(dataWidget);
+
     m_label = "VELOCITY";
+
+}
+
+hprcVelocityGaugeData::hprcVelocityGaugeData(QWidget *parent) :
+    hprcGaugeData{parent}
+{
+    m_max = 1000.0;
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
@@ -87,7 +119,21 @@ hprcVelocityGauge::hprcVelocityGauge(QWidget *parent) :
 hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
     hprcGauge{parent}
 {
+    QHBoxLayout* hLayout = new QHBoxLayout;
+    this->setLayout(hLayout);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    this->setContentsMargins(0, 0, 0, 0);
+    hprcAccelerationGaugeData* dataWidget = new hprcAccelerationGaugeData(this);
+    hLayout->addWidget(dataWidget);
+
+
     m_label = "ACCELERATION";
+
+}
+
+hprcAccelerationGaugeData::hprcAccelerationGaugeData(QWidget *parent) :
+    hprcGaugeData{parent}
+{
     m_max = 400;
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))

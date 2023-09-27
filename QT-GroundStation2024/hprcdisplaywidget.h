@@ -15,6 +15,7 @@ public:
     {
         HPRC_Timeline,
         HPRC_Gauge,
+        HPRC_GaugeData,
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
@@ -81,6 +82,17 @@ public:
 signals:
 };
 
+class hprcGaugeData : public hprcDisplayWidget
+{
+    Q_OBJECT
+public:
+
+
+    explicit hprcGaugeData(QWidget *parent = nullptr);
+
+signals:
+};
+
 class hprcAltitudeGauge : public hprcGauge
 {
 
@@ -88,6 +100,16 @@ class hprcAltitudeGauge : public hprcGauge
 public:
 
     explicit hprcAltitudeGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcAltitudeGaugeData : public hprcGaugeData
+{
+
+
+public:
+
+    explicit hprcAltitudeGaugeData(QWidget *parent = nullptr);
 
 };
 
@@ -100,6 +122,15 @@ public:
     explicit hprcVelocityGauge(QWidget *parent = nullptr);
 
 };
+class hprcVelocityGaugeData : public hprcGaugeData
+{
+
+
+public:
+
+    explicit hprcVelocityGaugeData(QWidget *parent = nullptr);
+
+};
 
 class hprcAccelerationGauge : public hprcGauge
 {
@@ -108,6 +139,15 @@ class hprcAccelerationGauge : public hprcGauge
 public:
 
     explicit hprcAccelerationGauge(QWidget *parent = nullptr);
+
+};
+class hprcAccelerationGaugeData : public hprcGaugeData
+{
+
+
+public:
+
+    explicit hprcAccelerationGaugeData(QWidget *parent = nullptr);
 
 };
 

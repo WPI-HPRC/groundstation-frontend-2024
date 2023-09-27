@@ -36,13 +36,16 @@ public:
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
 
-    // draw custom widgets
+    // draw custom widgets - backgrounds
     void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
+
+    // draw custom widgets - data sections
+    void drawHPRCGaugeData(QPainter *p, const hprcDisplayWidget *w);
 
     QBrush m_backgroundBrush;
     QBrush m_panelBrush;
