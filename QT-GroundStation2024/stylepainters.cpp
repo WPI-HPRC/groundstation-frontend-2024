@@ -502,13 +502,13 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
-
+    /*
 
     p->setBrush(m_transparentBrush);
     p->setPen(textPen);
     p->drawLine(top.topRight(), bottom.bottomRight());
     p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
-
+*/
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
@@ -578,6 +578,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     pointsToDraw.append(rect.bottomLeft());
     pointsToDraw.append(rect.bottomRight());
     p->setBrush(QBrush(gradient));
+
 //    p->setBrush(m_transparentBrush);
     p->drawPolygon(QPolygonF(pointsToDraw));
     p->setPen(QPen(m_highlightBrush, 3));
