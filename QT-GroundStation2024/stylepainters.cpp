@@ -533,15 +533,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     for(int i = 0; i < data.size(); i++)
     {
 ////        if(!(data.at(i).time < (start - range)))
-////        {
-            if(data.at(i).value > scaleMax)
-            {
-                scaleMax = data.at(i).value;
-            }
-            if(data.at(i).value < scaleMin)
-            {
-                scaleMin = data.at(i).value;
-            }
+////
+            scaleMax = fmaxf(data.at(i).value, scaleMax);
+            scaleMin = fminf(data.at(i).value, scaleMin);
 
 ////        }
     }
