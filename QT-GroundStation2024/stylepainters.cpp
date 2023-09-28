@@ -624,7 +624,7 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     };
 
     //Current airbrakes will be drawn on top of desired airbrakes, everything below here is drawn rotated and relative to circle position
-    p->translate(circlePosition); //QPointF(circlePosition.x(), -w->rect().height() / 4) Not sure why the y translation works
+    p->translate(circlePosition);
     p->rotate(45);
 
     //The rendering order of the desired and current airbrakes should change depending on which one is higher or lower
