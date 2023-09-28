@@ -75,6 +75,25 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 
 }
 
+
+void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
+{
+    // Resize the 3D viewer to match the container widget
+    w->m_view->resize(w->size());
+
+    // Update the orientation of the rocket based on the latest data
+    if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
+        const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
+        if (viewer) {
+            viewer->orientRocket(m_latest->orientation);
+        }
+    }
+
+    // TODO: Update the colors to match the current color scheme
+    // requires pointers to the materials, or helper methods, which is probably better
+
+}
+
 void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 {
 

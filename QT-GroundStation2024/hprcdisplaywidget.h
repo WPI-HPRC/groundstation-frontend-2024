@@ -5,6 +5,8 @@
 #include <QWidget>
 
 #include <Qt3DCore/QTransform>
+#include <Qt3DExtras/Qt3DWindow>
+#include <QQuaternion>
 
 class hprcDisplayWidget : public QWidget
 {
@@ -41,6 +43,10 @@ public:
     int fillChanged();
     int getFilled();
     void setFilled(int input);
+
+    // 3D Props
+    Qt3DCore::QTransform *m_rocketTransform;
+    Qt3DExtras::Qt3DWindow *m_view;
 
     QPoint m_mousePos;
 
@@ -150,12 +156,18 @@ public:
 
 class hprcViewer : public hprcDisplayWidget
 {
-private:
-    Qt3DCore::QTransform *m_rocketTransform;
-
 public:
-
     explicit hprcViewer(QWidget *parent = nullptr);
+    void orientRocket(QQuaternion orientation) const;
+
+    float m_rocketVertOffset = -1.8f;
+    float m_cameraDistToRocket = 40.0f;
+    float m_rocketScale = 0.18f;
+
+    // Note: the -90 is there to orient the rocket correctly
+    // since the STL will face out of the screen by default
+    // Note: euler angles are pitch, yaw, roll
+    QQuaternion m_rocketOrientVertically = QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f);
 };
 
 

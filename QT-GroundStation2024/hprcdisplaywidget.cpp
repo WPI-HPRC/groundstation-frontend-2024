@@ -13,7 +13,6 @@
 #include <Qt3DCore/QEntity>
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QCamera>
-#include <Qt3DRender/QDirectionalLight>
 #include <Qt3DCore/QTransform>
 
 #include <Qt3DExtras/QForwardRenderer>
@@ -157,12 +156,6 @@ hprcViewer::hprcViewer(QWidget *parent) :
 
     Qt3DCore::QEntity *rootEntity = new Qt3DCore::QEntity;
 
-    // Create an environment light
-    Qt3DRender::QDirectionalLight* light = new Qt3DRender::QDirectionalLight(rootEntity);
-    light->setIntensity(0);
-
-    // Set the intensity of the environment light (adjust as needed)
-
     // Create rocket mesh and entity objects
     Qt3DCore::QEntity *rocketEntity = new Qt3DCore::QEntity(rootEntity);
     Qt3DRender::QMesh *rocketMesh = new Qt3DRender::QMesh();
@@ -173,23 +166,20 @@ hprcViewer::hprcViewer(QWidget *parent) :
     // Set the material of the rocket
     Qt3DExtras::QDiffuseSpecularMaterial *rocketMaterial = new Qt3DExtras::QDiffuseSpecularMaterial(rootEntity);
     rocketMaterial->setDiffuse(QColor(255, 0, 0)); // Set the diffuse color (red in this case)
+    rocketMaterial->setAmbient(QColor(100, 100, 100));
+//    rocketMaterial->setDiffuse(QColor(255, 255, 255)); // diffuse white
     rocketMaterial->setSpecular(QColor(255, 255, 255)); // Set the specular color (white)
-    rocketMaterial->setShininess(0.0); // Set the shininess (adjust to control specular highlights)
-    //    rocketMaterial->setDiffuseColor(Qt::red);
-    //    geometry->rocketMaterial(material);
+    rocketMaterial->setShininess(10.0); // Set the shininess (adjust to control specular highlights)
 
     Qt3DCore::QTransform *rocketTransform = new Qt3DCore::QTransform;
-    rocketTransform->setTranslation(QVector3D(0.0, 0.0, 0.0));
+    rocketTransform->setTranslation(QVector3D(0.0, m_rocketVertOffset, 0.0));
 
     // Scale the rocket to fit correctly on the screen
-    rocketTransform->setScale3D(QVector3D(0.15, 0.15, 0.15));
+    rocketTransform->setScale3D(QVector3D(m_rocketScale, m_rocketScale, m_rocketScale));
 
     // Set the rotation of the rocket based on the input quaternion
-    // Note: the -90 is there to orient the rocket correctly
-    // since the STL will face out of the screen by default
     rocketTransform->setRotation(
-        QQuaternion::fromEulerAngles(0.0f, 0.0f, 0.0f) * QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f)); // pitch, yaw, roll
-
+        QQuaternion::fromEulerAngles(0.0f, 0.0f, 0.0f) * m_rocketOrientVertically);
 
     rocketEntity->addComponent(rocketMesh);
     rocketEntity->addComponent(rocketTransform);
@@ -199,21 +189,30 @@ hprcViewer::hprcViewer(QWidget *parent) :
 
     // Camera
     Qt3DRender::QCamera *camera = view->camera();
-    camera->setPosition(QVector3D(0, 0, 40.0f));
+    camera->setPosition(QVector3D(0, 0, m_cameraDistToRocket));
     camera->setViewCenter(QVector3D(0, 0, 0));
 
     view->setRootEntity(scene);
-    view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x607D8B))); // set the background color
+//    view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x607D8B))); // set the background color
+    view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x000000)));
 
     // Store the transform of the rocket
     m_rocketTransform = rocketTransform;
 
-//    QWidget *container = QWidget::createWindowContainer(view, this);
+    // Store the 3d view
+    m_view = view;
+
     QWidget::createWindowContainer(view, this);
 
+    // Connect each instance of the widget to the orientation update signal
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-//            connect(mainWin, SIGNAL(orientUpdated(QQuaternion)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(orientUpdated(QQuaternion)), this, SLOT(repaint()));
         }
+}
+
+void hprcViewer::orientRocket(QQuaternion orientation) const {
+    // Set the rotation of the rocket based on the input quaternion
+    m_rocketTransform->setRotation(orientation * m_rocketOrientVertically);
 }
