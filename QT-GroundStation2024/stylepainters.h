@@ -72,6 +72,7 @@ public:
 
     QFont m_widgetLarge;
     QFont m_widgetMedium;
+    QFont m_widgetFancy;
 
 
     // data maps

@@ -21,6 +21,11 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 
     int id = QFontDatabase::addApplicationFont(":/fonts/fonts/OverpassMono-VariableFont_wght.ttf");
     QString overpassMono = QFontDatabase::applicationFontFamilies(id).at(0);
+
+    id = QFontDatabase::addApplicationFont(":/fonts/fonts/JockeyOne-Regular.ttf");
+    QStringList l = QFontDatabase::applicationFontFamilies(id);
+    QString jockeyOne = QFontDatabase::applicationFontFamilies(id).at(0);
+    m_widgetFancy = QFont(jockeyOne, 30, 5, false);
     m_widgetLarge = QFont(overpassMono, 20, 5, false);
     m_widgetMedium = QFont(overpassMono, 15, 5, false);
 
@@ -255,20 +260,20 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     int lMargin = drawBox.height() * 0.075;
     drawBox.adjust(lMargin, 0, 0, -lMargin);
 
-    QPointF topRightTop = drawBox.topRight();
-    QPointF bottomLeftBottom = drawBox.bottomLeft();
+    QPointF topLeftTop = drawBox.topLeft();
+    QPointF bottomRightBottom = drawBox.bottomRight();
 
     int row2Top = drawBox.y() + drawBox.height()/3;
     int row3Top = drawBox.y() + 2 * drawBox.height()/3;
 
-    QPointF bottomLeftTop(drawBox.left(), row2Top);
-    QPointF topRightMiddle(drawBox.right(), row2Top);
-    QPointF bottomLeftMiddle(drawBox.left(), row3Top);
-    QPointF topRightBottom(drawBox.right(), row3Top);
+    QPointF bottomRightTop(drawBox.right(), row2Top);
+    QPointF topLeftMiddle(drawBox.left(), row2Top);
+    QPointF bottomRightMiddle(drawBox.right(), row3Top);
+    QPointF topLeftBottom(drawBox.left(), row3Top);
 
-    QRectF top(topRightTop, bottomLeftTop);
-    QRectF middle(topRightMiddle, bottomLeftMiddle);
-    QRectF bottom(topRightBottom, bottomLeftBottom);
+    QRectF top(topLeftTop, bottomRightTop);
+    QRectF middle(topLeftMiddle, bottomRightMiddle);
+    QRectF bottom(topLeftBottom, bottomRightBottom);
 
     double range = 5000;
     double start = m_latest->rocketTime - range;
@@ -360,10 +365,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     }
 
-
-
-
-
     gradient.setFinalStop(rect.topLeft());
     pointsToDraw.append(rect.bottomLeft());
     pointsToDraw.append(rect.bottomRight());
@@ -378,9 +379,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->drawRect(ptHighlight);
         p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
 
-
-
-
         p->setBrush(m_highlightBrush);
         p->drawEllipse(highlighted, 5, 5);
 
@@ -390,6 +388,26 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setPen(QPen(m_highlightBrush, 3));
     }
 
+    m_widgetFancy.setPointSize(rect.height() * 3/4);
+    p->setFont(m_widgetFancy);
+
+    bg.setAlphaF(0.4);
+    p->setPen(QPen(bg, 20));
+
+    switch (graphType)
+    {
+    case GRAPH_Altitude:
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ALT");
+        break;
+    case GRAPH_Velocity:
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "VEL");
+        break;
+    case GRAPH_Acceleration:
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ACCEL");
+        break;
+    default:
+        break;
+    }
 
 }
 
