@@ -9,6 +9,8 @@
 #include "mainwindow.h"
 #include <QDateTime>
 
+#define MAX_GRAPH_SCALE 0.85
+
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
@@ -344,7 +346,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         if(valY < max)
             max = valY;
         valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
-        valY = -((g.value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
+        valY = -((g.value - scaleMin) / scale) * (rect.height() * MAX_GRAPH_SCALE) + rect.bottom();
 
         if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data.size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data.size()))
         {
@@ -383,7 +385,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setPen(QPen(m_highlightBrush, 3));
     }
 
-    m_widgetFancy.setPointSize(rect.height() * 3/4);
+    m_widgetFancy.setPointSize(rect.height() * 2/3);
     p->setFont(m_widgetFancy);
 
     bg.setAlphaF(0.4);
@@ -392,17 +394,36 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     switch (graphType)
     {
     case GRAPH_Altitude:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ALT");
+
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "ALT (m)");
         break;
     case GRAPH_Velocity:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "VEL");
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "VEL (m/s)");
         break;
     case GRAPH_Acceleration:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ACCEL");
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "ACCEL (m/s²)");
         break;
     default:
         break;
     }
+
+//    p->setPen(QPen(m_textBrush, 5));
+    p->setPen(QPen(m_textBrush, 2));
+    p->setOpacity(0.8);
+    m_widgetMedium.setPointSize(rect.height()/5);
+    p->setFont(m_widgetMedium);
+//    p->setFont(m_widgetMedium);
+    p->drawText(QRect(rect.right()-100,
+                      rect.top()+1,
+                      90,
+                      rect.height()*(1-MAX_GRAPH_SCALE)*2),
+                Qt::AlignRight | Qt::AlignVCenter,
+                QString::asprintf("%d", 100));
+
+    p->drawLine(rect.right() - 5,
+                rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
+                rect.right() + 5,
+                rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
 
 }
 
