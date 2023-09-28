@@ -6,6 +6,9 @@
 #define NUM_DURATION_FOR_AVERAGE 200
 #define TIME_INDIVIDUAL_WIDGETS true
 
+#define RUN_SINGLE_TEST false
+#define SINGULAR_WIDGET_TEST_NAME "widget"
+
 #include <iostream>
 #include <iomanip>
 
@@ -18,6 +21,7 @@ void SpeedTester::runSpeedTests()
 {
     std::vector<SpeedTester_TimeDuration> windowTimeDurations;
 
+#if !RUN_SINGLE_TEST
     std::cout << "Running speed tests for windows...\n\n" << std::endl;
     foreach (QWidget *w, qApp->topLevelWidgets())
     {
@@ -48,18 +52,21 @@ void SpeedTester::runSpeedTests()
         std::cout << "\tEstimated fps: "  << 1000/duration.duration << "\n" << std::endl;
     }
 
+    std::cout << "\nRunning speed test for widgets...\n" << std::endl;
+#endif
 
     QList<QWidget*> allWidgets = QApplication::allWidgets();
-
     std::vector<double> averages;
-
     std::vector<SpeedTester_TimeDuration> widgetTimeDurations;
-
-    std::cout << "\nRunning speed test for widgets...\n\n" << std::endl;
     for(QWidget* w : allWidgets)
     {
         if(w->findChildren<QWidget*>().length() != 0)
             continue;
+
+#if RUN_SINGLE_TEST
+        if (QString::compare(w->objectName(), SINGULAR_WIDGET_TEST_NAME) != 0)
+            continue;
+#endif
 
         std::vector<double> widgetDurations;
 
@@ -82,17 +89,22 @@ void SpeedTester::runSpeedTests()
 
     std::sort(widgetTimeDurations.begin(), widgetTimeDurations.end(), compareDurations);
 
+    double total = std::accumulate(averages.begin(), averages.end(), 0.0);
+
     for(SpeedTester_TimeDuration& duration : widgetTimeDurations)
     {
-        std::cout << "Speed test for widget " << duration.name << std::endl;
-        std::cout << "\tAverage draw time: " << std::setprecision(4) << duration.duration << "ms" << std::endl;
-        std::cout << "\tEstimated fps: "  << 1000/duration.duration << "\n" << std::endl;
+
+#if RUN_SINGLE_TEST
+        std::cout << "\nTime for " << duration.name << ": " << duration.duration << "ms" << std::endl;
+#else
+        std::cout << "\t" << std::setprecision(4) << duration.duration / total * 100 << "% " << duration.name << ", " << duration.duration << "ms" << std::endl;
+#endif
     }
 
-    double total = std::accumulate(averages.begin(), averages.end(), 0.0) ;
-
+#if !RUN_SINGLE_TEST
     std::cout << "\nEstimated total time: " << total << "ms" << std::endl;
     std::cout << "Estimated fps: " << (1000/total) << "\n\n\n" << std::endl;
+#endif
 }
 
 SpeedTester::SpeedTester()
@@ -114,7 +126,9 @@ void SpeedTester::tickOccurred(int _)
 
     if(numTicks == 30) // Wait for the window to open and for things to settle
     {
+#if TIME_INDIVIDUAL_WIDGETS
         runSpeedTests();
+#endif
     }
     else if(numTicks < 30)
     {
