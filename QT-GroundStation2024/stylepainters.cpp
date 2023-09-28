@@ -295,13 +295,11 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
-    /*
+    p->setPen(QPen(m_textBrush, 5));
 
-    p->setBrush(m_transparentBrush);
-    p->setPen(textPen);
-    p->drawLine(top.topRight(), bottom.bottomRight());
-    p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
-*/
+    // Need to make sure this is using the right units. Is time in s? Ms? Time since launch? Unix time? Time since boot? etc.
+    if(m_latest->altData.size() > 0)
+        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time));
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
@@ -407,24 +405,22 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         break;
     }
 
-//    p->setPen(QPen(m_textBrush, 5));
     p->setPen(QPen(m_textBrush, 2));
     p->setOpacity(0.8);
     m_widgetMedium.setPointSize(rect.height()/5);
     p->setFont(m_widgetMedium);
-//    p->setFont(m_widgetMedium);
+
     p->drawText(QRect(rect.right()-100,
                       rect.top()+1,
                       90,
                       rect.height()*(1-MAX_GRAPH_SCALE)*2),
                 Qt::AlignRight | Qt::AlignVCenter,
-                QString::asprintf("%d", 100));
+                QString::asprintf("%d", (int)scale));
 
     p->drawLine(rect.right() - 5,
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
                 rect.right(),
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
-
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
@@ -434,7 +430,6 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     QPen linePen(m_backgroundBrush, 4);
     linePen.setCapStyle(Qt::RoundCap);
     p->setPen(linePen);
-
 
     int abortConditions = m_alarmMapA.size();
     int warnConditions = m_alarmMapW.size();
