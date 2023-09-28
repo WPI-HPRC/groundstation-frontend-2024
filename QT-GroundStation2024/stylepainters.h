@@ -42,6 +42,13 @@ public:
         LABEL_Other,
     };
 
+    enum GraphType
+    {
+        GRAPH_Altitude,
+        GRAPH_Velocity,
+        GRAPH_Acceleration
+    };
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
@@ -80,7 +87,7 @@ public:
 
 private:
 
-    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, GraphType graphType, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
 };
 
