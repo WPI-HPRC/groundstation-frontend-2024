@@ -631,7 +631,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     p->drawLine(rect.right() - 5,
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
-                rect.right() + 5,
+                rect.right(),
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
 
 }
