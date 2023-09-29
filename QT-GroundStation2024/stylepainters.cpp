@@ -506,7 +506,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     p->setPen(QPen(m_textBrush, 5));
 
-    // Need to make sure this is using the right units. Is time in s? Ms? Time since launch? Unix time? Time since boot? etc.
+
     if(m_latest->altData.size() > 0)
         p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
 }
@@ -521,7 +521,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QLinearGradient gradient(bottomPt, rect.topLeft());
 //    gradient.setColorAt(0, m_transparentBrush.color());
 //    gradient.setColorAt(1, bg);
-    bg = bg.lighter();
+//    bg = bg.lighter();
     bg.setAlphaF(0.3);
     gradient.setColorAt(0, bg);
     gradient.setColorAt(1, m_transparentBrush.color());
@@ -615,29 +615,33 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     }
 
 
-    p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
-                Qt::AlignRight | Qt::AlignVCenter,
-                QString::asprintf("%d", (int)(data.last().value)));
+    if(!drawTooltip)
+    {
+        p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
+                    Qt::AlignRight | Qt::AlignVCenter,
+                    QString::asprintf("%d", (int)(data.last().value)));
 
-    p->setPen(QPen(m_textBrush, 2));
-    p->setOpacity(0.8);
-    m_widgetMedium.setPointSize(rect.height()/5);
-    p->setFont(m_widgetMedium);
+        p->setPen(QPen(m_textBrush, 2));
+        p->setOpacity(0.8);
+        m_widgetMedium.setPointSize(rect.height()/5);
+        p->setFont(m_widgetMedium);
 
-    if(drawMaxMarker)
+
         p->drawText(QRect(rect.left(),
                           rect.top()+1,
                           rect.width(),
                           rect.height()*(1-MAX_GRAPH_SCALE)*2),
                     Qt::AlignCenter,
                     QString::asprintf("%d", (int)scale));
+        p->drawLine(rect.right() - 5,
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
+                    rect.right(),
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
+    }
 
-    p->drawLine(rect.right() - 5,
-                rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
-                rect.right(),
-                rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
+    p->setOpacity(0.8);
 
-    p->setOpacity(1);
+
     p->setPen(QPen(m_highlightBrush, 3));
     p->setBrush(lightHighlighterBrush);
 
