@@ -167,7 +167,6 @@ hprcViewer::hprcViewer(QWidget *parent) :
     Qt3DExtras::QDiffuseSpecularMaterial *rocketMaterial = new Qt3DExtras::QDiffuseSpecularMaterial(rootEntity);
     rocketMaterial->setDiffuse(QColor(255, 0, 0)); // Set the diffuse color (red in this case)
     rocketMaterial->setAmbient(QColor(100, 100, 100));
-//    rocketMaterial->setDiffuse(QColor(255, 255, 255)); // diffuse white
     rocketMaterial->setSpecular(QColor(255, 255, 255)); // Set the specular color (white)
     rocketMaterial->setShininess(10.0); // Set the shininess (adjust to control specular highlights)
 
@@ -193,7 +192,6 @@ hprcViewer::hprcViewer(QWidget *parent) :
     camera->setViewCenter(QVector3D(0, 0, 0));
 
     view->setRootEntity(scene);
-//    view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x607D8B))); // set the background color
     view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x000000)));
 
     // Store the transform of the rocket
@@ -202,7 +200,12 @@ hprcViewer::hprcViewer(QWidget *parent) :
     // Store the 3d view
     m_view = view;
 
+    // Store the rocket material
+    m_rocketMaterial = rocketMaterial;
+
     QWidget::createWindowContainer(view, this);
+
+    // TODO: Remove margin between the outer and inner widget
 
     // Connect each instance of the widget to the orientation update signal
     foreach (QWidget *w, qApp->topLevelWidgets())
@@ -215,4 +218,9 @@ hprcViewer::hprcViewer(QWidget *parent) :
 void hprcViewer::orientRocket(QQuaternion orientation) const {
     // Set the rotation of the rocket based on the input quaternion
     m_rocketTransform->setRotation(orientation * m_rocketOrientVertically);
+}
+
+void hprcViewer::updateColors(QColor panel, QColor highlight) const {
+    m_rocketMaterial->setDiffuse(highlight);
+    m_view->defaultFrameGraph()->setClearColor(panel);
 }

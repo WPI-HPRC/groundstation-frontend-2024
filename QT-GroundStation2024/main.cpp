@@ -6,9 +6,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyle(new HPRCDarkStyle(nullptr));
+    a.setStyle(new HPRCLightStyle(nullptr));
     MainWindow w;
-    a.setStyle(new HPRCDarkStyle(w.getCurrentData()));
+    a.setStyle(new HPRCLightStyle(w.getCurrentData()));
     w.centralWidget()->setBackgroundRole(QPalette::Window);
     w.show();
     w.showMaximized();
