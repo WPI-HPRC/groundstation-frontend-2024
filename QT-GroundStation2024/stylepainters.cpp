@@ -366,10 +366,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
         p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
                           boundingBox.y()-30,
-                          crossWidth * 6,
+                          crossWidth * 10,
                           crossWidth * 3
                           ),
-                    Qt::AlignCenter,
+                    Qt::AlignVCenter,
                     "PITCH");
 
         m_widgetLarge.setPointSize(crossWidth * 2);
@@ -405,7 +405,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
                       boundingBox.y()-30,
-                      crossWidth * 6,
+                      crossWidth * 60,
                       crossWidth * 3
                       ),
                 Qt::AlignCenter,
