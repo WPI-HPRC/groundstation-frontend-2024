@@ -508,7 +508,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     // Need to make sure this is using the right units. Is time in s? Ms? Time since launch? Unix time? Time since boot? etc.
     if(m_latest->altData.size() > 0)
-        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time));
+        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
@@ -521,8 +521,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QLinearGradient gradient(bottomPt, rect.topLeft());
 //    gradient.setColorAt(0, m_transparentBrush.color());
 //    gradient.setColorAt(1, bg);
+    bg = bg.lighter();
+    bg.setAlphaF(0.3);
     gradient.setColorAt(0, bg);
     gradient.setColorAt(1, m_transparentBrush.color());
+    bg.setAlphaF(1);
 
 //    p->setPen(QPen(m_transparentBrush, 3));
     p->setPen(QPen(bg, 3));
@@ -532,8 +535,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     double scaleMin = 999999;
     for(int i = 0; i < data.size(); i++)
     {
-////        if(!(data.at(i).time < (start - range)))
-////
+///       if(!(data.at(i).time < (start - range)))
+///
             scaleMax = fmaxf(data.at(i).value, scaleMax);
             scaleMin = fminf(data.at(i).value, scaleMin);
 
@@ -546,17 +549,22 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QPointF highlighted(-100,0);
     QString ptLabel("");
 
+    bool drawMaxMarker = true;
+
     for(MainWindow::graphPoint g : data)
     {
         double valX = 0;
         double valY = 0;
         if(valY < max)
             max = valY;
-        valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
+        valX = (g.time - start) / (range) * (rect.width()) + rect.left();
         valY = -((g.value - scaleMin) / scale) * (rect.height() * MAX_GRAPH_SCALE) + rect.bottom();
 
-        if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data.size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data.size()))
+        if(valX > w->m_mousePos.x() - (rect.width() / data.size())/2 &&
+            valX < w->m_mousePos.x() + (rect.width() / data.size())/2)
         {
+            if(fabs(valX - rect.width()/2 - rect.x()) < data.size())
+                drawMaxMarker = false;
             ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
             ptLabel = QString::number(g.value);
             highlighted = QPointF(valX, valY);
@@ -568,35 +576,27 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     }
 
+    bg.setAlphaF(0.4);
+
+    //    p->setPen(QPen(m_transparentBrush, 3));
+    p->setPen(QPen(bg, 3));
     gradient.setFinalStop(rect.topLeft());
-    pointsToDraw.append(rect.bottomLeft());
     pointsToDraw.append(rect.bottomRight());
+    pointsToDraw.append(rect.bottomLeft());
     p->setBrush(QBrush(gradient));
 
 //    p->setBrush(m_transparentBrush);
     p->drawPolygon(QPolygonF(pointsToDraw));
-    p->setPen(QPen(m_highlightBrush, 3));
-    p->setBrush(lightHighlighterBrush);
-
-    if(drawTooltip)
-    {
-        p->drawRect(ptHighlight);
-        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
-
-        p->setBrush(m_highlightBrush);
-        p->drawEllipse(highlighted, 5, 5);
-
-        p->setPen(QPen(m_textBrush, 3));
-        p->setFont(m_widgetMedium);
-        p->drawText(ptHighlight, ptLabel);
-        p->setPen(QPen(m_highlightBrush, 3));
-    }
 
     m_widgetFancy.setPointSize(rect.height() * 2/3);
+    m_widgetFancy.setWeight(QFont::Black);
     p->setFont(m_widgetFancy);
 
-    bg.setAlphaF(0.4);
+    bg.setAlphaF(1);
     p->setPen(QPen(bg, 20));
+
+    if(data.length() == 0)
+        data.append(MainWindow::graphPoint{0, 0});
 
     switch (graphType)
     {
@@ -614,22 +614,46 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         break;
     }
 
+
+    p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
+                Qt::AlignRight | Qt::AlignVCenter,
+                QString::asprintf("%d", (int)(data.last().value)));
+
     p->setPen(QPen(m_textBrush, 2));
     p->setOpacity(0.8);
     m_widgetMedium.setPointSize(rect.height()/5);
     p->setFont(m_widgetMedium);
 
-    p->drawText(QRect(rect.right()-100,
-                      rect.top()+1,
-                      90,
-                      rect.height()*(1-MAX_GRAPH_SCALE)*2),
-                Qt::AlignRight | Qt::AlignVCenter,
-                QString::asprintf("%d", (int)scale));
+    if(drawMaxMarker)
+        p->drawText(QRect(rect.left(),
+                          rect.top()+1,
+                          rect.width(),
+                          rect.height()*(1-MAX_GRAPH_SCALE)*2),
+                    Qt::AlignCenter,
+                    QString::asprintf("%d", (int)scale));
 
     p->drawLine(rect.right() - 5,
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
                 rect.right(),
                 rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
+
+    p->setOpacity(1);
+    p->setPen(QPen(m_highlightBrush, 3));
+    p->setBrush(lightHighlighterBrush);
+
+    if(drawTooltip)
+    {
+        p->drawRect(ptHighlight);
+        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
+
+        p->setBrush(m_highlightBrush);
+        p->drawEllipse(highlighted, 5, 5);
+
+        p->setPen(QPen(m_textBrush, 3));
+        p->setFont(m_widgetMedium);
+        p->drawText(ptHighlight, ptLabel);
+        p->setPen(QPen(m_highlightBrush, 3));
+    }
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
