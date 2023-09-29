@@ -403,9 +403,9 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     p->setPen(QPen(m_textBrush, 2));
 
-    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*5,
                       boundingBox.y()-30,
-                      crossWidth * 60,
+                      crossWidth * 10,
                       crossWidth * 3
                       ),
                 Qt::AlignCenter,
