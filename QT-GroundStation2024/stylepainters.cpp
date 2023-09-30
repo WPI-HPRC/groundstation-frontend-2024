@@ -284,12 +284,12 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 //    quat.getEulerAngles(&pitch, &yaw, &roll);
 
     // Clamp to values
-    pitch = fminf(w->m_degreeOffsetPitch + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetPitch - w->m_maxDegreeRange, pitch));
-    yaw = fminf(w->m_degreeOffsetYaw + w->m_maxDegreeRange, fmaxf(w->m_degreeOffsetYaw - w->m_maxDegreeRange, yaw));
+    pitch = fminf(m_AttitudeDegreeOffsetPitch + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetPitch - m_AttitudeMaxDegreeRange, pitch));
+    yaw = fminf(m_AttitudeDegreeOffsetYaw + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetYaw - m_AttitudeMaxDegreeRange, yaw));
 
     // Normalize between -1 -> +1
-    float pitchNormalized = (pitch - w->m_degreeOffsetPitch)/w->m_maxDegreeRange;
-    float yawNormalized = (yaw - w->m_degreeOffsetYaw)/w->m_maxDegreeRange;
+    float pitchNormalized = (pitch - m_AttitudeDegreeOffsetPitch)/m_AttitudeMaxDegreeRange;
+    float yawNormalized = (yaw - m_AttitudeDegreeOffsetYaw)/m_AttitudeMaxDegreeRange;
 
     float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
     float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
@@ -303,7 +303,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     float circleLocation;
 
-    std::vector<float> vec = w->circleLocationsDegrees[m_latest->state];
+    std::vector<float> vec = m_AttitudeCircleLocationsDegrees[m_latest->state];
 
     bool rocketIsWithinGraph = pitch * pitch + yaw * yaw < vec.back() * vec.back();
 
@@ -318,7 +318,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
     for(float circleLocationDegrees: vec) {
 
-        circleLocation = circleLocationDegrees / (w->m_maxDegreeRange);
+        circleLocation = circleLocationDegrees / (m_AttitudeMaxDegreeRange);
 
         float dist = hypot(yaw, pitch) - circleLocationDegrees;
 
@@ -326,8 +326,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
 
         if(rocketIsWithinGraph){
             fgCol.setAlphaF(fminf(
-                powf(1 - fabsf(dist)/w->m_maxDegreeRange, 4),
-                powf((dist + circleLocationDegrees)/w->m_maxDegreeRange, 3)));
+                powf(1 - fabsf(dist)/m_AttitudeMaxDegreeRange, 4),
+                powf((dist + circleLocationDegrees)/m_AttitudeMaxDegreeRange, 3)));
         }
         else {
             fgCol.setAlphaF(1);

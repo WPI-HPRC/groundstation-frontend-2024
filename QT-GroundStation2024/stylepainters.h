@@ -78,6 +78,16 @@ public:
     std::map<HPRCAlarmType, bool> m_alarmMapA;
 
 
+    float m_AttitudeMaxDegreeRange = 15;
+    float m_AttitudeDegreeOffsetYaw = 0;
+    float m_AttitudeDegreeOffsetPitch = 0;
+
+    std::vector<std::vector<float>> m_AttitudeCircleLocationsDegrees {
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        }
+    };
+
 
 
 private:
