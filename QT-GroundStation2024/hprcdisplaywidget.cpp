@@ -117,8 +117,8 @@ hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            // TODO: change tick() to the the correct function for when the orientation quaternion changes.
-            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(orientationUpdated()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(gyroUpdated()), this, SLOT(repaint()));
         }
 }
 

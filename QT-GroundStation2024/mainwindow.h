@@ -73,6 +73,8 @@ signals:
     void stateUpdated(int);
     void rocketTimeUpdated(float);
     void groundTimeUpdated();
+    void orientationUpdated();
+    void gyroUpdated();
     void tick();
     void speedTick(int);
 
