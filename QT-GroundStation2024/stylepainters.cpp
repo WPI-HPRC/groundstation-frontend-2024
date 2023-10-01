@@ -238,7 +238,7 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     p->drawText(boundingBox.adjusted(0, -30, 0, -30), Qt::AlignCenter, dataString);
 }
 
-void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcAttitudeWidget *w)
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 {
     // -- Pen Setup --
 

@@ -49,7 +49,7 @@ public:
     // draw custom widgets
     void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
-    void drawHPRCAttitudeWidget(QPainter* p, const hprcAttitudeWidget *w);
+    void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);

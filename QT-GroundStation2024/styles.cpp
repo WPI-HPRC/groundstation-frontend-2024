@@ -56,7 +56,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 m_drawer->drawHPRCGauge(painter, w);
                 return;
             case hprcDisplayWidget::HPRC_Attitude:
-                m_drawer->drawHPRCAttitudeWidget(painter, dynamic_cast<const hprcAttitudeWidget*>(w));
+                m_drawer->drawHPRCAttitudeWidget(painter, w);
                 return;
             case hprcDisplayWidget::HPRC_Graph:
                 m_drawer->drawHPRCGraph(painter, w);
