@@ -141,7 +141,8 @@ hprcAirbrakes::hprcAirbrakes(QWidget* parent):
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(desiredAirbrakesUpdated(float)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(currentAirbrakesUpdated(float)), this, SLOT(repaint()));
         }
 
 
