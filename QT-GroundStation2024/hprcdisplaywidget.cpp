@@ -203,9 +203,12 @@ hprcViewer::hprcViewer(QWidget *parent) :
     // Store the rocket material
     m_rocketMaterial = rocketMaterial;
 
-    QWidget::createWindowContainer(view, this);
+    QWidget *container = QWidget::createWindowContainer(view, this);
 
-    // TODO: Remove margin between the outer and inner widget
+    container->setContentsMargins(0, 0, 0, 0);
+
+    // Resize the 3D viewer to match the container widget
+    m_view->resize(this->size());
 
     // Connect each instance of the widget to the orientation update signal
     foreach (QWidget *w, qApp->topLevelWidgets())
@@ -221,6 +224,9 @@ void hprcViewer::orientRocket(QQuaternion orientation) const {
 }
 
 void hprcViewer::updateColors(QColor panel, QColor highlight) const {
+    // Adjust the rocket color
     m_rocketMaterial->setDiffuse(highlight);
+
+    // Adjust the background color
     m_view->defaultFrameGraph()->setClearColor(panel);
 }

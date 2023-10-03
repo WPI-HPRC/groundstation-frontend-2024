@@ -77,7 +77,7 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 
 
 void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
-{
+{    
     if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
         const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
         if (viewer) {
