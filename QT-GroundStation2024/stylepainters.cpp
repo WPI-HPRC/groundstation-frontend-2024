@@ -349,7 +349,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         if(valY < max)
             max = valY;
         valX = (g.time - start) / (range) * (rect.width()) + rect.left();
-        valY = -((g.value - scaleMin) / scale) * (rect.height() * MAX_GRAPH_SCALE) + rect.bottom();
+        valY = -((g.value - fabs(scaleMin)) / scale) * (rect.height()/2 * MAX_GRAPH_SCALE) + rect.center().y();
 
         if(valX > w->m_mousePos.x() - (rect.width() / data.size())/2 &&
             valX < w->m_mousePos.x() + (rect.width() / data.size())/2)
@@ -372,8 +372,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     //    p->setPen(QPen(m_transparentBrush, 3));
     p->setPen(QPen(bg, 3));
     gradient.setFinalStop(rect.topLeft());
-    pointsToDraw.append(rect.bottomRight());
-    pointsToDraw.append(rect.bottomLeft());
+    pointsToDraw.append(QPoint(rect.right(), rect.center().y()));
+    pointsToDraw.append(QPoint(rect.left(), rect.center().y()));
     p->setBrush(QBrush(gradient));
 
 //    p->setBrush(m_transparentBrush);
