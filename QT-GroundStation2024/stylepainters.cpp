@@ -529,6 +529,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
 //    p->setPen(QPen(m_transparentBrush, 3));
     p->setPen(QPen(bg, 3));
+
+    p->drawLine(rect.bottomLeft(), rect.bottomRight());
+
     QList<QPointF> pointsToDraw;
     double max = 9999;
     double scaleMax = 1;
@@ -602,13 +605,13 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     {
     case GRAPH_Altitude:
 
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "ALT (m)");
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ALT (m)");
         break;
     case GRAPH_Velocity:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "VEL (m/s)");
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "VEL (m/s)");
         break;
     case GRAPH_Acceleration:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignBottom, "ACCEL (m/s²)");
+        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ACCEL (m/s²)");
         break;
     default:
         break;
