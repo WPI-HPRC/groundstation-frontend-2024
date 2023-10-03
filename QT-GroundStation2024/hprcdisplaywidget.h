@@ -17,6 +17,7 @@ public:
     {
         HPRC_Timeline,
         HPRC_Gauge,
+        HPRC_Attitude,
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
@@ -113,6 +114,15 @@ public:
 
     explicit hprcAccelerationGauge(QWidget *parent = nullptr);
 
+};
+
+class hprcAttitudeWidget: public hprcDisplayWidget
+{
+
+public:
+
+    explicit hprcAttitudeWidget(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
 };
 
 class hprcGraph : public hprcDisplayWidget

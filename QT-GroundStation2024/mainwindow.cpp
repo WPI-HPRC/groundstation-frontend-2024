@@ -84,6 +84,18 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.groundTime = p.groundTime;
         emit groundTimeUpdated();
     }
+    if(p.orientation != m_currentData.orientation)
+    {
+        m_currentData.orientation = p.orientation;
+        emit orientationUpdated();
+    }
+    if(p.gyroX != m_currentData.gyroX || p.gyroY != m_currentData.gyroY || p.gyroZ != m_currentData.gyroZ)
+    {
+        m_currentData.gyroX = p.gyroX;
+        m_currentData.gyroY = p.gyroY;
+        m_currentData.gyroZ = p.gyroZ;
+        emit gyroUpdated();
+    }
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
 
