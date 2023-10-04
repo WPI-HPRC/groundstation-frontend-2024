@@ -337,6 +337,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 ////        }
     }
 
+    scaleMax = 1000;
+    scaleMin = -5000;
+
     double scale = fmax(1.0, scaleMax - scaleMin);
 
     QRectF ptHighlight(-100,0,0,0);
@@ -345,6 +348,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     bool drawMaxMarker = true;
 
+    double centerY = fabs(scaleMin/scale) * rect.height() * MAX_GRAPH_SCALE;
+
     for(MainWindow::graphPoint g : data)
     {
         double valX = 0;
@@ -352,13 +357,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         if(valY < max)
             max = valY;
         valX = (g.time - start) / (range) * (rect.width()) + rect.left();
-        valY = -((g.value - fabs(scaleMin)) / scale) * (rect.height()/2 * MAX_GRAPH_SCALE) + rect.center().y();
+        valY = rect.height() - ((g.value - fabs(scaleMin)) / scale) * ((rect.height() - centerY) * MAX_GRAPH_SCALE) - centerY;
 
         if(valX > w->m_mousePos.x() - (rect.width() / data.size())/2 &&
             valX < w->m_mousePos.x() + (rect.width() / data.size())/2)
         {
-            if(fabs(valX - rect.width()/2 - rect.x()) < data.size())
-                drawMaxMarker = false;
             ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
             ptLabel = QString::number(g.value);
             highlighted = QPointF(valX, valY);
@@ -375,8 +378,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     //    p->setPen(QPen(m_transparentBrush, 3));
     p->setPen(QPen(bg, 3));
     gradient.setFinalStop(rect.topLeft());
-    pointsToDraw.append(QPoint(rect.right(), rect.center().y()));
-    pointsToDraw.append(QPoint(rect.left(), rect.center().y()));
+    pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
+    pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
     p->setBrush(QBrush(gradient));
 
 //    p->setBrush(m_transparentBrush);
