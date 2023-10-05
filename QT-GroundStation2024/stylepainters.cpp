@@ -488,6 +488,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     double range = 5000;
     double start = m_latest->rocketTime - range;
+    if(m_latest->altData.size() > 0)
+        start= m_latest->altData.at(0).time;
 
     bool drawT = false;
     if(drawBox.contains(w->m_mousePos))
@@ -504,7 +506,12 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
+    p->setBrush(m_transparentBrush);
+    p->setPen(QPen(m_textBrush, 2));
+    p->drawRect(drawBox);
+
     p->setPen(QPen(m_textBrush, 5));
+
 
 
     if(m_latest->altData.size() > 0)
@@ -524,9 +531,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     gradient.setColorAt(1, m_transparentBrush.color());
     bg.setAlphaF(1);
 
-    p->setPen(QPen(bg, 3));
+    p->setPen(QPen(bg, 2));
 
-    p->drawLine(rect.bottomLeft(), rect.bottomRight());
+    p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
 
     QList<QPointF> pointsToDraw;
     double scaleMax = std::numeric_limits<double>::min();
@@ -560,7 +567,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     for(MainWindow::graphPoint g : data)
     {
-        double valX = (g.time - start) / (range) * (rect.width()) + rect.left();
+        double valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1);
 
         valYNormalized = g.value / scale;
         yMultiplier = (g.value > 0 ? rect.height() - centerY : centerY) * 0.85;
@@ -591,7 +598,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
     pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
 
-    p->setPen(QPen(bg, 3));
+    p->setPen(QPen(bg, 2));
     p->setBrush(QBrush(gradient));
 
     p->drawPolygon(QPolygonF(pointsToDraw));
