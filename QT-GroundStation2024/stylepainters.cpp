@@ -489,7 +489,10 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     double range = 5000;
     double start = m_latest->rocketTime - range;
     if(m_latest->altData.size() > 0)
-        start= m_latest->altData.at(0).time;
+    {
+        range = m_latest->altData.last().time - m_latest->altData.at(0).time;
+        start = m_latest->altData.at(0).time;
+    }
 
     bool drawT = false;
     if(drawBox.contains(w->m_mousePos))
@@ -507,8 +510,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
     p->setBrush(m_transparentBrush);
-    p->setPen(QPen(m_textBrush, 2));
-    p->drawRect(drawBox);
+    p->setPen(QPen(m_panelBrush, 4));
+    p->drawRect(drawBox.adjusted(1, 0, 0, 4));
 
     p->setPen(QPen(m_textBrush, 5));
 
@@ -578,7 +581,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         {
             closestDist = fabs(valX - w->m_mousePos.x());
             ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
-            ptLabel = QString::number(g.value);
+            ptLabel = QString::number((int)g.value);
             highlighted = QPointF(valX, valY);
         } else {
 
@@ -640,7 +643,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
         p->drawRect(ptHighlight);
 
-        p->setOpacity(0.7);
+        p->setOpacity(0.3);
         p->setPen(QPen(lightHighlighterBrush, 2));
         p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
 
@@ -693,6 +696,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
                     rect.right(),
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
     }
+    p->setOpacity(1);
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
