@@ -308,37 +308,26 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
 
     QPointF bottomPt = rect.bottomLeft();
-//    bottomPt.setY(rect.bottom() + rect.height()/3);
     QLinearGradient gradient(bottomPt, rect.topLeft());
-//    gradient.setColorAt(0, m_transparentBrush.color());
-//    gradient.setColorAt(1, bg);
-//    bg = bg.lighter();
+
     bg.setAlphaF(0.3);
     gradient.setColorAt(0, bg);
     gradient.setColorAt(1, m_transparentBrush.color());
     bg.setAlphaF(1);
 
-//    p->setPen(QPen(m_transparentBrush, 3));
     p->setPen(QPen(bg, 3));
 
     p->drawLine(rect.bottomLeft(), rect.bottomRight());
 
     QList<QPointF> pointsToDraw;
-    double max = 9999;
-    double scaleMax = 1;
-    double scaleMin = 999999;
+    double scaleMax = std::numeric_limits<double>::min();
+    double scaleMin = std::numeric_limits<double>::max();
+
     for(int i = 0; i < data.size(); i++)
     {
-///       if(!(data.at(i).time < (start - range)))
-///
             scaleMax = fmaxf(data.at(i).value, scaleMax);
             scaleMin = fminf(data.at(i).value, scaleMin);
-
-////        }
     }
-
-    scaleMax = 1000;
-    scaleMin = -5000;
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
@@ -348,16 +337,28 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     bool drawMaxMarker = true;
 
-    double centerY = fabs(scaleMin/scale) * rect.height() * MAX_GRAPH_SCALE;
+    double centerY = 0;
+
+    if(scaleMin < 0)
+        centerY = fabs(scaleMin/scale) * rect.height();
+    else
+        scale = scaleMax;
+
+//    std::cout << "Rect height: " << rect.height() << std::endl;
+
+    double valYNormalized = 0;
+    double yMultiplier = 0;
 
     for(MainWindow::graphPoint g : data)
     {
-        double valX = 0;
-        double valY = 0;
-        if(valY < max)
-            max = valY;
-        valX = (g.time - start) / (range) * (rect.width()) + rect.left();
-        valY = rect.height() - ((g.value - fabs(scaleMin)) / scale) * ((rect.height() - centerY) * MAX_GRAPH_SCALE) - centerY;
+        double valX = (g.time - start) / (range) * (rect.width()) + rect.left();
+
+        valYNormalized = g.value / scale;
+        yMultiplier = (g.value > 0 ? rect.height() - centerY : centerY) * 0.85;
+
+//        std::cout << "Normalized = " << valYNormalized << ", multiplier = " << multiplier << std::endl;
+
+        double valY = rect.top() + rect.height() - valYNormalized * yMultiplier - centerY;
 
         if(valX > w->m_mousePos.x() - (rect.width() / data.size())/2 &&
             valX < w->m_mousePos.x() + (rect.width() / data.size())/2)
@@ -370,26 +371,27 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         }
 
         pointsToDraw.append(QPointF(valX, valY));
-
     }
 
     bg.setAlphaF(0.4);
 
-    //    p->setPen(QPen(m_transparentBrush, 3));
-    p->setPen(QPen(bg, 3));
+
     gradient.setFinalStop(rect.topLeft());
+
+    // Middle line
     pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
     pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
+
+    p->setPen(QPen(bg, 3));
     p->setBrush(QBrush(gradient));
 
-//    p->setBrush(m_transparentBrush);
     p->drawPolygon(QPolygonF(pointsToDraw));
 
     m_widgetFancy.setPointSize(rect.height() * 2/3);
     m_widgetFancy.setWeight(QFont::Black);
     p->setFont(m_widgetFancy);
 
-    bg.setAlphaF(1);
+    bg.setAlphaF(0.7);
     p->setPen(QPen(bg, 20));
 
     if(data.length() == 0)
@@ -418,22 +420,32 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
                     Qt::AlignRight | Qt::AlignVCenter,
                     QString::asprintf("%d", (int)(data.last().value)));
 
-        p->setPen(QPen(m_textBrush, 2));
+        p->setPen(QPen(m_textBrush, 1));
         p->setOpacity(0.8);
-        m_widgetMedium.setPointSize(rect.height()/5);
+        m_widgetMedium.setPointSize(rect.height()/8);
         p->setFont(m_widgetMedium);
-
 
         p->drawText(QRect(rect.left(),
                           rect.top()+1,
-                          rect.width(),
-                          rect.height()*(1-MAX_GRAPH_SCALE)*2),
-                    Qt::AlignCenter,
-                    QString::asprintf("%d", (int)scale));
+                          rect.width() - 7,
+                          rect.height()*(1-MAX_GRAPH_SCALE)),
+                    Qt::AlignVCenter | Qt::AlignRight,
+                    QString::asprintf("%d", (int)scaleMax));
         p->drawLine(rect.right() - 5,
-                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE),
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
-                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE));
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2);
+
+        p->drawText(QRect(rect.left(),
+                          rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
+                          rect.width() - 7,
+                          rect.height()*(1-MAX_GRAPH_SCALE)),
+                    Qt::AlignVCenter | Qt::AlignRight,
+                    QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
+        p->drawLine(rect.right() - 5,
+                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                    rect.right(),
+                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
     }
 
     p->setOpacity(0.8);
