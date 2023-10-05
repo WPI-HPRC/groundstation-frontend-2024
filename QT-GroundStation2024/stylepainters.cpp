@@ -521,7 +521,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
 
-    QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
+    QBrush lightHighlighterBrush(QColor(255, 255, 255, 255));
 
     QPointF bottomPt = rect.bottomLeft();
     QLinearGradient gradient(bottomPt, rect.topLeft());
@@ -560,10 +560,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     else
         scale = scaleMax;
 
-//    std::cout << "Rect height: " << rect.height() << std::endl;
-
     double valYNormalized = 0;
     double yMultiplier = 0;
+
+    double closestDist = 1000;
 
     for(MainWindow::graphPoint g : data)
     {
@@ -572,13 +572,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         valYNormalized = g.value / scale;
         yMultiplier = (g.value > 0 ? rect.height() - centerY : centerY) * 0.85;
 
-//        std::cout << "Normalized = " << valYNormalized << ", multiplier = " << multiplier << std::endl;
-
         double valY = rect.top() + rect.height() - valYNormalized * yMultiplier - centerY;
 
-        if(valX > w->m_mousePos.x() - (rect.width() / data.size())/2 &&
-            valX < w->m_mousePos.x() + (rect.width() / data.size())/2)
+        if(fabs(valX - w->m_mousePos.x()) < closestDist)
         {
+            closestDist = fabs(valX - w->m_mousePos.x());
             ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
             ptLabel = QString::number(g.value);
             highlighted = QPointF(valX, valY);
@@ -630,8 +628,40 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     }
 
 
-    if(!drawTooltip)
+
+    if(drawTooltip)
     {
+        p->setOpacity(0.1);
+
+
+
+        p->setPen(QPen(m_transparentBrush, 0));
+        p->setBrush(lightHighlighterBrush);
+
+        p->drawRect(ptHighlight);
+
+        p->setOpacity(0.7);
+        p->setPen(QPen(lightHighlighterBrush, 2));
+        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
+
+        bg.setAlphaF(1);
+
+        p->setBrush(bg);
+        p->setPen(bg);
+
+        p->setOpacity(1);
+        p->drawEllipse(highlighted, 5, 5);
+
+        p->setOpacity(1);
+        p->setPen(QPen(m_textBrush, 3));
+        p->setFont(m_widgetMedium);
+//        p->drawText(QRect(ptHighlight.x(), highlighted.y() - 300, ptHighlight.width(), 600), Qt::AlignVCenter, ptLabel);
+        p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
+        p->setPen(QPen(m_highlightBrush, 3));
+    }
+    else
+    {
+        p->setOpacity(1);
         p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
                     Qt::AlignRight | Qt::AlignVCenter,
                     QString::asprintf("%d", (int)(data.last().value)));
@@ -662,26 +692,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
-    }
-
-    p->setOpacity(0.8);
-
-
-    p->setPen(QPen(m_highlightBrush, 3));
-    p->setBrush(lightHighlighterBrush);
-
-    if(drawTooltip)
-    {
-        p->drawRect(ptHighlight);
-        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
-
-        p->setBrush(m_highlightBrush);
-        p->drawEllipse(highlighted, 5, 5);
-
-        p->setPen(QPen(m_textBrush, 3));
-        p->setFont(m_widgetMedium);
-        p->drawText(ptHighlight, ptLabel);
-        p->setPen(QPen(m_highlightBrush, 3));
     }
 }
 
