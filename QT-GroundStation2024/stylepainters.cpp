@@ -310,7 +310,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QPointF bottomPt = rect.bottomLeft();
     QLinearGradient gradient(bottomPt, rect.topLeft());
 
-    bg.setAlphaF(0.3);
+    bg.setAlphaF(0.5);
     gradient.setColorAt(0, bg);
     gradient.setColorAt(1, m_transparentBrush.color());
     bg.setAlphaF(1);
