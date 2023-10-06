@@ -544,8 +544,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     for(int i = 0; i < data.size(); i++)
     {
-            scaleMax = fmaxf(data.at(i).value, scaleMax);
-            scaleMin = fminf(data.at(i).value, scaleMin);
+        scaleMax = fmaxf(data.at(i).value, scaleMax);
+        scaleMin = fminf(data.at(i).value, scaleMin);
     }
 
     double scale = fmax(1.0, scaleMax - scaleMin);
@@ -577,12 +577,12 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
         double valY = rect.top() + rect.height() - valYNormalized * yMultiplier - centerY;
 
-        if(fabs(valX - w->m_mousePos.x()) < closestDist)
+        if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
+            ptHighlight = QRectF(valX - 25, roundf(rect.top()), 50, roundf(rect.height()));
             ptLabel = QString::number((int)g.value);
-            highlighted = QPointF(valX, valY);
+            highlighted = QPointF(roundf(valX), roundf(valY));
         } else {
 
         }
@@ -636,12 +636,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     {
         p->setOpacity(0.1);
 
-
-
         p->setPen(QPen(m_transparentBrush, 0));
         p->setBrush(lightHighlighterBrush);
 
-        p->drawRect(ptHighlight);
+        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
 
         p->setOpacity(0.3);
         p->setPen(QPen(lightHighlighterBrush, 2));
