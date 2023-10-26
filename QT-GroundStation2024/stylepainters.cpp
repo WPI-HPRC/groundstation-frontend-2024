@@ -10,6 +10,7 @@
 #include <QDateTime>
 
 #define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -296,17 +297,15 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
+//    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
+//    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
     p->setBrush(m_transparentBrush);
     p->setPen(QPen(m_panelBrush, 4));
-    p->drawRect(drawBox.adjusted(1, 0, 0, 4));
+//    p->drawRect(drawBox.adjusted(1, 0, 0, 4));
 
     p->setPen(QPen(m_textBrush, 5));
-
-
 
     if(m_latest->altData.size() > 0)
         p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
@@ -350,7 +349,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     double centerY = 0;
 
     if(scaleMin < 0)
+    {
         centerY = fabs(scaleMin/scale) * rect.height();
+        scaleMin = 0;
+    }
     else
         scale = scaleMax;
 
@@ -422,7 +424,17 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     }
 
 
+    double y = 0;
+    p->setPen(QPen(m_textBrush, 1));
+    for (int i = 0; i < scale/2; i += GRAPH_TICK_DISTANCE)
+    {
+        y = i/scale * rect.height() * MAX_GRAPH_SCALE * 0.8;
+        p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
+        p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+    }
 
+
+    p->setPen(QPen(bg, 1));
     if(drawTooltip)
     {
         p->setOpacity(0.1);
