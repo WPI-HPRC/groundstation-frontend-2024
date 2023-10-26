@@ -41,12 +41,12 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_Pitch, true));
 
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MasterWarn, true));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_PowerLoss, false));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_LowPower, false));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_PowerLoss, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_LowPower, true));
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_SignalLoss, true));
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_EarlyChute, true));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_Ballistic, false));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, false));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_Ballistic, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, true));
 
 
     // get a pointer to the current data's location
@@ -493,20 +493,226 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     case ALARM_MasterAbort:
     {
 
+        QRect Rectangle(iconX+iconSize/6, iconY+iconSize/6, iconSize*4/6, iconSize*4/6);
+
+        QLine X1(iconX+iconSize/6, iconY+iconSize/6, iconX+iconSize*5/6, iconY+iconSize*5/6);
+        QLine X2(iconX+iconSize*5/6, iconY+iconSize/6, iconX+iconSize*1/6, iconY+iconSize*5/6);
+
+        p->drawRect(Rectangle);
+
+        p->drawLine(X1);
+        p->drawLine(X2);
+
         return;
     }
     case ALARM_Pitch:
+    {
+
+        QLine exclamation(iconX + iconSize/2, iconY+iconSize/2, iconX+iconSize/2, iconY+iconSize/4);
+        QLine point(iconX + iconSize/2, iconY+iconSize*4.4/6, iconX+iconSize/2, iconY+iconSize*4.5/6);
+
+        QRect leftArc(iconX+iconSize/6, iconY+iconSize/5, iconSize*2/6, iconSize*4/6);
+        QLine leftArrHoriz(iconX+iconSize/6, iconY+iconSize/5, iconX+iconSize/3, iconY+iconSize/5);
+        QLine leftArrDown(iconX+iconSize/3, iconY+iconSize/3, iconX+iconSize/3, iconY+iconSize/5);
+
+
+        QRect rightArc(iconX+iconSize*3/6, iconY+iconSize/5, iconSize*2/6, iconSize*4/6);
+        QLine rightArrHoriz(iconX+iconSize*5/6, iconY+iconSize*5/6, iconX+iconSize*2/3, iconY+iconSize*5/6);
+        QLine rightArrUp(iconX+iconSize*4/6, iconY+iconSize*4/6, iconX+iconSize*2/3, iconY+iconSize*5/6);
+
+
+        int startAngle = 90;
+        int spanAngle = 180;
+
+        p->drawLine(exclamation);
+        p->drawLine(point);
+
+        p->drawArc(leftArc, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawLine(leftArrHoriz);
+        p->drawLine(leftArrDown);
+
+        p->drawArc(rightArc, ((-1*startAngle)+10)*16, (spanAngle-20)*16);
+        p->drawLine(rightArrHoriz);
+        p->drawLine(rightArrUp);
+
+
+        return;
+    }
     case ALARM_MasterWarn:
+    {
+
+        QLine triL(iconX+iconSize/2, iconY+iconSize/6, iconX+iconSize*1/6, iconY+iconSize*5/6);
+        QLine triR(iconX+iconSize/2, iconY+iconSize/6, iconX+iconSize*5/6, iconY+iconSize*5/6);
+        QLine triBot(iconX+iconSize*1/6, iconY+iconSize*5/6, iconX+iconSize*5/6, iconY+iconSize*5/6);
+
+        QLine exclamation(iconX + iconSize/2, iconY+iconSize/2.1, iconX+iconSize/2, iconY+iconSize*3/5);
+        QLine point(iconX + iconSize/2, iconY+iconSize*4.4/6, iconX+iconSize/2, iconY+iconSize*4.5/6);
+
+
+        p->drawLine(triL);
+        p->drawLine(triR);
+        p->drawLine(triBot);
+
+        p->drawLine(exclamation);
+        p->drawLine(point);
+
+        return;
+    }
     case ALARM_LowPower:
+    {
+
+        QRect Rectangle(iconX+iconSize/6, iconY+iconSize/3, iconSize/1.75, iconSize/2.5);
+        QRect Fluid(iconX+1+iconSize/6, iconY+iconSize/3, iconSize/10, iconSize/2.5);
+        QRect point(iconX+iconSize/1.3, iconY+iconSize/2.05, iconSize/10, iconSize/10);
+
+        p->drawRect(Rectangle);
+        p->drawRect(Fluid);
+        p->drawRect(point);
+
+        return;
+    }
     case ALARM_SignalLoss:
+    {
+        QRect topArc(iconX+iconSize/6, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
+        QRect midArc(iconX+iconSize/3.35, iconY+iconSize/2.4, iconSize*2.6/6, iconSize*2.25/6);
+        QRect dot(iconX+iconSize/2.2, iconY+iconSize*1.9/3, iconSize/7.5, iconSize/7.5);
+
+        int startAngle = 0;
+        int spanAngle = 180;
+
+        p->drawArc(topArc, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawArc(midArc, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawRect(dot);
+
+        return;
+    }
     case ALARM_PowerLoss:
+    {
+
+        QLine top(iconX + iconSize / 2.5, iconY + iconSize/5, iconX + 3 * iconSize / 4, iconY + iconSize / 5);
+        QLine topRight(iconX + iconSize / 1.6, iconY + iconSize/2.5, iconX + 3 * iconSize / 4, iconY + iconSize / 5);
+        QLine midRight(iconX + iconSize / 1.6, iconY + iconSize/2.5, iconX + 5 * iconSize / 6, iconY + iconSize / 2.5);
+        QLine botRight(iconX + iconSize / 2.4, iconY + iconSize*9/10, iconX + 5 * iconSize / 6, iconY + iconSize / 2.5);
+
+        QLine topLeft(iconX + iconSize / 2.5, iconY + iconSize/5, iconX + 1 * iconSize / 4, iconY + iconSize / 1.75);
+        QLine midLeft(iconX + iconSize / 2, iconY + iconSize/1.75, iconX + 1 * iconSize / 4, iconY + iconSize / 1.75);
+        QLine botLeft(iconX + iconSize / 2, iconY + iconSize/1.75, iconX + 1 * iconSize / 2.4, iconY + 9*iconSize / 10);
+
+        QLine cross(iconX, iconY, iconX + iconSize, iconY + iconSize);
+
+
+        p->drawLine(top);
+        p->drawLine(topRight);
+        p->drawLine(midRight);
+        p->drawLine(botRight);
+
+        p->drawLine(topLeft);
+        p->drawLine(midLeft);
+        p->drawLine(botLeft);
+
+        p->drawLine(cross);
+
+        return;
+    }
     case ALARM_MainDeployFail:
+    {
+
+        QRect topPara(iconX+iconSize/6, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
+
+        //QLine botPara()
+
+        int startAngle = 0;
+        int spanAngle = 180;
+
+        p->drawArc(topPara, (startAngle+10)*16, (spanAngle-20)*16);
+
+        return;
+    }
     case ALARM_DrogueDeployFail:
+    {
+
+        return;
+    }
     case ALARM_PayloadDeployFail:
+    {
+
+        return;
+    }
     case ALARM_Ballistic:
+    {
+
+        QRect body(iconX+iconSize/2, iconY+iconSize/3, iconSize*2.5/6, iconSize*2/6);
+
+        QLine triL(iconX+iconSize/2, iconY+iconSize/3, iconX+iconSize/2, iconY+iconSize*2/3);
+        QLine triTop(iconX+iconSize/4, iconY+iconSize/2, iconX+iconSize/2, iconY+iconSize/3);
+        QLine triBot(iconX+iconSize/4, iconY+iconSize/2, iconX+iconSize/2, iconY+iconSize*2/3);
+
+        QLine tailTop(iconX+iconSize*2/3, iconY+iconSize/3, iconX+iconSize*11/12, iconY+iconSize/5);
+        QLine tailBot(iconX+iconSize*2/3, iconY+iconSize*2/3, iconX+iconSize*11/12, iconY+iconSize*4/5);
+        QLine tailR(iconX+iconSize*11/12, iconY+iconSize/5, iconX+iconSize*11/12, iconY+iconSize*4/5);
+
+        QRect trajectory(iconX+iconSize/8, iconY+iconSize/2, iconSize*2/6, iconSize*5/6);
+
+        QLine arrLeft(iconX+iconSize/8, iconY+iconSize*5/6, iconX+iconSize/12, iconY+iconSize*2.2/3);
+        QLine arrRight(iconX+iconSize/8, iconY+iconSize*5/6, iconX+iconSize/4, iconY+iconSize*2.2/3);
+
+        int startAngle = 90;
+        int spanAngle = 90;
+
+        p->drawRect(body);
+
+        p->drawLine(triL);
+        p->drawLine(triTop);
+        p->drawLine(triBot);
+
+        p->drawLine(tailTop);
+        p->drawLine(tailBot);
+        p->drawLine(tailR);
+
+        p->drawArc(trajectory, (startAngle+10)*16, (spanAngle-20)*16);
+
+        p->drawLine(arrLeft);
+        p->drawLine(arrRight);
+
+        return;
+    }
     case ALARM_LowTrack:
+    {
+
+        QLine botLine(iconX + iconSize * 1 / 6, iconY + iconSize*5/6, iconX + iconSize * 5 / 6, iconY + iconSize * 5/ 6);
+        QLine vertLine(iconX + iconSize / 2, iconY + iconSize/6, iconX + iconSize / 2, iconY + iconSize *5 / 6);
+
+        QLine left(iconX + iconSize / 2, iconY + iconSize*5/6, iconX + iconSize * 1/ 6, iconY + iconSize / 2);
+        QLine right(iconX + iconSize / 2, iconY + iconSize*5/6, iconX + iconSize * 5/ 6, iconY + iconSize / 2);
+
+        p->drawLine(botLine);
+        p->drawLine(vertLine);
+
+        p->drawLine(left);
+        p->drawLine(right);
+
+        return;
+    }
     case ALARM_HighTrack:
+    {
+        QLine topLine(iconX + iconSize * 1 / 6, iconY + iconSize*1/6, iconX + iconSize * 5 / 6, iconY + iconSize * 1/ 6);
+        QLine vertLine(iconX + iconSize / 2, iconY + iconSize/6, iconX + iconSize / 2, iconY + iconSize *5 / 6);
+
+        QLine left(iconX + iconSize / 2, iconY + iconSize*1/6, iconX + iconSize * 1/ 6, iconY + iconSize / 2);
+        QLine right(iconX + iconSize / 2, iconY + iconSize*1/6, iconX + iconSize * 5/ 6, iconY + iconSize / 2);
+
+        p->drawLine(topLine);
+        p->drawLine(vertLine);
+
+        p->drawLine(left);
+        p->drawLine(right);
+        return;
+    }
     case ALARM_EarlyChute:
+    {
+
+        return;
+    }
     case ALARM_Unknown:
         break;
     }
