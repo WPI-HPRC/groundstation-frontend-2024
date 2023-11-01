@@ -11,6 +11,8 @@
 
 #define MAX_GRAPH_SCALE 0.85
 #define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -297,8 +299,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
-//    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
-//    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
     drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
     p->setBrush(m_transparentBrush);
@@ -426,13 +428,20 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     double y = 0;
     p->setPen(QPen(m_textBrush, 1));
-    for (int i = 0; i < scale/2; i += GRAPH_TICK_DISTANCE)
+    p->setOpacity(0.5);
+
+    std::cout << scale << std::endl;
+    float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
+    std::cout << gScale << std::endl;
+
+    for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
     {
-        y = i/scale * rect.height() * MAX_GRAPH_SCALE * 0.8;
+        y = i/gScale * rect.height() * MAX_GRAPH_SCALE * 1;
         p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
         p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
     }
 
+    p->setOpacity(1);
 
     p->setPen(QPen(bg, 1));
     if(drawTooltip)
