@@ -455,8 +455,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
-
-
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
 
@@ -584,9 +582,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptHighlight = QRectF(valX - 25, roundf(rect.top()), 50, roundf(rect.height()));
+            ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top()), 50, roundf(rect.height()));
             ptLabel = QString::number((int)g.value);
-            highlighted = QPointF(roundf(valX), roundf(valY));
+            highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         } else {
 
         }
@@ -633,7 +631,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     default:
         break;
     }
-
 
     double y = 0;
     p->setPen(QPen(m_textBrush, 1));
