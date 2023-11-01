@@ -430,9 +430,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     p->setPen(QPen(m_textBrush, 1));
     p->setOpacity(0.5);
 
-    std::cout << scale << std::endl;
     float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
-    std::cout << gScale << std::endl;
 
     for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
     {
