@@ -73,6 +73,9 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_Viewer:
                 m_drawer->drawHPRCViewer(painter, w);
                 return;
+            case hprcAirbrakes::HPRC_AIRBRAKES:
+                m_drawer->drawHPRCAirbrakes(painter, w);
+                return;
             default:
                 return;
             }

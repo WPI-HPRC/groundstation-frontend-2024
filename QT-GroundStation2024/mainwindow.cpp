@@ -92,6 +92,14 @@ void MainWindow::updateData(dataPoint p)
     if(p.gyroX != m_currentData.gyroX || p.gyroY != m_currentData.gyroY || p.gyroZ != m_currentData.gyroZ)
     {
         m_currentData.gyroX = p.gyroX;
+    if(p.currentAirbrakes != m_currentData.currentAirbrakes) {
+        m_currentData.currentAirbrakes = p.currentAirbrakes;
+        emit currentAirbrakesUpdated(p.currentAirbrakes);
+    }
+    if(p.desiredAirbrakes != m_currentData.desiredAirbrakes) {
+        m_currentData.desiredAirbrakes = p.desiredAirbrakes;
+        emit desiredAirbrakesUpdated(p.desiredAirbrakes);
+    }
         m_currentData.gyroY = p.gyroY;
         m_currentData.gyroZ = p.gyroZ;
         emit gyroUpdated();

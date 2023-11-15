@@ -37,6 +37,8 @@ public:
         float rocketTime = 0;
         float rocketTimeSinceLaunch = 0;
         int groundTime = 0;
+        float desiredAirbrakes = 0;
+        float currentAirbrakes = 0;
         QList<graphPoint> accData;
         QList<graphPoint> velData;
         QList<graphPoint> altData;
@@ -75,6 +77,8 @@ signals:
     void groundTimeUpdated();
     void orientationUpdated();
     void gyroUpdated();
+    void currentAirbrakesUpdated(float);
+    void desiredAirbrakesUpdated(float);
     void tick();
     void speedTick(int);
 
