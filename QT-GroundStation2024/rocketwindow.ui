@@ -47,6 +47,11 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -58,7 +63,13 @@
   <customwidget>
    <class>hprcRocketVisualizer</class>
    <extends>QWidget</extends>
-   <header>hprcDisplayWidget.h</header>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

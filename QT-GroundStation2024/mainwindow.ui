@@ -93,9 +93,6 @@
               </widget>
              </item>
              <item>
-              <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
-             </item>
-             <item>
               <widget class="hprcVelocityGauge" name="gauge2" native="true">
                <layout class="QFormLayout" name="formLayout_2"/>
               </widget>
@@ -177,12 +174,6 @@
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
-   <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>hprcAttitudeWidget</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
