@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>models/Starship.stl</file>
+        <file>models/HPRC_rocket.stl</file>
+    </qresource>
+</RCC>

@@ -55,6 +55,7 @@ public:
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
 
 
     QBrush m_backgroundBrush;
@@ -89,6 +90,7 @@ public:
     };
 
 
+private:
 
 private:
 

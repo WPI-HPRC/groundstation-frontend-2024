@@ -69,6 +69,10 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 return;
             case hprcDisplayWidget::HPRC_RocketVisual:
                 m_drawer->drawHPRCRocketVis(painter, w);
+                return;
+            case hprcDisplayWidget::HPRC_Viewer:
+                m_drawer->drawHPRCViewer(painter, w);
+                return;
             default:
                 return;
             }
