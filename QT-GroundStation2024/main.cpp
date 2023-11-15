@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyle(new HPRCLightStyle(nullptr));
+    a.setStyle(new HPRCDarkStyle(nullptr));
     MainWindow w;
     RocketWindow r;
     a.setStyle(new HPRCDarkStyle(w.getCurrentData()));

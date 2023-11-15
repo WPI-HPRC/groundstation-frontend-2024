@@ -180,6 +180,7 @@ hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_RocketVisual;
+}
 
 Qt3DCore::QEntity *createRocketScene();
 

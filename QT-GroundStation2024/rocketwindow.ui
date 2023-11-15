@@ -49,6 +49,12 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
+          <widget class="hprcAirbrakes" name="airbrakes" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcViewer" name="viewer" native="true"/>
+         </item>
+         <item>
           <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
          </item>
         </layout>
@@ -68,6 +74,18 @@
   </customwidget>
   <customwidget>
    <class>hprcAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcViewer</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcAirbrakes</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
