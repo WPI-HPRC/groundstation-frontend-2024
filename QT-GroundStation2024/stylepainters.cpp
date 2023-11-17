@@ -47,6 +47,12 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_EarlyChute, true));
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_Ballistic, true));
     m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_PayloadDeployFail, true));
+    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_DrogueDeployFail, true));
+
+    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_HighTrack, true));
+    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_LowTrack, true));
+
 
 
     // get a pointer to the current data's location
@@ -509,7 +515,7 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     {
 
         QLine exclamation(iconX + iconSize/2, iconY+iconSize/2, iconX+iconSize/2, iconY+iconSize/4);
-        QLine point(iconX + iconSize/2, iconY+iconSize*4.4/6, iconX+iconSize/2, iconY+iconSize*4.5/6);
+        QLine point(iconX + iconSize/2, iconY+iconSize*4/6, iconX+iconSize/2, iconY+iconSize*4.2/6);
 
         QRect leftArc(iconX+iconSize/6, iconY+iconSize/5, iconSize*2/6, iconSize*4/6);
         QLine leftArrHoriz(iconX+iconSize/6, iconY+iconSize/5, iconX+iconSize/3, iconY+iconSize/5);
@@ -546,7 +552,7 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
         QLine triBot(iconX+iconSize*1/6, iconY+iconSize*5/6, iconX+iconSize*5/6, iconY+iconSize*5/6);
 
         QLine exclamation(iconX + iconSize/2, iconY+iconSize/2.1, iconX+iconSize/2, iconY+iconSize*3/5);
-        QLine point(iconX + iconSize/2, iconY+iconSize*4.4/6, iconX+iconSize/2, iconY+iconSize*4.5/6);
+        QLine point(iconX + iconSize/2, iconY+iconSize*4/6, iconX+iconSize/2, iconY+iconSize*4.2/6);
 
 
         p->drawLine(triL);
@@ -573,7 +579,7 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     }
     case ALARM_SignalLoss:
     {
-        QRect topArc(iconX+iconSize/6, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
+        QRect topArc(iconX+iconSize/5.9, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
         QRect midArc(iconX+iconSize/3.35, iconY+iconSize/2.4, iconSize*2.6/6, iconSize*2.25/6);
         QRect dot(iconX+iconSize/2.2, iconY+iconSize*1.9/3, iconSize/7.5, iconSize/7.5);
 
@@ -618,23 +624,72 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     {
 
         QRect topPara(iconX+iconSize/6, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
+        QLine botPara(iconX + iconSize / 5, iconY + iconSize / 2.3, iconX + 4 * iconSize / 5, iconY + iconSize / 2.3);
+        QLine lineParaL(iconX + iconSize / 5, iconY + iconSize / 2.3, iconX +  iconSize / 2.9, iconY + iconSize / 1.8);
+        QLine lineParaR(iconX + iconSize *4 / 5, iconY + iconSize / 2.3, iconX + 2 * iconSize / 3, iconY + iconSize / 1.8);
 
-        //QLine botPara()
+        QRect box(iconX+iconSize/2.9, iconY+iconSize/1.8, iconSize/3, iconSize/3);
+
+        QLine cross(iconX, iconY, iconX + iconSize, iconY + iconSize);
 
         int startAngle = 0;
         int spanAngle = 180;
 
         p->drawArc(topPara, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawLine(botPara);
+        p->drawLine(lineParaL);
+        p->drawLine(lineParaR);
+
+        p->drawRect(box);
+
+        p->drawLine(cross);
 
         return;
     }
     case ALARM_DrogueDeployFail:
     {
+        QRect topPara(iconX+iconSize/4, iconY+iconSize/5, iconSize/2, iconSize*2/6);
+        QLine botPara(iconX + iconSize / 3.2, iconY + iconSize / 2.6, iconX + 2 * iconSize / 2.8, iconY + iconSize / 2.6);
+        QLine rope(iconX + iconSize / 2, iconY + iconSize / 2.4, iconX + iconSize / 2, iconY + iconSize / 2);
 
+        QRect box(iconX+iconSize*3/8, iconY+iconSize/1.8, iconSize/4, iconSize/4);
+
+        QLine cross(iconX, iconY, iconX + iconSize, iconY + iconSize);
+
+        int startAngle = 0;
+        int spanAngle = 180;
+
+        p->drawArc(topPara, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawLine(botPara);
+        p->drawLine(rope);
+
+        p->drawRect(box);
+
+        p->drawLine(cross);
+
+        return;
         return;
     }
     case ALARM_PayloadDeployFail:
     {
+        QRect box(iconX+iconSize/6, iconY+iconSize/6, iconSize*4/6, iconSize*4/6);
+
+        QRect P(iconX+iconSize/3, iconY+iconSize/3, iconSize/3, iconSize/4);
+        QLine topP(iconX + iconSize /3, iconY + iconSize /3, iconX + iconSize / 2, iconY + iconSize / 3);
+        QLine botP(iconX + iconSize /3, iconY + iconSize /1.8, iconX + iconSize / 2, iconY + iconSize / 1.8);
+
+        QLine left(iconX + iconSize /3, iconY + iconSize /3, iconX + iconSize / 3, iconY + iconSize *2/ 3);
+
+        p->drawRect(box);
+
+        int startAngle = -90;
+        int spanAngle = 180;
+
+        p->drawArc(P, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawLine(topP);
+        p->drawLine(botP);
+
+        p->drawLine(left);
 
         return;
     }
@@ -710,6 +765,28 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     }
     case ALARM_EarlyChute:
     {
+        QRect topPara(iconX+iconSize/6, iconY+iconSize/5, iconSize*4/6, iconSize*3.25/6);
+        QLine botPara(iconX + iconSize / 5, iconY + iconSize / 2.3, iconX + 4 * iconSize / 5, iconY + iconSize / 2.3);
+        QLine lineParaL(iconX + iconSize / 5, iconY + iconSize / 2.3, iconX +  iconSize / 2.9, iconY + iconSize / 1.8);
+        QLine lineParaR(iconX + iconSize *4 / 5, iconY + iconSize / 2.3, iconX + 2 * iconSize / 3, iconY + iconSize / 1.8);
+
+        QLine top(iconX+iconSize/2.9, iconY+iconSize/1.7, iconX +  iconSize / 1.5, iconY + iconSize / 1.7);
+        QLine mid(iconX+iconSize/2.9, iconY+iconSize/1.3, iconX +  iconSize / 1.8, iconY + iconSize / 1.3);
+        QLine bot(iconX+iconSize/2.9, iconY+iconSize/1.1, iconX +  iconSize / 1.5, iconY + iconSize / 1.1);
+        QLine left(iconX+iconSize/2.9, iconY+iconSize/1.7, iconX +  iconSize / 2.9, iconY + iconSize / 1.1);
+
+        int startAngle = 0;
+        int spanAngle = 180;
+
+        p->drawArc(topPara, (startAngle+10)*16, (spanAngle-20)*16);
+        p->drawLine(botPara);
+        p->drawLine(lineParaL);
+        p->drawLine(lineParaR);
+
+        p->drawLine(top);
+        p->drawLine(mid);
+        p->drawLine(bot);
+        p->drawLine(left);
 
         return;
     }
