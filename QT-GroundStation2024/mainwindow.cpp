@@ -49,7 +49,7 @@ void MainWindow::updateData(dataPoint p)
     if(p.altitude != m_currentData.altitude)
     {
         m_currentData.altitude = p.altitude;
-        emit altUpdated(p.altitude);
+        emit altUpdated(p.altitude, p.rocketTime);
     }
     if(p.state != m_currentData.state)
     {
@@ -67,15 +67,22 @@ void MainWindow::updateData(dataPoint p)
         {
             m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
         }
+
+        if(p.state >= 5 && p.state <= 10) { //If the rocket is descending then the payload window needs data to stay in memory for longer
+            dataDeletionTime = 60000*10; //10 minutes
+        } else {
+            dataDeletionTime = 5000;
+        }
+
         m_currentData.rocketTime = p.rocketTime;
         m_currentData.accData.append(graphPoint {p.acceleration, p.rocketTime});
-        while(m_currentData.accData.first().time < p.rocketTime - 5000)
+        while(m_currentData.accData.first().time < p.rocketTime - dataDeletionTime)
             m_currentData.accData.removeFirst();
         m_currentData.velData.append(graphPoint {p.velocity, p.rocketTime});
-        while(m_currentData.velData.first().time < p.rocketTime - 5000)
+        while(m_currentData.velData.first().time < p.rocketTime - dataDeletionTime)
             m_currentData.velData.removeFirst();
         m_currentData.altData.append(graphPoint {p.altitude, p.rocketTime});
-        while(m_currentData.altData.first().time < p.rocketTime - 5000)
+        while(m_currentData.altData.first().time < p.rocketTime - dataDeletionTime)
             m_currentData.altData.removeFirst();
         emit rocketTimeUpdated(p.rocketTime);
     }

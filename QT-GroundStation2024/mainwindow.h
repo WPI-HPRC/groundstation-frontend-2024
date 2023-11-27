@@ -68,10 +68,12 @@ public:
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
+    int dataDeletionTime;
+
 signals:
     void accUpdated(int);
     void velUpdated(int);
-    void altUpdated(int);
+    void altUpdated(float, float);
     void stateUpdated(int);
     void rocketTimeUpdated(float);
     void groundTimeUpdated();

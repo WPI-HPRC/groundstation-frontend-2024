@@ -25,6 +25,7 @@ public:
         HPRC_Gauge,
         HPRC_Attitude,
         HPRC_Graph,
+        HPRC_PAYLOAD_GRAPH,
         HPRC_Alarm,
         HPRC_Clock,
         HPRC_RocketVisual,
@@ -62,7 +63,7 @@ public:
 
 public slots:
 
-    void updateFilled(int input);
+    void updateFilled(float input);
     void doSpeedTick(int input);
 
 protected:
@@ -138,6 +139,16 @@ class hprcGraph : public hprcDisplayWidget
 public:
 
     explicit hprcGraph(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
+};
+
+class hprcPayloadGraph : public hprcDisplayWidget
+{
+Q_OBJECT
+
+public:
+
+    explicit hprcPayloadGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
 };
 

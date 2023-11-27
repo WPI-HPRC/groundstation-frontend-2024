@@ -54,12 +54,12 @@ hprcGauge::hprcGauge(QWidget *parent)
     m_widgetType = HPRC_Gauge;
 }
 
-void hprcDisplayWidget::updateFilled(int input)
+void hprcDisplayWidget::updateFilled(float input)
 {
 
     QPropertyAnimation *animation = new QPropertyAnimation(this, "filledPercent");
     animation->setDuration(400);
-    animation->setEndValue(input);
+    animation->setEndValue((int) input);
     animation->start();
 }
 
@@ -93,7 +93,7 @@ hprcAltitudeGauge::hprcAltitudeGauge(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            connect(mainWin, SIGNAL(altUpdated(int)), this, SLOT(updateFilled(int)));
+            connect(mainWin, SIGNAL(altUpdated(float, float)), this, SLOT(updateFilled(float)));
         }
 }
 
@@ -151,7 +151,25 @@ hprcGraph::hprcGraph(QWidget *parent) :
         }
 }
 
+hprcPayloadGraph::hprcPayloadGraph(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    setMouseTracking(true);
+    m_widgetType = HPRC_PAYLOAD_GRAPH;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
+        }
+}
+
 void hprcGraph::mouseMoveEvent(QMouseEvent *e)
+{
+    m_mousePos = e->pos();
+
+}
+
+void hprcPayloadGraph::mouseMoveEvent(QMouseEvent *e)
 {
     m_mousePos = e->pos();
 

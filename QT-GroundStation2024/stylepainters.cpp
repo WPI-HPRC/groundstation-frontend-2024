@@ -493,9 +493,9 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, range, start, w, drawT);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, range, start, w, drawT);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), &m_latest->accData, range, start, w, drawT);
+    drawHPRCSubGraph(p, middle, QColor("#2c4985"), &m_latest->velData, range, start, w, drawT);
+    drawHPRCSubGraph(p, bottom, QColor("#471d57"), &m_latest->altData, range, start, w, drawT);
 
 
 
@@ -506,7 +506,121 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
+void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
+{
+    hprcPayloadGraph* widget = (hprcPayloadGraph*) w;
+
+    p->setRenderHint(QPainter::Antialiasing);
+    QPen textPen(m_textBrush, 3);
+
+    int width= w->rect().width();
+    int height = w->rect().height();
+
+    double scaleF = 0.75;
+    double paddingRatio = (1-scaleF) / 2.0;
+
+    int margin = fmin(paddingRatio * width, paddingRatio * height);
+
+    QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+
+    // label padding = 7.5%
+    int lMargin = drawBox.height() * 0.075;
+    drawBox.adjust(lMargin, 0, 0, -lMargin);
+
+    QPointF topRightTop = drawBox.topRight();
+    QPointF bottomLeftBottom = drawBox.bottomLeft();
+
+    int row2Top = drawBox.y() + drawBox.height()/3;
+    int row3Top = drawBox.y() + 2 * drawBox.height()/3;
+
+    QPointF bottomLeftTop(drawBox.left(), row2Top);
+    QPointF topRightMiddle(drawBox.right(), row2Top);
+    QPointF bottomLeftMiddle(drawBox.left(), row3Top);
+    QPointF topRightBottom(drawBox.right(), row3Top);
+
+    QRectF top(topRightTop, bottomLeftTop);
+    QRectF middle(topRightMiddle, bottomLeftMiddle);
+    QRectF bottom(topRightBottom, bottomLeftBottom);
+
+    double range = 1000 * 200;
+    double start = m_latest->altData.length() > 0 ? m_latest->altData[0].time : 0;
+    if(m_latest->altData.length() > 1) {
+        double averageTimePerAltitude = 0;
+        //Get average descent rate for past 10 seconds
+        int initialDataPoint = m_latest->altData.length() - 1;
+        //Find index of data point from about 10 seconds ago
+        while(initialDataPoint > 0 && m_latest->rocketTime - m_latest->altData[initialDataPoint].time < 10 * 1000) {
+            initialDataPoint --;
+        }
+        //Negative to counteract the fact that altitude decreases over time
+        averageTimePerAltitude = -(m_latest->altData[m_latest->altData.length() - 1].time - m_latest->altData[initialDataPoint].time) / (m_latest->altData[m_latest->altData.length() - 1].value - m_latest->altData[initialDataPoint].value);
+
+        //The range of the graph is calculated based on how long it would take to reach 0 altitude at the current descent rate
+        //current time + (time / altitude) * (current altitude (amount of altitude required to reach 0 altitude))
+        range = m_latest->altData[m_latest->altData.length() - 1].time - m_latest->altData[0].time + averageTimePerAltitude * m_latest->altData[m_latest->altData.length() - 1].value;
+        //std::cout << "Range: " << range << std::endl;
+    }
+    //range = 1000 * 100;
+    //std::cout << "length: " << widget->altitudeData.length() << std::endl;
+
+    bool drawT = false;
+    if(drawBox.contains(w->m_mousePos))
+    {
+        drawT = true;
+    }
+
+    // <---- draw ----> //
+
+    p->setBrush(m_backgroundBrush);
+    p->drawRect(drawBox);
+
+    //Debug thing below
+    //if(m_latest->altData.length() == 0) {
+    //    m_latest->altData.append(MainWindow::graphPoint{(float) m_latest->altData.length() + 100, (float) start + 1000}); //(float) (m_latest->rocketTime - range)
+    //}
+
+    drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData, range, start, w, drawT, 0, 1300, false);
+    Range yRange = getDataYRange(&m_latest->accData);
+    drawHPRCSubGraph(p, middle, m_highlightBrush.color(), &m_latest->accData, range, start, w, drawT, yRange.min, yRange.max, false);
+    //drawHPRCSubGraph(p, bottom, QColor("#FFFF00"), widget->altitudeData, range, start, w, drawT);
+
+
+    p->setBrush(m_transparentBrush);
+    p->setPen(textPen);
+    p->drawLine(top.topRight(), bottom.bottomRight());
+    p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
+
+}
+
+HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint>* data) {
+    double scaleMax = 1;
+    double scaleMin = 999999;
+    for(int i = 0; i < data->size(); i++)
+    {
+        ////        if(!(data.at(i).time < (start - range)))
+        ////        {
+        if(data->at(i).value > scaleMax)
+        {
+            scaleMax = data->at(i).value;
+        }
+        if(data->at(i).value < scaleMin)
+        {
+            scaleMin = data->at(i).value;
+        }
+
+        ////        }
+    }
+
+    return Range{scaleMin, scaleMax};
+}
+
+void HPRCStyle::drawHPRCSubGraph(QPainter* p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget* w, bool drawTooltip) {
+    Range yRange = getDataYRange(data);
+
+    drawHPRCSubGraph(p, rect, bg, data, range, start, w, drawTooltip, yRange.min, yRange.max, true);
+}
+
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin, double scaleMax, bool enableEndZeroPoints)
 {
 
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
@@ -523,23 +637,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     p->setPen(QPen(bg, 3));
     QList<QPointF> pointsToDraw;
     double max = 9999;
-    double scaleMax = 1;
-    double scaleMin = 999999;
-    for(int i = 0; i < data.size(); i++)
-    {
-////        if(!(data.at(i).time < (start - range)))
-////        {
-            if(data.at(i).value > scaleMax)
-            {
-                scaleMax = data.at(i).value;
-            }
-            if(data.at(i).value < scaleMin)
-            {
-                scaleMin = data.at(i).value;
-            }
-
-////        }
-    }
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
@@ -547,7 +644,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     QPointF highlighted(-100,0);
     QString ptLabel("");
 
-    for(MainWindow::graphPoint g : data)
+    for(MainWindow::graphPoint g : *data)
     {
         double valX = 0;
         double valY = 0;
@@ -556,7 +653,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
         valY = -((g.value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
 
-        if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data.size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data.size()))
+        if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data->size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data->size()))
         {
             ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
             ptLabel = QString::number(g.value);
@@ -574,8 +671,15 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
 
     gradient.setFinalStop(rect.topLeft());
-    pointsToDraw.append(rect.bottomLeft());
-    pointsToDraw.append(rect.bottomRight());
+    if(enableEndZeroPoints) {
+        pointsToDraw.append(rect.bottomLeft());
+        pointsToDraw.append(rect.bottomRight());
+    } else {
+        if(data->length() > 0) {
+            pointsToDraw.append(QPoint(-((*data)[data->length() - 1].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomRight().y()));
+            pointsToDraw.append(QPoint(-((*data)[0].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomLeft().y()));
+        }
+    }
     p->setBrush(QBrush(gradient));
 //    p->setBrush(m_transparentBrush);
     p->drawPolygon(QPolygonF(pointsToDraw));

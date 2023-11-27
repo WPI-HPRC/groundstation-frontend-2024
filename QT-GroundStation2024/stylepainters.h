@@ -51,6 +51,7 @@ public:
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
@@ -94,10 +95,17 @@ public:
 private:
 
 private:
+    struct Range {
+        double min;
+        double max;
+    };
+
     static constexpr float AIRBRAKE_DESIRED_THRESHOLD = 0.075f; //The minimum amount of difference between the desired and current position required to display the desired airbrakes
 
-    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double lowerBound, double upperBound, bool enableEndZeroPoints);
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
+    Range getDataYRange(QList<MainWindow::graphPoint>* data);
 };
 
 #endif // HPRCSTYLE_H
