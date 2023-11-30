@@ -3,6 +3,7 @@
 #include <QStyle>
 #include <QPalette>
 #include <QStyleOption>
+#include <QPainterPath>
 #include <iomanip>
 #include <iostream>
 #include <QFontDatabase>
@@ -527,20 +528,19 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     int lMargin = drawBox.height() * 0.075;
     drawBox.adjust(lMargin, 0, 0, -lMargin);
 
-    QPointF topRightTop = drawBox.topRight();
+    float fontSize = drawBox.height() / 16;
+
+    QPointF topRightTop = QPointF(drawBox.topRight().x(), drawBox.topRight().y() + fontSize * 2);
     QPointF bottomLeftBottom = drawBox.bottomLeft();
 
-    int row2Top = drawBox.y() + drawBox.height()/3;
-    int row3Top = drawBox.y() + 2 * drawBox.height()/3;
-
-    QPointF bottomLeftTop(drawBox.left(), row2Top);
-    QPointF topRightMiddle(drawBox.right(), row2Top);
-    QPointF bottomLeftMiddle(drawBox.left(), row3Top);
-    QPointF topRightBottom(drawBox.right(), row3Top);
+    QPointF bottomLeftTop(drawBox.left(), drawBox.y() + drawBox.height() / 2);
+    QPointF topRightBottom(drawBox.right(), drawBox.y() + drawBox.height() / 2);
 
     QRectF top(topRightTop, bottomLeftTop);
-    QRectF middle(topRightMiddle, bottomLeftMiddle);
+
+    //QRectF middle(topRightMiddle, bottomLeftMiddle);
     QRectF bottom(topRightBottom, bottomLeftBottom);
+    bottom.adjust(0, fontSize * 2, 0, 0); //Font size needs to be multiplied by 2 for some reason
 
     double range = 1000 * 200;
     double start = m_latest->altData.length() > 0 ? m_latest->altData[0].time : 0;
@@ -574,16 +574,58 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
+    //Draw label text
+    std::string altitudeText = "Altitude: " + std::to_string((int) round(m_latest->altitude)) + " [m]";
+    std::string descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->velocity)) + " [m/s]";
+    p->setPen(textPen);
+    m_widgetLarge.setPointSize(fontSize);
+    p->setFont(m_widgetLarge);
+    //std::cout << "draw box: x: " << drawBox.x() << ", y: " << drawBox.y() << ", width: " << drawBox.width() << ", height: " << drawBox.height() << std::endl;
+    p->drawText(QRect(top.x(), top.y() - fontSize * 2,
+                      top.width(), top.height()),
+                Qt::AlignHCenter, QString::fromStdString(altitudeText)); //QString::fromStdString(altitudeText)
+    p->drawText(QRect(bottom.x(), bottom.y() - fontSize * 2,
+                      bottom.width(), bottom.height()),
+                Qt::AlignHCenter, QString::fromStdString(descentRateText));
+
     //Debug thing below
     //if(m_latest->altData.length() == 0) {
     //    m_latest->altData.append(MainWindow::graphPoint{(float) m_latest->altData.length() + 100, (float) start + 1000}); //(float) (m_latest->rocketTime - range)
     //}
 
-    drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData, range, start, w, drawT, 0, 1300, false);
-    Range yRange = getDataYRange(&m_latest->accData);
-    drawHPRCSubGraph(p, middle, m_highlightBrush.color(), &m_latest->accData, range, start, w, drawT, yRange.min, yRange.max, false);
+    Range altitudeSubGraphRange = drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData, range, start, w, drawT, 0, m_latest->altData.length() > 0 ? m_latest->altData[0].value : 1300, false);
+    Range yRange = getDataYRange(&((hprcPayloadGraph*) w)->verticalSpeedData);
+    drawHPRCSubGraph(p, bottom, m_highlightBrush.color(), &((hprcPayloadGraph*) w)->verticalSpeedData, range, start, w, drawT, yRange.min, yRange.max, false);
     //drawHPRCSubGraph(p, bottom, QColor("#FFFF00"), widget->altitudeData, range, start, w, drawT);
 
+    //Draw a fun parachute graphic for the altitude graph
+    if(m_latest->altData.length() > 0) {
+        float lastGraphX = -(m_latest->altData[m_latest->altData.length() - 1].time - start) / (range) * (top.width()) + top.right();
+        double subGraphScale = fmax(1.0, altitudeSubGraphRange.max - altitudeSubGraphRange.min);
+        float lastGraphY = -((m_latest->altData[m_latest->altData.length() - 1].value - altitudeSubGraphRange.min) / subGraphScale) * (top.height() * 0.97) + top.bottom();
+        float boxWidth = drawBox.height() / 24.0;
+        float boxHeight = drawBox.height() / 24.0;
+        QRect parachuteRect(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, boxWidth, boxHeight);
+
+        QBrush parachuteBrush = QBrush(QColor(255, 255, 255, 128));
+        QPen transparentPen = QPen(QColor(255, 255, 255, 0));
+        QPen linePen = QPen(QColor(255, 255, 255, 128));
+        p->setBrush(parachuteBrush);
+        p->setPen(transparentPen);
+        p->drawRect(parachuteRect);
+
+        QPainterPath semiCirclePath;
+        float parachuteX = lastGraphX - boxWidth;
+        float parachuteY = lastGraphY - boxWidth * 1.5;
+        semiCirclePath.moveTo(parachuteX, parachuteY);
+        semiCirclePath.arcTo(parachuteX, parachuteY - boxHeight, boxWidth * 2.0, boxHeight * 2.0, 0, 180);
+
+        p->drawPath(semiCirclePath);
+
+        p->setPen(linePen);
+        p->drawLine(QLine(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX - boxWidth, lastGraphY - boxHeight * 1.5));
+        p->drawLine(QLine(lastGraphX + boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX + boxWidth, lastGraphY - boxHeight * 1.5));
+    }
 
     p->setBrush(m_transparentBrush);
     p->setPen(textPen);
@@ -620,7 +662,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter* p, QRectF rect, QColor bg, QList<Main
     drawHPRCSubGraph(p, rect, bg, data, range, start, w, drawTooltip, yRange.min, yRange.max, true);
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin, double scaleMax, bool enableEndZeroPoints)
+HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin, double scaleMax, bool enableEndZeroPoints)
 {
 
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
@@ -646,6 +688,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     for(MainWindow::graphPoint g : *data)
     {
+        //Skip drawing data points until they are within the range of the graph
+        if(g.time < start) {
+            continue;
+        }
+
         double valX = 0;
         double valY = 0;
         if(valY < max)
@@ -703,7 +750,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setPen(QPen(m_highlightBrush, 3));
     }
 
-
+    return Range{scaleMin, scaleMax};
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)

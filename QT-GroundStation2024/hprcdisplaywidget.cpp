@@ -159,8 +159,16 @@ hprcPayloadGraph::hprcPayloadGraph(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
+            mainWindow = mainWin;
             connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(accUpdated(int)), this, SLOT(updateVerticalSpeed()));
         }
+}
+
+void hprcPayloadGraph::updateVerticalSpeed() {
+    if(mainWindow->m_currentData.altData.length() > 1) {
+        verticalSpeedData.append(MainWindow::graphPoint{(mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].value - mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 2].value) / ((mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].time - mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 2].time) / 1000), mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].time});
+    }
 }
 
 void hprcGraph::mouseMoveEvent(QMouseEvent *e)

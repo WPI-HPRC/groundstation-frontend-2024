@@ -150,6 +150,14 @@ public:
 
     explicit hprcPayloadGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
+
+    QList<MainWindow::graphPoint> verticalSpeedData;
+
+private:
+    MainWindow* mainWindow;
+
+private slots:
+    void updateVerticalSpeed();
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget
