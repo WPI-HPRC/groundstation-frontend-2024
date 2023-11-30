@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-    m_webSocket.open(QUrl(QString("ws://130.215.208.241:3005")));
+    m_webSocket.open(QUrl(QString("ws://130.215.211.177:3005")));
 }
 
 MainWindow::~MainWindow()
@@ -110,24 +110,28 @@ void MainWindow::onTextMessageReceived(QString message)
     QStringList messageSplit = message.split(",");
     for(QString e : messageSplit.toList())
     {
+
         e.remove("\"");
+        e.replace("}", "");
+        e.replace("{", "");
+
         QStringList elementSplit = e.split(":");
         if(elementSplit.at(0) == QString("Altitude"))
         {
             QString altData = elementSplit.at(1);
             altData.remove("}");
             m_dataBuffer.altitude = altData.toFloat();
-        } else if(elementSplit.at(0) == QString("Velocity"))
+        } else if(elementSplit.at(0).toLower() == QString("Velocity").toLower())
         {
             m_dataBuffer.velocity = elementSplit.at(1).toFloat();
-        } else if(elementSplit.at(0) == QString("AccelZ"))
+        } else if(elementSplit.at(0).toLower() == QString("AccelZ").toLower())
         {
             m_dataBuffer.acceleration = elementSplit.at(1).toDouble();
-        } else if(elementSplit.at(0) == QString("Timestamp"))
+        } else if(elementSplit.at(0).toLower() == QString("Timestamp").toLower())
         {
             m_dataBuffer.rocketTime = elementSplit.at(1).toFloat();
         }
-        else if(elementSplit.at(0) == QString("State"))
+        else if(elementSplit.at(0).toLower() == QString("State").toLower())
         {
             m_dataBuffer.state = elementSplit.at(1).toInt();
         }
