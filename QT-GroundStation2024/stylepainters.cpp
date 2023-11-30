@@ -278,7 +278,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     QRectF middle(topLeftMiddle, bottomRightMiddle);
     QRectF bottom(topLeftBottom, bottomRightBottom);
 
-    double range = 5000;
+    double range = 5000; // Should maybe specify what this means?
     double start = m_latest->rocketTime - range;
     if(m_latest->altData.size() > 0)
     {
@@ -303,7 +303,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     p->setBrush(m_transparentBrush);
     p->setPen(QPen(m_panelBrush, 4));
-//    p->drawRect(drawBox.adjusted(1, 0, 0, 4));
 
     p->setPen(QPen(m_textBrush, 5));
 
@@ -326,20 +325,22 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     p->setPen(QPen(bg, 2));
 
+    // Line at the bottom
     p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
 
     QList<QPointF> pointsToDraw;
     double scaleMax = std::numeric_limits<double>::min();
     double scaleMin = std::numeric_limits<double>::max();
 
-    for(int i = 0; i < data.size(); i++)
+    for(auto& value : data)
     {
-        scaleMax = fmaxf(data.at(i).value, scaleMax);
-        scaleMin = fminf(data.at(i).value, scaleMin);
+        scaleMax = fmaxf(value.value, scaleMax);
+        scaleMin = fminf(value.value, scaleMin);
     }
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
+    // Out of sight
     QRectF ptHighlight(-100,0,0,0);
     QPointF highlighted(-100,0);
     QString ptLabel("");
@@ -348,43 +349,49 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     double centerY = 0;
 
+    // Setting the centerpoint of the axis
     if(scaleMin < 0)
     {
         centerY = fabs(scaleMin/scale) * rect.height();
         scaleMin = 0;
     }
     else
+    {
         scale = scaleMax;
+    }
 
     double valYNormalized = 0;
     double yMultiplier = 0;
 
-    double closestDist = 1000;
+    double valX = 0;
+    double valY = 0;
+
+    double closestDist = std::numeric_limits<double>::max();
 
     for(MainWindow::graphPoint g : data)
     {
-        double valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1);
+        valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1); // This was Ben's math. It works
 
         valYNormalized = g.value / scale;
-        yMultiplier = (g.value > 0 ? rect.height() - centerY : centerY) * 0.85;
 
-        double valY = rect.top() + rect.height() - valYNormalized * yMultiplier - centerY;
+        // Multiply the normalized value by the distance between the center line and the top or the bottom
+        // depending on whether the value is positive or negative. Use some boolean algebra to avoid an if statement
+        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * 0.85;
+
+        // The actual y position to draw
+        valY = (rect.top() + rect.height() - centerY) - valYNormalized * yMultiplier;
 
         if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top()), 50, roundf(rect.height()));
             ptLabel = QString::number((int)g.value);
             highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
-        } else {
-
         }
 
         pointsToDraw.append(QPointF(valX, valY));
     }
 
     bg.setAlphaF(0.4);
-
 
     gradient.setFinalStop(rect.topLeft());
 
@@ -407,23 +414,28 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     if(data.length() == 0)
         data.append(MainWindow::graphPoint{0, 0});
 
+    QString textToDraw = "";
+
     switch (graphType)
     {
     case GRAPH_Altitude:
-
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ALT (m)");
+        textToDraw = "ALT (m)";
         break;
     case GRAPH_Velocity:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "VEL (m/s)");
+        textToDraw = "VEL (m/s)";
         break;
     case GRAPH_Acceleration:
-        p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, "ACCEL (m/s²)");
+        textToDraw = "ACCEL (m/s²)";
         break;
     default:
         break;
     }
 
-    double y = 0;
+    p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
+
+
+    // Now we draw the ticks
+    float y = 0;
     p->setPen(QPen(m_textBrush, 1));
     p->setOpacity(0.5);
 
@@ -431,7 +443,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
     {
-        y = i/gScale * rect.height() * MAX_GRAPH_SCALE * 1;
+        y = i/gScale * rect.height() * MAX_GRAPH_SCALE;
+
+        // Drawing the actual ticks
         p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
         p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
     }
@@ -439,6 +453,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     p->setOpacity(1);
 
     p->setPen(QPen(bg, 1));
+
+    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top()), 50, roundf(rect.height()));
     if(drawTooltip)
     {
         p->setOpacity(0.1);
@@ -463,12 +479,12 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setOpacity(1);
         p->setPen(QPen(m_textBrush, 3));
         p->setFont(m_widgetMedium);
-//        p->drawText(QRect(ptHighlight.x(), highlighted.y() - 300, ptHighlight.width(), 600), Qt::AlignVCenter, ptLabel);
         p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
         p->setPen(QPen(m_highlightBrush, 3));
     }
     else
     {
+        // Only draw current values and graph scale if tooltips are not being shown
         p->setOpacity(1);
         p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
                     Qt::AlignRight | Qt::AlignVCenter,
