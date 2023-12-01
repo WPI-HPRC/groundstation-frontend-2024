@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-    m_webSocket.open(QUrl(QString("ws://130.215.211.177:3005")));
+    m_webSocket.open(QUrl(QString("ws://localhost:8000")));
 }
 
 MainWindow::~MainWindow()

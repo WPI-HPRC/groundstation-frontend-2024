@@ -223,8 +223,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     progressGradient.setColorAt(1, m_panelBrush.color());
     progressGradient.setColorAt(0, m_highlightBrush.color());
 
-
-//    QPen fgPen(QBrush(progressGradient), 5);
     QPen fgPen(m_highlightBrush, 5);
 
     fgPen.setCapStyle(Qt::RoundCap);
@@ -503,6 +501,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     // <---- draw ----> //
 
+    p->setPen(QPen(m_transparentBrush.color()));
     p->setBrush(m_backgroundBrush);
     p->drawRect(drawBox);
 
