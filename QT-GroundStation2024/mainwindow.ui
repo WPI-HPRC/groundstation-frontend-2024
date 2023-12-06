@@ -114,7 +114,10 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="hprcTimeline" name="timeline" native="true">
+          <widget class="hprcPayloadServo" name="timeline" native="true">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout"/>
           </widget>
          </item>
@@ -127,15 +130,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>hprcTimeline</class>
-   <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-   <slots>
-    <slot>updateFilled(int)</slot>
-   </slots>
-  </customwidget>
   <customwidget>
    <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
@@ -174,6 +168,12 @@
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadServo</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

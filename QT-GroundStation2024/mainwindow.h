@@ -46,6 +46,8 @@ public:
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        QList<float> servoEncoders;
+        QList<float> servoDesired;
     };
 
 #if RUN_SPEED_TESTS
@@ -81,6 +83,7 @@ signals:
     void desiredAirbrakesUpdated(float);
     void tick();
     void speedTick(int);
+    void servoUpdated();
 
 public slots:
     void update();

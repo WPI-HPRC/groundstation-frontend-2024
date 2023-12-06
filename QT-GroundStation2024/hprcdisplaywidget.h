@@ -31,6 +31,7 @@ public:
         HPRC_Hidden,
         HPRC_Viewer,
         HPRC_AIRBRAKES,
+        HPRC_PayloadServo
     };
 
     enum hprcDataType // TODO
@@ -170,6 +171,10 @@ public:
 class hprcAirbrakes : public hprcDisplayWidget {
 public:
     explicit hprcAirbrakes(QWidget* parent = nullptr);
+};
+class hprcPayloadServo : public hprcDisplayWidget {
+public:
+    explicit hprcPayloadServo(QWidget* parent = nullptr);
 };
 class hprcRocketVisualizer : public hprcDisplayWidget
 {

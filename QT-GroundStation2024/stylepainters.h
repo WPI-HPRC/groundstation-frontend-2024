@@ -56,6 +56,7 @@ public:
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
+    void drawHPRCPayloadServo(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
 
 
