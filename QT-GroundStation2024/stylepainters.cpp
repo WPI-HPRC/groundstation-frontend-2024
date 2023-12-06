@@ -193,8 +193,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     QPen textPen(m_textBrush, 5);
 
-
-
     QRectF boundingBox(w->rect().adjusted(15, 15, -15, -15));
 
     double scaleF = 0.85;
@@ -269,15 +267,17 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     // -- Create bounding box --
 
-    QRectF boundingBox(w->rect().adjusted(15, 30, -15, 30));
+    QRectF boundingBox(w->rect().adjusted(15, 15, -15, -15));
 
-    double scaleF = 0.5;
+    double scaleF = 0.8;
 
-    int oWidth = boundingBox.width();
+    int sizeMin = fmin(boundingBox.height() * scaleF, boundingBox.width() * scaleF);
 
-    int sizeMin = fmin(boundingBox.height(), boundingBox.width() * scaleF);
-
-    boundingBox.adjust(oWidth/2 - sizeMin/2, 0, oWidth/2 - sizeMin/2, 0);
+    boundingBox.adjust(boundingBox.width()/2 - sizeMin/2,
+                       boundingBox.height()/2 - sizeMin/2,
+                       boundingBox.width()/2 - sizeMin/2,
+                       boundingBox.height()/2 - sizeMin/2
+                       );
 
     boundingBox.setHeight(sizeMin);
     boundingBox.setWidth(sizeMin);
