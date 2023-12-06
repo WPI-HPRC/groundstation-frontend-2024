@@ -308,3 +308,13 @@ hprcAirbrakes::hprcAirbrakes(QWidget* parent):
 
     m_widgetType = HPRC_AIRBRAKES;
 }
+
+hprcServoStatusWidget::hprcServoStatusWidget(QWidget* parent) {
+    // subscribe to any data that needs to cause an update
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            //connect(mainWin, SIGNAL(desiredAirbrakesUpdated(float)), this, SLOT(repaint())); //PUT SERVO DATA CONNECTION IN HERE!!
+        }
+    m_widgetType = HPRC_SERVO_STATUS;
+}

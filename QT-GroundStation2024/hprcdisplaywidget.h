@@ -32,6 +32,7 @@ public:
         HPRC_Hidden,
         HPRC_Viewer,
         HPRC_AIRBRAKES,
+        HPRC_SERVO_STATUS
     };
 
     enum hprcDataType // TODO
@@ -147,11 +148,22 @@ class hprcPayloadGraph : public hprcDisplayWidget
 Q_OBJECT
 
 public:
-
     explicit hprcPayloadGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
 
     QList<MainWindow::graphPoint> verticalSpeedData;
+    static const int MAX_RENDERED_POINTS = 50;
+
+    QTransform transform;
+    QPolygonF graphPolygonAltitude;
+    QPolygonF graphPolygonVerticalSpeed;
+    int startIndexAltitude;
+    int startIndexVerticalSpeed;
+
+    //DEBUG; REMOVE THIS WHEN NOT IN USE
+    std::chrono::time_point<std::chrono::high_resolution_clock> lastTime = std::chrono::high_resolution_clock::now();
+    int fps = 0;
+    int frames = 0;
 
 private:
     MainWindow* mainWindow;
@@ -219,6 +231,10 @@ public:
     QQuaternion m_rocketOrientVertically = QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f);
 };
 
-
+class hprcServoStatusWidget: public hprcDisplayWidget
+{
+public:
+    explicit hprcServoStatusWidget(QWidget *parent = nullptr);
+};
 
 #endif // HPRCDISPLAYWIDGET_H

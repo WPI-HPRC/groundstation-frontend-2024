@@ -58,6 +58,8 @@ public:
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
+    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w);
+    void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
 
 
     QBrush m_backgroundBrush;
@@ -103,7 +105,7 @@ private:
     static constexpr float AIRBRAKE_DESIRED_THRESHOLD = 0.075f; //The minimum amount of difference between the desired and current position required to display the desired airbrakes
 
     void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
-    Range drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double lowerBound, double upperBound, bool enableEndZeroPoints);
+    Range drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double lowerBound, double upperBound, bool enableEndZeroPoints, bool enablePolygonTransformationRendering, int* startIndex, QPolygonF* polygon); //startIndex pointer means that you give a pointer to the start index variable for this piece of data
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
     Range getDataYRange(QList<MainWindow::graphPoint>* data);
 };

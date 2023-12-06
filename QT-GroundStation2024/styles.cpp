@@ -79,6 +79,8 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcAirbrakes::HPRC_AIRBRAKES:
                 m_drawer->drawHPRCAirbrakes(painter, w);
                 return;
+            case hprcServoStatusWidget::HPRC_SERVO_STATUS:
+                m_drawer->drawHprcServoStatus(painter, w);
             default:
                 return;
             }

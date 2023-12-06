@@ -111,6 +111,7 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.gyroZ = p.gyroZ;
         emit gyroUpdated();
     }
+
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
 
