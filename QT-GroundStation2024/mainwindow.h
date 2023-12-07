@@ -46,6 +46,10 @@ public:
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        float payloadServo1Position;
+        float payloadServo2Position;
+        float desiredPayloadServo1Position;
+        float desiredPayloadServo2Position;
     };
 
 #if RUN_SPEED_TESTS
@@ -83,6 +87,10 @@ signals:
     void desiredAirbrakesUpdated(float);
     void tick();
     void speedTick(int);
+    void payloadServo1PositionUpdated(float);
+    void payloadServo2PositionUpdated(float);
+    void desiredPayloadServo1PositionUpdated(float);
+    void desiredPayloadServo2PositionUpdated(float);
 
 public slots:
     void update();

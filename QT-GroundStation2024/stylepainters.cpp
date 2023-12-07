@@ -1286,15 +1286,39 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     p->rotate(-45);
 }
 
-void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w) {
+void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float y, float width) {
     //Draw a happy servo picture
-    p->setPen(QPen(m_textBrush, 3));
+    p->setPen(QPen(m_textBrush, w->rect().width() / 200));
     p->setBrush(m_transparentBrush);
-    p->drawRect(QRect(w->rect().x(), w->rect().y(), w->rect().width() / 8, w->rect().width() / 5));
+    QRect servoRect = QRect(x, y, w->rect().width() / 8, w->rect().width() / 5);
+    p->drawRect(servoRect);
+    p->drawRect(QRect(servoRect.right(), servoRect.y() + servoRect.height() / 4, servoRect.height() / 4, servoRect.height() / 12));
+
+    //Draw title
+    m_widgetLarge.setPointSize(w->width() / 28);
+    p->setFont(m_widgetLarge);
+    p->drawText(QRect(x - width / 2, y + servoRect.height(),
+                      width, 100),
+                Qt::AlignHCenter, title);
+
+    //Draw encoder value
+    QString valueString = QString::number(encoderPosition, 'f', 2);
+    //Make sure there are no trailing zeros
+    while(valueString.length() > 0 && valueString.back() == '0') {
+        valueString.remove(valueString.length() - 1, 1);
+    }
+    valueString.remove(valueString.length() - 1, 1);
+
+    m_widgetLarge.setPointSize(w->width() / 54);
+    p->setFont(m_widgetLarge);
+    p->drawText(QRect(x - width / 2, y + servoRect.height(),
+                      width, 100),
+                Qt::AlignHCenter, "Encoder Position: " + valueString);
 }
 
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w);
+    drawServoStatusServo(p, w, "Servo 1", 0.5, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().y(), w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", 0.5, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().y(), w->rect().center().x() - w->rect().x());
 }
