@@ -694,9 +694,24 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     {
         // Only draw current values and graph scale if tooltips are not being shown
         p->setOpacity(1);
+
+        float dataToDraw = data.last().value;
+        bool drawDecimals = dataToDraw < 10;
+
+        QString printString;
+
+        if (drawDecimals)
+        {
+            printString = QString::asprintf("%0.2f", dataToDraw);
+        }
+        else
+        {
+            printString = QString::asprintf("%d", (int)dataToDraw);
+        }
+
         p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
                     Qt::AlignRight | Qt::AlignVCenter,
-                    QString::asprintf("%d", (int)(data.last().value)));
+                    printString);
 
         p->setPen(QPen(m_textBrush, 1));
         p->setOpacity(0.8);
