@@ -282,8 +282,10 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
         start = m_latest->altData.at(0).time;
     }
 
+
     bool drawT = false;
-    if(drawBox.contains(w->m_mousePos))
+    // Adjust the box a little bit to fully encapsulate the entire visual area of the graph
+    if(drawBox.adjusted(0, 0, 0, 5).contains(w->m_mousePos))
     {
         drawT = true;
     }
@@ -292,11 +294,14 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     p->setPen(QPen(m_transparentBrush.color()));
     p->setBrush(m_backgroundBrush);
-    p->drawRect(drawBox);
 
+    // Do a little adjusting to help with tooltip rendering
+    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
+
+    // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
+    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
+    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
     p->setBrush(m_transparentBrush);
     p->setPen(QPen(m_panelBrush, 4));
@@ -322,7 +327,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     p->setPen(QPen(bg, 2));
 
-    // Line at the bottom
+    // Line at the bottom, subtract a pixel from each side to fit nicer
     p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
 
     QList<QPointF> pointsToDraw;
@@ -349,6 +354,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     // Setting the centerpoint of the axis
     if(scaleMin < 0)
     {
+        // Move the centerline up away from the bottom of the rectangle so negative points fit on the graph
         centerY = fabs(scaleMin/scale) * rect.height();
         scaleMin = 0;
     }
@@ -363,6 +369,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     double valX = 0;
     double valY = 0;
 
+    double centerLine = rect.top() + rect.height() - centerY;
+
     double closestDist = std::numeric_limits<double>::max();
 
     for(MainWindow::graphPoint g : data)
@@ -373,11 +381,13 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
         // Multiply the normalized value by the distance between the center line and the top or the bottom
         // depending on whether the value is positive or negative. Use some boolean algebra to avoid an if statement
-        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * 0.85;
+        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * MAX_GRAPH_SCALE;
 
         // The actual y position to draw
-        valY = (rect.top() + rect.height() - centerY) - valYNormalized * yMultiplier;
+        valY = centerLine - valYNormalized * yMultiplier;
 
+        // If this point is closer to the mouse than the current closest, and if the point is not the first or last point
+        // Ignore the first and last points for tooltip drawing, because they look bad
         if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
@@ -401,6 +411,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     p->drawPolygon(QPolygonF(pointsToDraw));
 
+    // Scale the text
     m_widgetFancy.setPointSize(rect.height() * 2/3);
     m_widgetFancy.setWeight(QFont::Black);
     p->setFont(m_widgetFancy);
@@ -408,6 +419,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     bg.setAlphaF(0.7);
     p->setPen(QPen(bg, 20));
 
+    // Make sure we always have a data point f
     if(data.length() == 0)
         data.append(MainWindow::graphPoint{0, 0});
 
@@ -428,6 +440,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         break;
     }
 
+    // 5 pixels of padding to the left
     p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
 
 
@@ -436,13 +449,16 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     p->setPen(QPen(m_textBrush, 1));
     p->setOpacity(0.5);
 
+    // Clamp the scale
     float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
 
+    // Only need to go half of the way, because graph ticks will be mirrored along the axis
     for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
     {
+        // Normalize the value, multiply is by the height of the rectangle, and then scale down a little to fit better
         y = i/gScale * rect.height() * MAX_GRAPH_SCALE;
 
-        // Drawing the actual ticks
+        // Drawing the actual ticks, 10 pixels from right to left centered about the right side of the rectangle
         p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
         p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
     }
@@ -451,7 +467,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     p->setPen(QPen(bg, 1));
 
-    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top()), 50, roundf(rect.height()));
+    // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
+    // Shift it down by 0.5 before rounding to align things
+    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top() - 0.5), 50, roundf(rect.height() + 0.5));
+
     if(drawTooltip)
     {
         p->setOpacity(0.1);
@@ -459,11 +478,16 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setPen(QPen(m_transparentBrush, 0));
         p->setBrush(lightHighlighterBrush);
 
-        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
+        // Shift one pixel down to look better
+//        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
+        p->drawRect(ptHighlight);
 
         p->setOpacity(0.3);
         p->setPen(QPen(lightHighlighterBrush, 2));
-        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
+
+        // Draw a line from the top to the bottom of the rectangle, at the x coordinate of the mouse
+        // Adjust the top 1 pixel down and the bottom 2 pixels up to make it fit well within the subgraph
+        p->drawLine(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
 
         bg.setAlphaF(1);
 
@@ -471,6 +495,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         p->setPen(bg);
 
         p->setOpacity(1);
+        // Circle at the data point
         p->drawEllipse(highlighted, 5, 5);
 
         p->setOpacity(1);
@@ -507,6 +532,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         m_widgetMedium.setPointSize(rect.height()/8);
         p->setFont(m_widgetMedium);
 
+        // Draw text that is the current maximum value for this subgraph. Use text centering to place the
         p->drawText(QRect(rect.left(),
                           rect.top()+1,
                           rect.width() - 7,
