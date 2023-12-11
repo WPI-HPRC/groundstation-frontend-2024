@@ -743,29 +743,36 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         m_widgetMedium.setPointSize(rect.height()/8);
         p->setFont(m_widgetMedium);
 
-        // Draw text that is the current maximum value for this subgraph. Use text centering to place the
+        // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
+        // created to fit the text nicely in the top right corner of the subgraph
         p->drawText(QRect(rect.left(),
                           rect.top()+1,
                           rect.width() - 7,
                           rect.height()*(1-MAX_GRAPH_SCALE)),
                     Qt::AlignVCenter | Qt::AlignRight,
                     QString::asprintf("%d", (int)scaleMax));
+
+        // The tick denoting the maximum value
         p->drawLine(rect.right() - 5,
                     rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
                     rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2);
 
+        // Draw the minimum value
         p->drawText(QRect(rect.left(),
                           rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
                           rect.width() - 7,
                           rect.height()*(1-MAX_GRAPH_SCALE)),
                     Qt::AlignVCenter | Qt::AlignRight,
                     QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
+        // The tick denoting the minimum value
         p->drawLine(rect.right() - 5,
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
     }
+
+    // Reset the pen opacity for future use
     p->setOpacity(1);
 }
 
