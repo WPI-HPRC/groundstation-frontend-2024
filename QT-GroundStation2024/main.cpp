@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
     w.centralWidget()->setBackgroundRole(QPalette::Window);
     r.centralWidget()->setBackgroundRole(QPalette::Window);
     w.show();
-    r.show();
+//    r.show();
     w.showMaximized();
-    r.showMaximized();
+//    r.showMaximized();
     w.update();
     r.update();
 

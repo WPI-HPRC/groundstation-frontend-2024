@@ -18,6 +18,11 @@
 #define MAX_DYNAMIC_GRAPH_SCALE 600
 
 
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
+
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
