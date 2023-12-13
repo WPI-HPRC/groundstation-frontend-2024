@@ -795,6 +795,22 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
+void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
+{
+    if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
+        const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
+
+        const QRectF mapBox = w->rect();
+
+        // Draw the image onto the widget
+        p->drawImage(mapBox, *(mapWidget->m_mapImage));
+
+        // Draw a border around the map
+        p->setPen(QPen(m_backgroundBrush, 3));
+        // p->drawLines();
+    }
+}
+
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 {
 

@@ -57,6 +57,7 @@ public:
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w);
 
 
     QBrush m_backgroundBrush;

@@ -83,7 +83,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="hprcAltitudeGauge" name="gauge3" native="true">
+              <widget class="hprcPayloadMap" name="gauge3" native="true">
                <layout class="QFormLayout" name="formLayout"/>
               </widget>
              </item>
@@ -137,12 +137,6 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>hprcAltitudeGauge</class>
-   <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>hprcVelocityGauge</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
@@ -174,6 +168,12 @@
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadMap</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

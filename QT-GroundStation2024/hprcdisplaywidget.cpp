@@ -182,6 +182,15 @@ hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
     m_widgetType = HPRC_RocketVisual;
 }
 
+hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_PayloadMap;
+
+    // Load the map image. In the future this will determine the correct map by location.
+    m_mapImage = new QImage(":/maps/spaceport-america.png");
+}
+
 Qt3DCore::QEntity *createRocketScene();
 
 hprcViewer::hprcViewer(QWidget *parent) :

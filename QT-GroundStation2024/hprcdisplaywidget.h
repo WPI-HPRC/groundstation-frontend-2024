@@ -31,6 +31,7 @@ public:
         HPRC_Hidden,
         HPRC_Viewer,
         HPRC_AIRBRAKES,
+        HPRC_PayloadMap
     };
 
     enum hprcDataType // TODO
@@ -198,6 +199,15 @@ public:
     // since the STL will face out of the screen by default
     // Note: euler angles are pitch, yaw, roll
     QQuaternion m_rocketOrientVertically = QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f);
+};
+
+class hprcPayloadMap : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadMap(QWidget *parent = nullptr);
+
+    // Store a reference to the map image here for rendering
+    QImage *m_mapImage;
 };
 
 
