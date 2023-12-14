@@ -97,7 +97,7 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 
 
 void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
-{    
+{
     if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
         const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
         if (viewer) {
@@ -490,14 +490,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     QRectF middle(topLeftMiddle, bottomRightMiddle);
     QRectF bottom(topLeftBottom, bottomRightBottom);
 
-    double range = 5000; // Should maybe specify what this means?
-    double start = m_latest->rocketTime - range;
-    if(m_latest->altData.size() > 0)
-    {
-        range = m_latest->altData.last().time - m_latest->altData.at(0).time;
-        start = m_latest->altData.at(0).time;
-    }
-
+    double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
+    double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
     bool drawT = false;
     // Adjust the box a little bit to fully encapsulate the entire visual area of the graph
@@ -524,11 +518,10 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     p->setPen(QPen(m_textBrush, 5));
 
-    if(m_latest->altData.size() > 0)
-        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
+    p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time/1000));
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
 
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 255));
@@ -546,15 +539,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     // Line at the bottom, subtract a pixel from each side to fit nicer
     p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
 
-    QList<QPointF> pointsToDraw;
-    double scaleMax = std::numeric_limits<double>::min();
-    double scaleMin = std::numeric_limits<double>::max();
-
-    for(auto& value : data)
-    {
-        scaleMax = fmaxf(value.value, scaleMax);
-        scaleMin = fminf(value.value, scaleMin);
-    }
+    QList<QPoint> pointsToDraw;
+    double scaleMax = data->maxValue->value;
+    double scaleMin = data->minValue->value;
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
@@ -589,29 +576,31 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     double closestDist = std::numeric_limits<double>::max();
 
-    for(MainWindow::graphPoint g : data)
-    {
-        valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1); // This was Ben's math. It works
 
-        valYNormalized = g.value / scale;
+    for (int i = 0; i < CIRCULAR_BUFFER_LEN; i++)
+    {
+        graphPoint *g = graphPointCircularBufferGetValueAtIndex(data, i);
+        valX = rect.left() + 1 + (g->time - start) / range * (rect.width()-1); // This was Ben's math. It works
+
+        valYNormalized = g->value / scale;
 
         // Multiply the normalized value by the distance between the center line and the top or the bottom
         // depending on whether the value is positive or negative. Use some boolean algebra to avoid an if statement
-        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * MAX_GRAPH_SCALE;
+        yMultiplier = ((g->value > 0) * (rect.height() - centerY) + (g->value < 0) * centerY) * MAX_GRAPH_SCALE;
 
         // The actual y position to draw
         valY = centerLine - valYNormalized * yMultiplier;
 
         // If this point is closer to the mouse than the current closest, and if the point is not the first or last point
         // Ignore the first and last points for tooltip drawing, because they look bad
-        if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
+        if(fabs(valX - w->m_mousePos.x()) < closestDist && g->time !=start && g->time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptLabel = QString::number((int)g.value);
+            ptLabel = QString::number((int)g->value);
             highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         }
 
-        pointsToDraw.append(QPointF(valX, valY));
+        pointsToDraw.append(QPoint(valX, valY));
     }
 
     bg.setAlphaF(0.4);
@@ -625,7 +614,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     p->setPen(QPen(bg, 2));
     p->setBrush(QBrush(gradient));
 
-    p->drawPolygon(QPolygonF(pointsToDraw));
+    p->drawPolygon(QPolygon(pointsToDraw));
 
     // Scale the text
     m_widgetFancy.setPointSize(rect.height() * 2/3);
@@ -634,10 +623,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     bg.setAlphaF(0.7);
     p->setPen(QPen(bg, 20));
-
-    // Make sure we always have a data point f
-    if(data.length() == 0)
-        data.append(MainWindow::graphPoint{0, 0});
 
     QString textToDraw = "";
 
@@ -725,7 +710,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         // Only draw current values and graph scale if tooltips are not being shown
         p->setOpacity(1);
 
-        float dataToDraw = data.last().value;
+        float dataToDraw = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
         bool drawDecimals = dataToDraw < 10;
 
         QString printString;

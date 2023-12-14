@@ -1,35 +1,117 @@
 #ifndef HPRCCIRCULARBUFFER_H
 #define HPRCCIRCULARBUFFER_H
 
-#include <mainwindow.h>
 #include <iostream>
+
+#define CIRCULAR_BUFFER_LEN 35
+
+typedef struct {
+    float value;
+    float time;
+} graphPoint;
 
 typedef struct {
     unsigned int length;
     unsigned int dataSize;
-    MainWindow::graphPoint *dataPtr;
-    MainWindow::graphPoint *data;
+    graphPoint *dataPtr;
+    graphPoint *data;
+
+    graphPoint *maxValue;
+    graphPoint *minValue;
 } GraphPointCircularBuffer;
 
 
-GraphPointCircularBuffer *createGraphPointCirularBuffer(unsigned int length)
+inline graphPoint *graphPointCircularBufferGetValueAtIndex(GraphPointCircularBuffer *buffer, unsigned int index)
 {
-    unsigned int size = sizeof(MainWindow::graphPoint);
+    unsigned int currentIndex = (buffer->dataPtr - buffer->data);
+    return &(buffer->data[(currentIndex + index) % buffer->length]);
+}
+
+inline GraphPointCircularBuffer *graphPointCirularBufferCreate(unsigned int length)
+{
+    unsigned int size = sizeof(graphPoint);
     GraphPointCircularBuffer* buffer = (GraphPointCircularBuffer*)malloc(sizeof(GraphPointCircularBuffer) + size * length);
 
     buffer->length = length;
     buffer->dataSize = size;
 
-    buffer->data = (MainWindow::graphPoint *)calloc(size, length);
+    buffer->data = (graphPoint *)calloc(size, length);
 
     buffer->dataPtr = &buffer->data[0];
+    buffer->maxValue = buffer->dataPtr;
+    buffer->minValue = buffer->dataPtr;
 
     return buffer;
 }
 
-void graphPointCirularBufferAdd(GraphPointCircularBuffer *buffer, MainWindow::graphPoint data)
+inline graphPoint *graphPointCircularBufferGetMaxValue(GraphPointCircularBuffer *buffer)
 {
+    graphPoint *maxValue = graphPointCircularBufferGetValueAtIndex(buffer, 0);
+    for (int i = 0; i < buffer->length; i++)
+    {
+        graphPoint *graphPoint = graphPointCircularBufferGetValueAtIndex(buffer, i);
+        if(maxValue->value < graphPoint->value)
+        {
+            maxValue = graphPoint;
+        }
+    }
+
+//    std::cout << "Getting max value \n";
+    return maxValue;
+}
+
+inline graphPoint *graphPointCircularBufferGetMinValue(GraphPointCircularBuffer *buffer)
+{
+    graphPoint *minValue = graphPointCircularBufferGetValueAtIndex(buffer, 0);
+    for (int i = 0; i < buffer->length; i++)
+    {
+        graphPoint *graphPoint = graphPointCircularBufferGetValueAtIndex(buffer, i);
+        if(minValue->value > graphPoint->value)
+        {
+            minValue = graphPoint;
+        }
+    }
+
+//    std::cout << "Getting min value \n";
+
+    return minValue;
+}
+
+inline void graphPointCirularBufferAdd(GraphPointCircularBuffer *buffer, graphPoint data)
+{
+
+    bool needNewMaxValue = false;
+    bool needNewMinValue = false;
+
+
+    if (buffer->dataPtr == buffer->maxValue)
+    {
+        needNewMaxValue = true;
+    }
+    else if (buffer->dataPtr == buffer->minValue)
+    {
+        needNewMinValue = true;
+    }
+    else if (data.value >= buffer->maxValue->value)
+    {
+        buffer->maxValue = buffer->dataPtr;
+    }
+    else if (data.value <= buffer->minValue->value)
+    {
+        buffer->minValue = buffer->dataPtr;
+    }
+
     *buffer->dataPtr = data;
+
+    if(needNewMaxValue)
+    {
+        buffer->maxValue = graphPointCircularBufferGetMaxValue(buffer);
+    }
+    else if (needNewMinValue)
+    {
+        buffer->minValue = graphPointCircularBufferGetMinValue(buffer);
+    }
+
 
     if (buffer->dataPtr == &buffer->data[buffer->length - 1])
     {
@@ -39,12 +121,6 @@ void graphPointCirularBufferAdd(GraphPointCircularBuffer *buffer, MainWindow::gr
     {
         buffer->dataPtr++;
     }
-}
-
-MainWindow::graphPoint graphPointCircularBufferGetValueAtIndex(GraphPointCircularBuffer *buffer, unsigned int index)
-{
-    unsigned int currentIndex = (buffer->dataPtr - buffer->data);
-    return (buffer->data[(currentIndex + index) % buffer->length]);
 }
 
 #endif // HPRCCIRCULARBUFFER_H

@@ -8,6 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+    m_currentData.accData = graphPointCirularBufferCreate(CIRCULAR_BUFFER_LEN);
+    m_currentData.velData = graphPointCirularBufferCreate(CIRCULAR_BUFFER_LEN);
+    m_currentData.altData = graphPointCirularBufferCreate(CIRCULAR_BUFFER_LEN);
+
+
     ui->setupUi(this);
     setBackgroundRole(QPalette::Window);
     setPalette(QApplication::style()->standardPalette());
@@ -31,7 +37,7 @@ void MainWindow::updateData(dataPoint p)
 {
 #if RUN_SPEED_TESTS
     emit speedTick(1);
-    return;
+//    return;
 #endif
 
     if(p.acceleration != m_currentData.acceleration)
@@ -68,15 +74,18 @@ void MainWindow::updateData(dataPoint p)
             m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
         }
         m_currentData.rocketTime = p.rocketTime;
-        m_currentData.accData.append(graphPoint {p.acceleration, p.rocketTime});
-        while(m_currentData.accData.first().time < p.rocketTime - 5000)
-            m_currentData.accData.removeFirst();
-        m_currentData.velData.append(graphPoint {p.velocity, p.rocketTime});
-        while(m_currentData.velData.first().time < p.rocketTime - 5000)
-            m_currentData.velData.removeFirst();
-        m_currentData.altData.append(graphPoint {p.altitude, p.rocketTime});
-        while(m_currentData.altData.first().time < p.rocketTime - 5000)
-            m_currentData.altData.removeFirst();
+        graphPointCirularBufferAdd(m_currentData.accData, graphPoint {
+                                                              .value = p.acceleration,
+                                                              .time = p.rocketTime
+                                                          });
+        graphPointCirularBufferAdd(m_currentData.velData, graphPoint {
+                                                              .value = p.velocity,
+                                                              .time = p.rocketTime
+                                                          });
+        graphPointCirularBufferAdd(m_currentData.altData, graphPoint {
+                                                              .value = p.altitude,
+                                                              .time = p.rocketTime
+                                                          });
         emit rocketTimeUpdated(p.rocketTime);
     }
     if(p.groundTime != m_currentData.groundTime)
