@@ -779,41 +779,59 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
                                                                 Qt::AlignRight | Qt::AlignVCenter,
                                                                 printString);
 
-        currentValue->setDefaultTextColor(m_textBrush.color());
-        currentValue->setOpacity(0.8);
-        m_widgetMedium.setPointSize(rect.height()/8);
-        currentValue->setFont(m_widgetMedium);
+        currentValue->setDefaultTextColor(bg);
+        currentValue->setFont(m_widgetFancy);
 
         scene->addItem(currentValue);
 
 
+        m_widgetMedium.setPointSize(rect.height()/8);
+//        currentValue->setOpacity(0.8);
+
+
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
-        p->drawText(QRect(rect.left(),
-                          rect.top()+1,
-                          rect.width() - 7,
-                          rect.height()*(1-MAX_GRAPH_SCALE)),
-                    Qt::AlignVCenter | Qt::AlignRight,
-                    QString::asprintf("%d", (int)scaleMax));
+        BetterQGraphicsTextItem *maxValue = new BetterQGraphicsTextItem(QRect(rect.left(),
+                                                                              rect.top()+1,
+                                                                              rect.width() - 7,
+                                                                              rect.height()*(1-MAX_GRAPH_SCALE)),
+                                                                        Qt::AlignVCenter | Qt::AlignRight,
+                                                                        QString::asprintf("%d", (int)scaleMax));
+        maxValue->setFont(m_widgetMedium);
+        maxValue->setOpacity(0.8);
+        maxValue->setDefaultTextColor(m_textBrush.color());
+
+        scene->addItem(maxValue);
 
         // The tick denoting the maximum value
-        p->drawLine(rect.right() - 5,
+        QGraphicsLineItem* maxLine = new QGraphicsLineItem(rect.right() - 5,
                     rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
                     rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2);
+        maxLine->setPen(QPen(m_textBrush, 1));
+
+        scene->addItem(maxLine);
 
         // Draw the minimum value
-        p->drawText(QRect(rect.left(),
+        BetterQGraphicsTextItem *minValue = new BetterQGraphicsTextItem(QRect(rect.left(),
                           rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
                           rect.width() - 7,
                           rect.height()*(1-MAX_GRAPH_SCALE)),
                     Qt::AlignVCenter | Qt::AlignRight,
                     QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
+
+        minValue->setFont(m_widgetMedium);
+        minValue->setOpacity(0.8);
+        minValue->setDefaultTextColor(m_textBrush.color());
+
+        scene->addItem(minValue);
         // The tick denoting the minimum value
-        p->drawLine(rect.right() - 5,
+        QGraphicsLineItem* minLine = new QGraphicsLineItem(rect.right() - 5,
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
                     rect.right(),
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
+        minLine->setPen(QPen(m_textBrush, 1));
+        scene->addItem(minLine);
     }
 
     // Reset the pen opacity for future use
