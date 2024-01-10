@@ -479,7 +479,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     QRectF drawBox = w->layout()->geometry().adjusted(margin, margin, -margin, -margin);
 
-//    w->graphicsView->setSceneRect(w->layout()->geometry());
+    w->graphicsView->setSceneRect(w->layout()->geometry());
 
     // label padding = 7.5%
     int lMargin = drawBox.height() * 0.075;
@@ -520,8 +520,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     bgRect->setBrush(m_backgroundBrush);
 
     w->graphicsScene->addItem(bgRect);
-
-    w->graphicsView->setSceneRect(drawBox);
 
     // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
