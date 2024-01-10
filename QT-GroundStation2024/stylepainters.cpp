@@ -546,6 +546,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     double scaleMax = graphPointCircularBufferGetMaxValue(data);
     double scaleMin = graphPointCircularBufferGetMinValue(data);
 
+    scaleMax = fmaxf(scaleMax, 0);
+
     double scale = fmax(1.0, scaleMax - scaleMin);
 
     // Out of sight
