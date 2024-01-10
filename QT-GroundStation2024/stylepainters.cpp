@@ -16,6 +16,8 @@
 #include <QGraphicsPolygonItem>
 #include <QVBoxLayout>
 
+#include "betterqgraphicstextitem.h"
+
 #define NUM_NAVBALL_CIRCLES 7
 
 #define MAX_GRAPH_SCALE 0.85
@@ -660,19 +662,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
 //    QGraphicsTextItem *textItem = new QGraphicsTextItem(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
 
-    QGraphicsTextItem *textItem = new QGraphicsTextItem(textToDraw);
+    BetterQGraphicsTextItem *textItem = new BetterQGraphicsTextItem(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
+
     textItem->setFont(m_widgetFancy);
-    textItem->setDefaultTextColor(bg.rgb());
+    textItem->setDefaultTextColor(bg);
 
-    // Set position and bounding box
-    QPointF position(rect.x() + 5, rect.y());
-    textItem->setPos(position);
-    textItem->setTextWidth(rect.width());
-
-    // Set text alignment
-//    textItem->set(Qt::AlignCenter);
-
-    // Add the text item to the scene
     scene->addItem(textItem);
 
     // Now we draw the ticks
@@ -753,11 +747,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         p->setPen(QPen(m_textBrush, 3));
         p->setFont(m_widgetMedium);
 
-        QGraphicsTextItem *text = new QGraphicsTextItem(ptLabel);
-        text->setPos(ptHighlight.center().x(), ptHighlight.center().y() );
+        BetterQGraphicsTextItem *text = new BetterQGraphicsTextItem(ptHighlight, Qt::AlignVCenter, ptLabel);
         text->setDefaultTextColor(m_textBrush.color());
         text->setFont(m_widgetMedium);
-        text->setScale(0.8);
+//        text->setScale(0.8);
         scene->addItem(text);
 
         p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
@@ -782,14 +775,17 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
             printString = QString::asprintf("%d", (int)dataToDraw);
         }
 
-        p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
-                    Qt::AlignRight | Qt::AlignVCenter,
-                    printString);
+        BetterQGraphicsTextItem *currentValue = new BetterQGraphicsTextItem(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
+                                                                Qt::AlignRight | Qt::AlignVCenter,
+                                                                printString);
 
-        p->setPen(QPen(m_textBrush, 1));
-        p->setOpacity(0.8);
+        currentValue->setDefaultTextColor(m_textBrush.color());
+        currentValue->setOpacity(0.8);
         m_widgetMedium.setPointSize(rect.height()/8);
-        p->setFont(m_widgetMedium);
+        currentValue->setFont(m_widgetMedium);
+
+        scene->addItem(currentValue);
+
 
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
