@@ -543,8 +543,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
 
     QList<QPoint> pointsToDraw;
-    double scaleMax = data->maxValue->value;
-    double scaleMin = data->minValue->value;
+    double scaleMax = graphPointCircularBufferGetMaxValue(data);
+    double scaleMin = graphPointCircularBufferGetMinValue(data);
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
@@ -582,7 +582,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
     for (int i = 0; i < CIRCULAR_BUFFER_LEN; i++)
     {
-        graphPoint *g = graphPointCircularBufferGetValueAtIndex(data, i);
+        GraphPoint *g = graphPointCircularBufferGetValueAtIndex(data, i);
         valX = rect.left() + 1 + (g->time - start) / range * (rect.width()-1); // This was Ben's math. It works
 
         valYNormalized = g->value / scale;

@@ -74,15 +74,15 @@ void MainWindow::updateData(dataPoint p)
             m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
         }
         m_currentData.rocketTime = p.rocketTime;
-        graphPointCirularBufferAdd(m_currentData.accData, graphPoint {
+        graphPointCirularBufferAdd(m_currentData.accData, GraphPoint {
                                                               .value = p.acceleration,
                                                               .time = p.rocketTime
                                                           });
-        graphPointCirularBufferAdd(m_currentData.velData, graphPoint {
+        graphPointCirularBufferAdd(m_currentData.velData, GraphPoint {
                                                               .value = p.velocity,
                                                               .time = p.rocketTime
                                                           });
-        graphPointCirularBufferAdd(m_currentData.altData, graphPoint {
+        graphPointCirularBufferAdd(m_currentData.altData, GraphPoint {
                                                               .value = p.altitude,
                                                               .time = p.rocketTime
                                                           });

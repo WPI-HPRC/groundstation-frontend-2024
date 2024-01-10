@@ -8,34 +8,34 @@
 typedef struct {
     float value;
     float time;
-} graphPoint;
+} GraphPoint;
 
 typedef struct {
     unsigned int length;
     unsigned int dataSize;
-    graphPoint *dataPtr;
-    graphPoint *data;
+    GraphPoint *dataPtr;
+    GraphPoint *data;
 
-    graphPoint *maxValue;
-    graphPoint *minValue;
+    GraphPoint *maxValue;
+    GraphPoint *minValue;
 } GraphPointCircularBuffer;
 
 
-inline graphPoint *graphPointCircularBufferGetValueAtIndex(GraphPointCircularBuffer *buffer, unsigned int index)
+inline GraphPoint *graphPointCircularBufferGetValueAtIndex(GraphPointCircularBuffer *buffer, unsigned int index)
 {
-    unsigned int currentIndex = (buffer->dataPtr - buffer->data);
-    return &(buffer->data[(currentIndex + index) % buffer->length]);
+    // (buffer->dataPtr - buffer->data) is the "current 0 index", add the desired index and mod it by the buffer length to make it wrap around
+    return &(buffer->data[((buffer->dataPtr - buffer->data) + index) % buffer->length]);
 }
 
 inline GraphPointCircularBuffer *graphPointCirularBufferCreate(unsigned int length)
 {
-    unsigned int size = sizeof(graphPoint);
+    unsigned int size = sizeof(GraphPoint);
     GraphPointCircularBuffer* buffer = (GraphPointCircularBuffer*)malloc(sizeof(GraphPointCircularBuffer) + size * length);
 
     buffer->length = length;
     buffer->dataSize = size;
 
-    buffer->data = (graphPoint *)calloc(size, length);
+    buffer->data = (GraphPoint *)calloc(size, length);
 
     buffer->dataPtr = &buffer->data[0];
     buffer->maxValue = buffer->dataPtr;
@@ -44,71 +44,31 @@ inline GraphPointCircularBuffer *graphPointCirularBufferCreate(unsigned int leng
     return buffer;
 }
 
-inline graphPoint *graphPointCircularBufferGetMaxValue(GraphPointCircularBuffer *buffer)
+inline float graphPointCircularBufferGetMaxValue(GraphPointCircularBuffer *buffer)
 {
-    graphPoint *maxValue = graphPointCircularBufferGetValueAtIndex(buffer, 0);
-    for (int i = 0; i < buffer->length; i++)
+    float maxValue = graphPointCircularBufferGetValueAtIndex(buffer, 0)->value;
+    for (int i = 1; i < buffer->length; i++)
     {
-        graphPoint *graphPoint = graphPointCircularBufferGetValueAtIndex(buffer, i);
-        if(maxValue->value < graphPoint->value)
-        {
-            maxValue = graphPoint;
-        }
+        maxValue = fmax(maxValue, graphPointCircularBufferGetValueAtIndex(buffer, i)->value);
     }
 
     return maxValue;
 }
 
-inline graphPoint *graphPointCircularBufferGetMinValue(GraphPointCircularBuffer *buffer)
+inline float graphPointCircularBufferGetMinValue(GraphPointCircularBuffer *buffer)
 {
-    graphPoint *minValue = graphPointCircularBufferGetValueAtIndex(buffer, 0);
-    for (int i = 0; i < buffer->length; i++)
+    float minValue = graphPointCircularBufferGetValueAtIndex(buffer, 0)->value;
+    for (int i = 1; i < buffer->length; i++)
     {
-        graphPoint *graphPoint = graphPointCircularBufferGetValueAtIndex(buffer, i);
-        if(minValue->value > graphPoint->value)
-        {
-            minValue = graphPoint;
-        }
+        minValue = fmin(minValue, graphPointCircularBufferGetValueAtIndex(buffer, i)->value);
     }
 
     return minValue;
 }
 
-inline void graphPointCirularBufferAdd(GraphPointCircularBuffer *buffer, graphPoint data)
+inline void graphPointCirularBufferAdd(GraphPointCircularBuffer *buffer, GraphPoint data)
 {
-
-    bool needNewMaxValue = false;
-    bool needNewMinValue = false;
-
-
-    if (buffer->dataPtr == buffer->maxValue)
-    {
-        needNewMaxValue = true;
-    }
-    else if (buffer->dataPtr == buffer->minValue)
-    {
-        needNewMinValue = true;
-    }
-    else if (data.value >= buffer->maxValue->value)
-    {
-        buffer->maxValue = buffer->dataPtr;
-    }
-    else if (data.value <= buffer->minValue->value)
-    {
-        buffer->minValue = buffer->dataPtr;
-    }
-
     *buffer->dataPtr = data;
-
-    if(needNewMaxValue)
-    {
-        buffer->maxValue = graphPointCircularBufferGetMaxValue(buffer);
-    }
-    else if (needNewMinValue)
-    {
-        buffer->minValue = graphPointCircularBufferGetMinValue(buffer);
-    }
-
 
     if (buffer->dataPtr == &buffer->data[buffer->length - 1])
     {
