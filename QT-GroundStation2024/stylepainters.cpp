@@ -479,13 +479,11 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     QRectF drawBox = w->layout()->geometry().adjusted(margin, margin, -margin, -margin);
 
-    w->graphicsView->setSceneRect(w->layout()->geometry());
+//    w->graphicsView->setSceneRect(w->layout()->geometry());
 
     // label padding = 7.5%
     int lMargin = drawBox.height() * 0.075;
     drawBox.adjust(lMargin, 0, 0, -lMargin);
-
-
 
     QPointF topLeftTop = drawBox.topLeft();
     QPointF bottomRightBottom = drawBox.bottomRight();
@@ -505,7 +503,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
     double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
-    bool drawT = w->graphicsView->underMouse();
+    bool drawT = drawBox.contains(w->m_mousePos);
 
     // <---- draw ----> //
 
@@ -515,8 +513,15 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     // Do a little adjusting to help with tooltip rendering
     p->drawRect(drawBox.adjusted(0, 0, 0, 2));
 
-    w->graphicsScene->setBackgroundBrush(m_transparentBrush);
     w->graphicsScene->clear();
+    w->graphicsScene->setBackgroundBrush(m_transparentBrush);
+
+    QGraphicsRectItem *bgRect = new QGraphicsRectItem(drawBox.adjusted(0, 0, 0, 2));
+    bgRect->setBrush(m_backgroundBrush);
+
+    w->graphicsScene->addItem(bgRect);
+
+    w->graphicsView->setSceneRect(drawBox);
 
     // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
