@@ -4,6 +4,8 @@
 #include "mainwindow.h"
 #include <QObject>
 #include <QWidget>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/Qt3DWindow>
@@ -139,6 +141,9 @@ public:
 
     explicit hprcGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
+
+    QGraphicsView* graphicsView;
+    QGraphicsScene* graphicsScene;
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget

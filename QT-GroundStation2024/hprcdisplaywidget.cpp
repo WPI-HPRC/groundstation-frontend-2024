@@ -9,6 +9,9 @@
 #include <QMouseEvent>
 #include <QQuaternion>
 
+#include <QVBoxLayout>
+#include "mousetrackinggraphicsview.h"
+
 // 3D imports
 #include <Qt3DCore/QEntity>
 #include <Qt3DRender/QMesh>
@@ -142,6 +145,22 @@ void hprcAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
+
+    graphicsView = new MouseTrackingGraphicsView(this);
+    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // Set up layout
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(graphicsView);
+
+    this->setLayout(layout);
+
+
+    graphicsScene = new QGraphicsScene(this);
+    graphicsView->setScene(graphicsScene);
+//    graphicsView->setMouseTracking(true);
+
     setMouseTracking(true);
     m_widgetType = HPRC_Graph;
     foreach (QWidget *w, qApp->topLevelWidgets())
@@ -154,7 +173,6 @@ hprcGraph::hprcGraph(QWidget *parent) :
 void hprcGraph::mouseMoveEvent(QMouseEvent *e)
 {
     m_mousePos = e->pos();
-
 }
 
 hprcAlarmPanel::hprcAlarmPanel(QWidget *parent) :

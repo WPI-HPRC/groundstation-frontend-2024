@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define RUN_SPEED_TESTS true
+#define RUN_SPEED_TESTS false
 #define TIMER_TICK_MS 1
 
 #if RUN_SPEED_TESTS

@@ -11,6 +11,11 @@
 #include <math.h>
 #include <QQuaternion>
 
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsPolygonItem>
+#include <QVBoxLayout>
+
 #define NUM_NAVBALL_CIRCLES 7
 
 #define MAX_GRAPH_SCALE 0.85
@@ -457,7 +462,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 {
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
@@ -470,11 +475,15 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     int margin = fmin(paddingRatio * width, paddingRatio * height);
 
-    QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+    QRectF drawBox = w->layout()->geometry().adjusted(margin, margin, -margin, -margin);
+
+    w->graphicsView->setSceneRect(w->layout()->geometry());
 
     // label padding = 7.5%
     int lMargin = drawBox.height() * 0.075;
     drawBox.adjust(lMargin, 0, 0, -lMargin);
+
+
 
     QPointF topLeftTop = drawBox.topLeft();
     QPointF bottomRightBottom = drawBox.bottomRight();
@@ -494,12 +503,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
     double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
-    bool drawT = false;
-    // Adjust the box a little bit to fully encapsulate the entire visual area of the graph
-    if(drawBox.adjusted(0, 0, 0, 5).contains(w->m_mousePos))
-    {
-        drawT = true;
-    }
+    bool drawT = w->graphicsView->underMouse();
 
     // <---- draw ----> //
 
@@ -509,10 +513,14 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     // Do a little adjusting to help with tooltip rendering
     p->drawRect(drawBox.adjusted(0, 0, 0, 2));
 
+    w->graphicsScene->setBackgroundBrush(m_transparentBrush);
+    w->graphicsScene->clear();
+
     // Do a little adjusting to help with tooltip rendering
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
-    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
+    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, w->graphicsScene, drawT);
+    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, w->graphicsScene, drawT);
+
 
     p->setBrush(m_transparentBrush);
     p->setPen(QPen(m_panelBrush, 4));
@@ -522,7 +530,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time/1000));
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip)
 {
     if (rect.height() < 10)
         return;
@@ -540,7 +548,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     p->setPen(QPen(bg, 2));
 
     // Line at the bottom, subtract a pixel from each side to fit nicer
-    p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
+    QGraphicsLineItem* bottomLine = new QGraphicsLineItem(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
+    bottomLine->setPen(QPen(bg, 2));
+    scene->addItem(bottomLine);
 
     QList<QPoint> pointsToDraw;
     double scaleMax = graphPointCircularBufferGetMaxValue(data);
@@ -616,10 +626,11 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
     pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
 
-    p->setPen(QPen(bg, 2));
-    p->setBrush(QBrush(gradient));
+    QGraphicsPolygonItem *polygonItem = new QGraphicsPolygonItem(QPolygon(pointsToDraw));
+    polygonItem->setBrush(gradient);
+    polygonItem->setPen(QPen(bg, 2));
 
-    p->drawPolygon(QPolygon(pointsToDraw));
+    scene->addItem(polygonItem);
 
     // Scale the text
     m_widgetFancy.setPointSize(rect.height() * 2/3);
@@ -646,9 +657,23 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         break;
     }
 
-    // 5 pixels of padding to the left
-    p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
 
+//    QGraphicsTextItem *textItem = new QGraphicsTextItem(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
+
+    QGraphicsTextItem *textItem = new QGraphicsTextItem(textToDraw);
+    textItem->setFont(m_widgetFancy);
+    textItem->setDefaultTextColor(bg.rgb());
+
+    // Set position and bounding box
+    QPointF position(rect.x() + 5, rect.y());
+    textItem->setPos(position);
+    textItem->setTextWidth(rect.width());
+
+    // Set text alignment
+//    textItem->set(Qt::AlignCenter);
+
+    // Add the text item to the scene
+    scene->addItem(textItem);
 
     // Now we draw the ticks
     float y = 0;
@@ -665,8 +690,17 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         y = i/gScale * rect.height() * MAX_GRAPH_SCALE;
 
         // Drawing the actual ticks, 10 pixels from right to left centered about the right side of the rectangle
-        p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
-        p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+
+        QGraphicsLineItem* tick1 = new QGraphicsLineItem(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
+        tick1->setPen(QPen(m_textBrush, 1));
+        tick1->setOpacity(0.5);
+
+        QGraphicsLineItem* tick2 = new QGraphicsLineItem(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+        tick2->setPen(QPen(m_textBrush, 1));
+        tick2->setOpacity(0.5);
+
+        scene->addItem(tick1);
+        scene->addItem(tick2);
     }
 
     p->setOpacity(1);
@@ -686,14 +720,21 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
         // Shift one pixel down to look better
 //        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
-        p->drawRect(ptHighlight);
+        QGraphicsRectItem *tooltipRect = new QGraphicsRectItem(ptHighlight);
+        tooltipRect->setPen(QPen(m_transparentBrush, 0));
+        tooltipRect->setBrush(lightHighlighterBrush);
+        tooltipRect->setOpacity(0.1);
+        scene->addItem(tooltipRect);
 
         p->setOpacity(0.3);
         p->setPen(QPen(lightHighlighterBrush, 2));
 
         // Draw a line from the top to the bottom of the rectangle, at the x coordinate of the mouse
         // Adjust the top 1 pixel down and the bottom 2 pixels up to make it fit well within the subgraph
-        p->drawLine(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
+        QGraphicsLineItem *centerLine = new QGraphicsLineItem(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
+        centerLine->setOpacity(0.3);
+        centerLine->setPen(QPen(lightHighlighterBrush, 2));
+        scene->addItem(centerLine);
 
         bg.setAlphaF(1);
 
@@ -702,11 +743,23 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
         p->setOpacity(1);
         // Circle at the data point
-        p->drawEllipse(highlighted, 5, 5);
+        QGraphicsEllipseItem *circle = new QGraphicsEllipseItem(highlighted.x() - 2.5, highlighted.y() - 2.5, 5, 5);
+        circle->setBrush(bg);
+        circle->setPen(bg);
+        scene->addItem(circle);
+
 
         p->setOpacity(1);
         p->setPen(QPen(m_textBrush, 3));
         p->setFont(m_widgetMedium);
+
+        QGraphicsTextItem *text = new QGraphicsTextItem(ptLabel);
+        text->setPos(ptHighlight.center().x(), ptHighlight.center().y() );
+        text->setDefaultTextColor(m_textBrush.color());
+        text->setFont(m_widgetMedium);
+        text->setScale(0.8);
+        scene->addItem(text);
+
         p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
         p->setPen(QPen(m_highlightBrush, 3));
     }
