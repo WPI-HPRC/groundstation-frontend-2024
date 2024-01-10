@@ -118,8 +118,6 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
     // <------------------- math --------------------->//
 
-
-
     p->setRenderHint(QPainter::Antialiasing);
 
     p->setFont(m_widgetLarge);
@@ -201,6 +199,9 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 {
+    if (w->rect().height() < 100)
+        return;
+
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_backgroundBrush);
     QPen bgPen(m_backgroundBrush, 5);
@@ -523,6 +524,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
+    if (rect.height() < 10)
+        return;
 
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 255));
 

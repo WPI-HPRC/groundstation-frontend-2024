@@ -251,7 +251,7 @@ hprcViewer::hprcViewer(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            connect(mainWin, SIGNAL(orientUpdated(QQuaternion)), this, SLOT(repaint()));
+//            connect(mainWin, SIGNAL(orientUpdated(QQuaternion)), this, SLOT(repaint()));
         }
 }
 

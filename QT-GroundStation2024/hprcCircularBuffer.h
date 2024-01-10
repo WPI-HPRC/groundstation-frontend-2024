@@ -56,7 +56,6 @@ inline graphPoint *graphPointCircularBufferGetMaxValue(GraphPointCircularBuffer 
         }
     }
 
-//    std::cout << "Getting max value \n";
     return maxValue;
 }
 
@@ -71,8 +70,6 @@ inline graphPoint *graphPointCircularBufferGetMinValue(GraphPointCircularBuffer 
             minValue = graphPoint;
         }
     }
-
-//    std::cout << "Getting min value \n";
 
     return minValue;
 }
