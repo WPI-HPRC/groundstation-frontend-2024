@@ -97,7 +97,7 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 {
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_panelBrush);
-    p->setPen(QPen(m_transparentBrush, 0));
+    p->setPen(QPen(m_transparentBrush, 1));
     p->drawRoundedRect(QRectF(o->rect).adjusted(0.5, 0.5, -0.5, -0.5), 10, 10);
 
 }
@@ -122,6 +122,9 @@ void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 {
+
+    if(w->rect().width() < 100)
+        return;
 
     // <------------------- math --------------------->//
 
@@ -277,6 +280,9 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 {
+    if(w->width() < 100)
+        return;
+
     // -- Pen Setup --
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -511,15 +517,18 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     p->setBrush(m_backgroundBrush);
 
     // Do a little adjusting to help with tooltip rendering
-    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
+//    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
 
     w->graphicsScene->clear();
     w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
     QGraphicsRectItem *bgRect = new QGraphicsRectItem(drawBox.adjusted(0, 0, 0, 2));
+    bgRect->setPen(QPen(m_transparentBrush, 2));
     bgRect->setBrush(m_backgroundBrush);
+    bgRect->setZValue(-1);
 
     w->graphicsScene->addItem(bgRect);
+
 
     // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
@@ -532,7 +541,14 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     p->setPen(QPen(m_textBrush, 5));
 
-    p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time/1000));
+    QGraphicsRectItem* outlineRect = new QGraphicsRectItem(drawBox.adjusted(-1, -1, 1, 3));
+    outlineRect->setBrush(m_transparentBrush);
+    outlineRect->setPen(QPen(m_panelBrush, 1));
+    outlineRect->setZValue(100);
+
+    w->graphicsScene->addItem(outlineRect);
+
+//    p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time/1000));
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip)
@@ -550,11 +566,10 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     gradient.setColorAt(1, m_transparentBrush.color());
     bg.setAlphaF(1);
 
-    p->setPen(QPen(bg, 2));
-
     // Line at the bottom, subtract a pixel from each side to fit nicer
     QGraphicsLineItem* bottomLine = new QGraphicsLineItem(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
     bottomLine->setPen(QPen(bg, 2));
+    bottomLine->setZValue(0);;
     scene->addItem(bottomLine);
 
     QList<QPoint> pointsToDraw;
@@ -620,7 +635,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
             highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         }
 
-        pointsToDraw.append(QPoint(valX, valY));
+        pointsToDraw.append(QPoint(round(valX), round(valY)));
     }
 
     bg.setAlphaF(0.4);
@@ -635,15 +650,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     polygonItem->setBrush(gradient);
     polygonItem->setPen(QPen(bg, 2));
 
-    scene->addItem(polygonItem);
-
     // Scale the text
     m_widgetFancy.setPointSize(rect.height() * 2/3);
     m_widgetFancy.setWeight(QFont::Black);
-    p->setFont(m_widgetFancy);
-
-    bg.setAlphaF(0.7);
-    p->setPen(QPen(bg, 20));
 
     QString textToDraw = "";
 
@@ -662,9 +671,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         break;
     }
 
-
-//    QGraphicsTextItem *textItem = new QGraphicsTextItem(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
-
     BetterQGraphicsTextItem *textItem = new BetterQGraphicsTextItem(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
 
     textItem->setFont(m_widgetFancy);
@@ -674,9 +680,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
     // Now we draw the ticks
     float y = 0;
-    p->setPen(QPen(m_textBrush, 1));
-    p->setOpacity(0.5);
-
     // Clamp the scale
     float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
 
@@ -700,25 +703,19 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         scene->addItem(tick2);
     }
 
-    p->setOpacity(1);
-
-    p->setPen(QPen(bg, 1));
+    polygonItem->setZValue(0);
+    scene->addItem(polygonItem);
 
     // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
     // Shift it down by 0.5 before rounding to align things
-    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top() - 0.5), 50, roundf(rect.height() + 0.5));
+    ptHighlight = QRect(round(w->m_mousePos.x() - 25), roundf(rect.top() - 0.5), round(50), roundf(rect.height() + 0.5));
 
     if(drawTooltip)
     {
-        p->setOpacity(0.1);
-
-        p->setPen(QPen(m_transparentBrush, 0));
-        p->setBrush(lightHighlighterBrush);
-
         // Shift one pixel down to look better
 //        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
         QGraphicsRectItem *tooltipRect = new QGraphicsRectItem(ptHighlight);
-        tooltipRect->setPen(QPen(m_transparentBrush, 0));
+        tooltipRect->setPen(QPen(m_transparentBrush, 1));
         tooltipRect->setBrush(lightHighlighterBrush);
         tooltipRect->setOpacity(0.1);
         scene->addItem(tooltipRect);
@@ -734,36 +731,19 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         scene->addItem(centerLine);
 
         bg.setAlphaF(1);
-
-        p->setBrush(bg);
-        p->setPen(bg);
-
-        p->setOpacity(1);
         // Circle at the data point
         QGraphicsEllipseItem *circle = new QGraphicsEllipseItem(highlighted.x() - 2.5, highlighted.y() - 2.5, 5, 5);
         circle->setBrush(bg);
         circle->setPen(bg);
         scene->addItem(circle);
 
-
-        p->setOpacity(1);
-        p->setPen(QPen(m_textBrush, 3));
-        p->setFont(m_widgetMedium);
-
         BetterQGraphicsTextItem *text = new BetterQGraphicsTextItem(ptHighlight, Qt::AlignVCenter, ptLabel);
         text->setDefaultTextColor(m_textBrush.color());
         text->setFont(m_widgetMedium);
-//        text->setScale(0.8);
         scene->addItem(text);
-
-        p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
-        p->setPen(QPen(m_highlightBrush, 3));
     }
-    else
+    else         // Only draw current values and graph scale if tooltips are not being shown
     {
-        // Only draw current values and graph scale if tooltips are not being shown
-        p->setOpacity(1);
-
         float dataToDraw = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
         bool drawDecimals = dataToDraw < 10;
 
@@ -787,10 +767,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
         scene->addItem(currentValue);
 
-
         m_widgetMedium.setPointSize(rect.height()/8);
-//        currentValue->setOpacity(0.8);
-
 
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
@@ -836,6 +813,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         minLine->setPen(QPen(m_textBrush, 1));
         scene->addItem(minLine);
     }
+
 
     // Reset the pen opacity for future use
     p->setOpacity(1);
@@ -1036,6 +1014,9 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 {
 
+    if(w->width() < 100)
+        return;
+
     // setup
     p->setBrush(m_transparentBrush);
 
@@ -1184,6 +1165,9 @@ void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, 
 
 void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 {
+    if(w->width() < 100)
+        return;
+
     p->setRenderHint(QPainter::Antialiasing);
 
     QPen textPenRed = QPen(m_highlightBrush, 3);
@@ -1277,7 +1261,7 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 
     //Circle drawn on top of airbrakes
     p->setBrush(circleBrush);
-    p->setPen(QPen(m_transparentBrush, 0));
+    p->setPen(QPen(m_transparentBrush, 1));
     p->drawEllipse(QPointF(0, 0), circleRadius, circleRadius);
 
     //End rotation and translation of origin
