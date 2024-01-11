@@ -472,9 +472,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 {
-    p->setRenderHint(QPainter::Antialiasing);
-    QPen textPen(m_textBrush, 3);
-
     int width= w->rect().width();
     int height = w->rect().height();
 
@@ -509,19 +506,23 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
     double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
-    bool drawT = drawBox.contains(w->m_mousePos);
+
+    bool drawT;
+    if(drawBox.contains(w->m_mousePos))
+    {
+        drawT = true;
+
+        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + 25), drawBox.right() - 25));
+    }
+
+
 
     // <---- draw ----> //
-
-    p->setPen(QPen(m_transparentBrush.color()));
-    p->setBrush(m_backgroundBrush);
-
-    // Do a little adjusting to help with tooltip rendering
-//    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
 
     w->graphicsScene->clear();
     w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
+    // Do a little adjusting to help with tooltip rendering
     QGraphicsRectItem *bgRect = new QGraphicsRectItem(drawBox.adjusted(0, 0, 0, 2));
     bgRect->setPen(QPen(m_backgroundBrush, 6));
     bgRect->setBrush(m_backgroundBrush);
@@ -529,18 +530,12 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     w->graphicsScene->addItem(bgRect);
 
-
     // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
     drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, w->graphicsScene, drawT);
     drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, w->graphicsScene, drawT);
 
-
-    p->setBrush(m_transparentBrush);
-    p->setPen(QPen(m_panelBrush, 4));
-
-    p->setPen(QPen(m_textBrush, 5));
-
+    // Draw an outline to clean up weird border rendering
     QGraphicsRectItem* outlineRect = new QGraphicsRectItem(drawBox.adjusted(-1, -1, 1, 3));
     outlineRect->setBrush(m_transparentBrush);
     outlineRect->setPen(QPen(m_backgroundBrush, 4));
