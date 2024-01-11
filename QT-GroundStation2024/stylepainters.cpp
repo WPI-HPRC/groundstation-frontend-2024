@@ -29,6 +29,9 @@
 #define GRAPH_TICK_DISTANCE 50
 #define MAX_DYNAMIC_GRAPH_SCALE 600
 
+#define TOOLTIP_WIDTH 50
+#define TOOLTIP_WIDTH_HALF 25
+
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
@@ -512,7 +515,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     {
         drawT = true;
 
-        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + 26), drawBox.right() - 26));
+        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + TOOLTIP_WIDTH_HALF + 2), drawBox.right() - TOOLTIP_WIDTH_HALF - 2));
     }
 
 
@@ -701,7 +704,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
     // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
     // Shift it down by 0.5 before rounding to align things
-    ptHighlight = QRect(round(w->m_mousePos.x() - 25), roundf(rect.top() - 0.5), round(50), roundf(rect.height() + 0.5));
+    ptHighlight = QRect(round(w->m_mousePos.x() - TOOLTIP_WIDTH_HALF), roundf(rect.top() - 0.5), TOOLTIP_WIDTH, roundf(rect.height() + 0.5));
 
     if(drawTooltip)
     {
