@@ -512,7 +512,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     {
         drawT = true;
 
-        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + 25), drawBox.right() - 25));
+        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + 26), drawBox.right() - 26));
     }
 
 
@@ -536,14 +536,12 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, w->graphicsScene, drawT);
 
     // Draw an outline to clean up weird border rendering
-    QGraphicsRectItem* outlineRect = new QGraphicsRectItem(drawBox.adjusted(-1, -1, 1, 3));
+    QGraphicsRectItem* outlineRect = new QGraphicsRectItem(drawBox.adjusted(0, 0, 0, 3));
     outlineRect->setBrush(m_transparentBrush);
     outlineRect->setPen(QPen(m_backgroundBrush, 4));
     outlineRect->setZValue(100);
 
     w->graphicsScene->addItem(outlineRect);
-
-//    p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time/1000));
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip)
@@ -707,8 +705,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
     if(drawTooltip)
     {
-        // Shift one pixel down to look better
-//        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
         QGraphicsRectItem *tooltipRect = new QGraphicsRectItem(ptHighlight);
         tooltipRect->setPen(QPen(m_transparentBrush, 1));
         tooltipRect->setBrush(lightHighlighterBrush);
