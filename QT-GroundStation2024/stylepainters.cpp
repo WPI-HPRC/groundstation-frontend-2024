@@ -626,7 +626,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         if(fabs(valX - w->m_mousePos.x()) < closestDist && g->time !=start && g->time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptLabel = QString::number((int)g->value);
+            ptLabel = g->value > 5 ? QString::number((int)g->value) : QString::asprintf("%0.2f", g->value);
             highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         }
 
