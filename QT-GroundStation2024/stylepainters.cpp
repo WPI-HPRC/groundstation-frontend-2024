@@ -523,7 +523,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
     QGraphicsRectItem *bgRect = new QGraphicsRectItem(drawBox.adjusted(0, 0, 0, 2));
-    bgRect->setPen(QPen(m_transparentBrush, 2));
+    bgRect->setPen(QPen(m_backgroundBrush, 6));
     bgRect->setBrush(m_backgroundBrush);
     bgRect->setZValue(-1);
 
@@ -543,7 +543,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     QGraphicsRectItem* outlineRect = new QGraphicsRectItem(drawBox.adjusted(-1, -1, 1, 3));
     outlineRect->setBrush(m_transparentBrush);
-    outlineRect->setPen(QPen(m_panelBrush, 1));
+    outlineRect->setPen(QPen(m_backgroundBrush, 4));
     outlineRect->setZValue(100);
 
     w->graphicsScene->addItem(outlineRect);
