@@ -15,9 +15,6 @@ typedef struct {
     unsigned int dataSize;
     GraphPoint *dataPtr;
     GraphPoint *data;
-
-    GraphPoint *maxValue;
-    GraphPoint *minValue;
 } GraphPointCircularBuffer;
 
 
@@ -38,8 +35,6 @@ inline GraphPointCircularBuffer *graphPointCirularBufferCreate(unsigned int leng
     buffer->data = (GraphPoint *)calloc(size, length);
 
     buffer->dataPtr = &buffer->data[0];
-    buffer->maxValue = buffer->dataPtr;
-    buffer->minValue = buffer->dataPtr;
 
     return buffer;
 }
