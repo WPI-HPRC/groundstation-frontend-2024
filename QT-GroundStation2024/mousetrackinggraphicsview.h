@@ -21,6 +21,10 @@ protected:
         // It's getting shifted for some reason, so shift it back
         graph->m_mousePos = QPoint(event->pos().x(), event->pos().y());
     }
+
+    virtual void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE {
+        event->accept();
+    }
 };
 
 #endif // MOUSETRACKINGGRAPHICSVIEW_H

@@ -805,10 +805,6 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         minLine->setPen(QPen(m_textBrush, 1));
         scene->addItem(minLine);
     }
-
-
-    // Reset the pen opacity for future use
-    p->setOpacity(1);
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
