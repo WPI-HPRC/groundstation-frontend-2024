@@ -150,6 +150,8 @@ hprcGraph::hprcGraph(QWidget *parent) :
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    graphicsView->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
+
     // Set up layout
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(graphicsView);

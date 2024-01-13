@@ -546,6 +546,8 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     outlineRect->setZValue(100);
 
     w->graphicsScene->addItem(outlineRect);
+
+    w->graphicsView->viewport()->update();
 }
 
 void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip)
