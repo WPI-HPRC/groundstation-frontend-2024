@@ -510,7 +510,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
 
-    bool drawT;
+    bool drawT = false;
     if(drawBox.contains(w->m_mousePos))
     {
         drawT = true;
@@ -523,6 +523,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     // <---- draw ----> //
 
     w->graphicsScene->clear();
+
     w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
     // Do a little adjusting to help with tooltip rendering
@@ -568,9 +569,15 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     bottomLine->setZValue(0);;
     scene->addItem(bottomLine);
 
+    double maxValue = graphPointCircularBufferGetMaxValue(data);
+    double minValue = graphPointCircularBufferGetMinValue(data);
+
+    // These values are altered sometimes for graph scaling purposes. We need to keep the real max/min for later
+    double scaleMax = maxValue;
+    double scaleMin = minValue;
+
     QList<QPoint> pointsToDraw;
-    double scaleMax = graphPointCircularBufferGetMaxValue(data);
-    double scaleMin = graphPointCircularBufferGetMinValue(data);
+
 
     scaleMax = fmaxf(scaleMax, 0);
 
@@ -731,51 +738,42 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         circle->setPen(bg);
         scene->addItem(circle);
 
-        BetterQGraphicsTextItem *text = new BetterQGraphicsTextItem(ptHighlight, Qt::AlignVCenter, ptLabel);
-        text->setDefaultTextColor(m_textBrush.color());
-        text->setFont(m_widgetMedium);
-        scene->addItem(text);
+        BetterQGraphicsTextItem *label = new BetterQGraphicsTextItem(ptHighlight, Qt::AlignVCenter, ptLabel);
+        label->setDefaultTextColor(m_textBrush.color());
+        label->setFont(m_widgetMedium);
+        scene->addItem(label);
     }
     else         // Only draw current values and graph scale if tooltips are not being shown
     {
-        float dataToDraw = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
-        bool drawDecimals = dataToDraw < 10;
+        float currentValue = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
 
-        QString printString;
-
-        if (drawDecimals)
-        {
-            printString = QString::asprintf("%0.2f", dataToDraw);
-        }
-        else
-        {
-            printString = QString::asprintf("%d", (int)dataToDraw);
-        }
-
-        BetterQGraphicsTextItem *currentValue = new BetterQGraphicsTextItem(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
+        BetterQGraphicsTextItem *currentValueLabel = new BetterQGraphicsTextItem(QRect(rect.right() - 200,
+                                                                                        rect.top(),
+                                                                                        190,
+                                                                                        rect.height()),
                                                                 Qt::AlignRight | Qt::AlignVCenter,
-                                                                printString);
+                                                                                 abs(currentValue) < 10 ? QString::asprintf("%0.2f", currentValue) : QString::asprintf("%d", (int)currentValue));
 
-        currentValue->setDefaultTextColor(bg);
-        currentValue->setFont(m_widgetFancy);
+        currentValueLabel->setDefaultTextColor(bg);
+        currentValueLabel->setFont(m_widgetFancy);
 
-        scene->addItem(currentValue);
+        scene->addItem(currentValueLabel);
 
         m_widgetMedium.setPointSize(rect.height()/8);
 
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
-        BetterQGraphicsTextItem *maxValue = new BetterQGraphicsTextItem(QRect(rect.left(),
+        BetterQGraphicsTextItem *maxLabel = new BetterQGraphicsTextItem(QRect(rect.left(),
                                                                               rect.top()+1,
                                                                               rect.width() - 7,
                                                                               rect.height()*(1-MAX_GRAPH_SCALE)),
                                                                         Qt::AlignVCenter | Qt::AlignRight,
-                                                                        QString::asprintf("%d", (int)scaleMax));
-        maxValue->setFont(m_widgetMedium);
-        maxValue->setOpacity(0.8);
-        maxValue->setDefaultTextColor(m_textBrush.color());
+                                                                        abs(maxValue) < 10 ? QString::asprintf("%0.2f", maxValue) : QString::asprintf("%d", (int)maxValue));
+        maxLabel->setFont(m_widgetMedium);
+        maxLabel->setOpacity(0.8);
+        maxLabel->setDefaultTextColor(m_textBrush.color());
 
-        scene->addItem(maxValue);
+        scene->addItem(maxLabel);
 
         // The tick denoting the maximum value
         QGraphicsLineItem* maxLine = new QGraphicsLineItem(rect.right() - 5,
@@ -787,18 +785,18 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         scene->addItem(maxLine);
 
         // Draw the minimum value
-        BetterQGraphicsTextItem *minValue = new BetterQGraphicsTextItem(QRect(rect.left(),
-                          rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
-                          rect.width() - 7,
-                          rect.height()*(1-MAX_GRAPH_SCALE)),
-                    Qt::AlignVCenter | Qt::AlignRight,
-                    QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
+        BetterQGraphicsTextItem *minLabel = new BetterQGraphicsTextItem(QRect(rect.left(),
+                                                                              rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
+                                                                              rect.width() - 7,
+                                                                              rect.height()*(1-MAX_GRAPH_SCALE)),
+                                                                        Qt::AlignVCenter | Qt::AlignRight,
+                                                                        abs(minValue) < 10 ? QString::asprintf("%0.2f", minValue) : QString::asprintf("%d", (int)minValue));
 
-        minValue->setFont(m_widgetMedium);
-        minValue->setOpacity(0.8);
-        minValue->setDefaultTextColor(m_textBrush.color());
+        minLabel->setFont(m_widgetMedium);
+        minLabel->setOpacity(0.8);
+        minLabel->setDefaultTextColor(m_textBrush.color());
 
-        scene->addItem(minValue);
+        scene->addItem(minLabel);
         // The tick denoting the minimum value
         QGraphicsLineItem* minLine = new QGraphicsLineItem(rect.right() - 5,
                     rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,

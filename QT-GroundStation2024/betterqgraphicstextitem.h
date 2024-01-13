@@ -10,11 +10,13 @@ public:
     {}
     virtual ~BetterQGraphicsTextItem() {}
     QRectF boundingRect() const { return geometry; }
+
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
         if(opacity)
             painter->setOpacity(opacity);
-//        if(font != nullptr)
+
         painter->setFont(font);
 
         painter->setBrush(QBrush(color));
@@ -22,6 +24,7 @@ public:
 
         painter->drawText(geometry, text, alignment);
     }
+
 
     void setOpacity(float _opacity)
     {
