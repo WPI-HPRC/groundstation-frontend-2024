@@ -83,7 +83,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="hprcPayloadMap" name="gauge3" native="true">
+              <widget class="hprcAltitudeGauge" name="gauge3" native="true">
                <layout class="QFormLayout" name="formLayout"/>
               </widget>
              </item>
@@ -173,7 +173,7 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>hprcPayloadMap</class>
+   <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
