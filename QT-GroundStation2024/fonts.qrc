@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/fonts">
         <file>fonts/OverpassMono-VariableFont_wght.ttf</file>
+        <file>fonts/JockeyOne-Regular.ttf</file>
     </qresource>
 </RCC>

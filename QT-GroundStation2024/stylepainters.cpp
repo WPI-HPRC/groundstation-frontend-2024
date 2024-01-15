@@ -13,6 +13,16 @@
 
 #define NUM_NAVBALL_CIRCLES 7
 
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
+
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
+
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 {
     QPalette widgetPalette = style->standardPalette();
@@ -25,6 +35,11 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
 
     int id = QFontDatabase::addApplicationFont(":/fonts/fonts/OverpassMono-VariableFont_wght.ttf");
     QString overpassMono = QFontDatabase::applicationFontFamilies(id).at(0);
+
+    id = QFontDatabase::addApplicationFont(":/fonts/fonts/JockeyOne-Regular.ttf");
+    QStringList l = QFontDatabase::applicationFontFamilies(id);
+    QString jockeyOne = QFontDatabase::applicationFontFamilies(id).at(0);
+    m_widgetFancy = QFont(jockeyOne, 30, 5, false);
     m_widgetLarge = QFont(overpassMono, 20, 5, false);
     m_widgetMedium = QFont(overpassMono, 15, 5, false);
     m_widgetSmall = QFont(overpassMono, 10, 5, false);
@@ -213,8 +228,6 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     progressGradient.setColorAt(1, m_panelBrush.color());
     progressGradient.setColorAt(0, m_highlightBrush.color());
 
-
-//    QPen fgPen(QBrush(progressGradient), 5);
     QPen fgPen(m_highlightBrush, 5);
 
     fgPen.setCapStyle(Qt::RoundCap);
@@ -445,8 +458,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
-
-
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
 
@@ -464,142 +475,310 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     int lMargin = drawBox.height() * 0.075;
     drawBox.adjust(lMargin, 0, 0, -lMargin);
 
-    QPointF topRightTop = drawBox.topRight();
-    QPointF bottomLeftBottom = drawBox.bottomLeft();
+    QPointF topLeftTop = drawBox.topLeft();
+    QPointF bottomRightBottom = drawBox.bottomRight();
 
     int row2Top = drawBox.y() + drawBox.height()/3;
     int row3Top = drawBox.y() + 2 * drawBox.height()/3;
 
-    QPointF bottomLeftTop(drawBox.left(), row2Top);
-    QPointF topRightMiddle(drawBox.right(), row2Top);
-    QPointF bottomLeftMiddle(drawBox.left(), row3Top);
-    QPointF topRightBottom(drawBox.right(), row3Top);
+    QPointF bottomRightTop(drawBox.right(), row2Top);
+    QPointF topLeftMiddle(drawBox.left(), row2Top);
+    QPointF bottomRightMiddle(drawBox.right(), row3Top);
+    QPointF topLeftBottom(drawBox.left(), row3Top);
 
-    QRectF top(topRightTop, bottomLeftTop);
-    QRectF middle(topRightMiddle, bottomLeftMiddle);
-    QRectF bottom(topRightBottom, bottomLeftBottom);
+    QRectF top(topLeftTop, bottomRightTop);
+    QRectF middle(topLeftMiddle, bottomRightMiddle);
+    QRectF bottom(topLeftBottom, bottomRightBottom);
 
-    double range = 5000;
+    double range = 5000; // Should maybe specify what this means?
     double start = m_latest->rocketTime - range;
+    if(m_latest->altData.size() > 0)
+    {
+        range = m_latest->altData.last().time - m_latest->altData.at(0).time;
+        start = m_latest->altData.at(0).time;
+    }
+
 
     bool drawT = false;
-    if(drawBox.contains(w->m_mousePos))
+    // Adjust the box a little bit to fully encapsulate the entire visual area of the graph
+    if(drawBox.adjusted(0, 0, 0, 5).contains(w->m_mousePos))
     {
         drawT = true;
     }
 
     // <---- draw ----> //
 
+    p->setPen(QPen(m_transparentBrush.color()));
     p->setBrush(m_backgroundBrush);
-    p->drawRect(drawBox);
 
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle, QColor("#2c4985"), m_latest->velData, range, start, w, drawT);
-    drawHPRCSubGraph(p, bottom, QColor("#471d57"), m_latest->altData, range, start, w, drawT);
+    // Do a little adjusting to help with tooltip rendering
+    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
 
-
+    // Do a little adjusting to help with tooltip rendering
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
+    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
+    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
 
     p->setBrush(m_transparentBrush);
-    p->setPen(textPen);
-    p->drawLine(top.topRight(), bottom.bottomRight());
-    p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
+    p->setPen(QPen(m_panelBrush, 4));
 
+    p->setPen(QPen(m_textBrush, 5));
+
+    if(m_latest->altData.size() > 0)
+        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
 {
 
-    QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
+    QBrush lightHighlighterBrush(QColor(255, 255, 255, 255));
 
     QPointF bottomPt = rect.bottomLeft();
-//    bottomPt.setY(rect.bottom() + rect.height()/3);
     QLinearGradient gradient(bottomPt, rect.topLeft());
-//    gradient.setColorAt(0, m_transparentBrush.color());
-//    gradient.setColorAt(1, bg);
+
+    bg.setAlphaF(0.5);
     gradient.setColorAt(0, bg);
     gradient.setColorAt(1, m_transparentBrush.color());
+    bg.setAlphaF(1);
 
-//    p->setPen(QPen(m_transparentBrush, 3));
-    p->setPen(QPen(bg, 3));
+    p->setPen(QPen(bg, 2));
+
+    // Line at the bottom, subtract a pixel from each side to fit nicer
+    p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
+
     QList<QPointF> pointsToDraw;
-    double max = 9999;
-    double scaleMax = 1;
-    double scaleMin = 999999;
-    for(int i = 0; i < data.size(); i++)
-    {
-////        if(!(data.at(i).time < (start - range)))
-////        {
-            if(data.at(i).value > scaleMax)
-            {
-                scaleMax = data.at(i).value;
-            }
-            if(data.at(i).value < scaleMin)
-            {
-                scaleMin = data.at(i).value;
-            }
+    double scaleMax = std::numeric_limits<double>::min();
+    double scaleMin = std::numeric_limits<double>::max();
 
-////        }
+    for(auto& value : data)
+    {
+        scaleMax = fmaxf(value.value, scaleMax);
+        scaleMin = fminf(value.value, scaleMin);
     }
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
+    // Out of sight
     QRectF ptHighlight(-100,0,0,0);
     QPointF highlighted(-100,0);
     QString ptLabel("");
 
+    bool drawMaxMarker = true;
+
+    double centerY = 0;
+
+    // Setting the centerpoint of the axis
+    if(scaleMin < 0)
+    {
+        // Move the centerline up away from the bottom of the rectangle so negative points fit on the graph
+        centerY = fabs(scaleMin/scale) * rect.height();
+        scaleMin = 0;
+    }
+    else
+    {
+        scale = scaleMax;
+    }
+
+    double valYNormalized = 0;
+    double yMultiplier = 0;
+
+    double valX = 0;
+    double valY = 0;
+
+    double centerLine = rect.top() + rect.height() - centerY;
+
+    double closestDist = std::numeric_limits<double>::max();
+
     for(MainWindow::graphPoint g : data)
     {
-        double valX = 0;
-        double valY = 0;
-        if(valY < max)
-            max = valY;
-        valX = -(g.time - start) / (range) * (rect.width()) + rect.right();
-        valY = -((g.value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
+        valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1); // This was Ben's math. It works
 
-        if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data.size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data.size()))
+        valYNormalized = g.value / scale;
+
+        // Multiply the normalized value by the distance between the center line and the top or the bottom
+        // depending on whether the value is positive or negative. Use some boolean algebra to avoid an if statement
+        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * MAX_GRAPH_SCALE;
+
+        // The actual y position to draw
+        valY = centerLine - valYNormalized * yMultiplier;
+
+        // If this point is closer to the mouse than the current closest, and if the point is not the first or last point
+        // Ignore the first and last points for tooltip drawing, because they look bad
+        if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
         {
-            ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
-            ptLabel = QString::number(g.value);
-            highlighted = QPointF(valX, valY);
-        } else {
-
+            closestDist = fabs(valX - w->m_mousePos.x());
+            ptLabel = QString::number((int)g.value);
+            highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         }
 
         pointsToDraw.append(QPointF(valX, valY));
-
     }
 
-
-
-
+    bg.setAlphaF(0.4);
 
     gradient.setFinalStop(rect.topLeft());
-    pointsToDraw.append(rect.bottomLeft());
-    pointsToDraw.append(rect.bottomRight());
+
+    // Middle line
+    pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
+    pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
+
+    p->setPen(QPen(bg, 2));
     p->setBrush(QBrush(gradient));
-//    p->setBrush(m_transparentBrush);
+
     p->drawPolygon(QPolygonF(pointsToDraw));
-    p->setPen(QPen(m_highlightBrush, 3));
-    p->setBrush(lightHighlighterBrush);
+
+    // Scale the text
+    m_widgetFancy.setPointSize(rect.height() * 2/3);
+    m_widgetFancy.setWeight(QFont::Black);
+    p->setFont(m_widgetFancy);
+
+    bg.setAlphaF(0.7);
+    p->setPen(QPen(bg, 20));
+
+    // Make sure we always have a data point f
+    if(data.length() == 0)
+        data.append(MainWindow::graphPoint{0, 0});
+
+    QString textToDraw = "";
+
+    switch (graphType)
+    {
+    case GRAPH_Altitude:
+        textToDraw = "ALT (m)";
+        break;
+    case GRAPH_Velocity:
+        textToDraw = "VEL (m/s)";
+        break;
+    case GRAPH_Acceleration:
+        textToDraw = "ACCEL (m/s²)";
+        break;
+    default:
+        break;
+    }
+
+    // 5 pixels of padding to the left
+    p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
+
+
+    // Now we draw the ticks
+    float y = 0;
+    p->setPen(QPen(m_textBrush, 1));
+    p->setOpacity(0.5);
+
+    // Clamp the scale
+    float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
+
+    // Only need to go half of the way, because graph ticks will be mirrored along the axis
+    for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
+    {
+        // Normalize the value, multiply is by the height of the rectangle, and then scale down a little to fit better
+        y = i/gScale * rect.height() * MAX_GRAPH_SCALE;
+
+        // Drawing the actual ticks, 10 pixels from right to left centered about the right side of the rectangle
+        p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
+        p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+    }
+
+    p->setOpacity(1);
+
+    p->setPen(QPen(bg, 1));
+
+    // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
+    // Shift it down by 0.5 before rounding to align things
+    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top() - 0.5), 50, roundf(rect.height() + 0.5));
 
     if(drawTooltip)
     {
+        p->setOpacity(0.1);
+
+        p->setPen(QPen(m_transparentBrush, 0));
+        p->setBrush(lightHighlighterBrush);
+
+        // Shift one pixel down to look better
+//        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
         p->drawRect(ptHighlight);
-        p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
 
+        p->setOpacity(0.3);
+        p->setPen(QPen(lightHighlighterBrush, 2));
 
+        // Draw a line from the top to the bottom of the rectangle, at the x coordinate of the mouse
+        // Adjust the top 1 pixel down and the bottom 2 pixels up to make it fit well within the subgraph
+        p->drawLine(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
 
+        bg.setAlphaF(1);
 
-        p->setBrush(m_highlightBrush);
+        p->setBrush(bg);
+        p->setPen(bg);
+
+        p->setOpacity(1);
+        // Circle at the data point
         p->drawEllipse(highlighted, 5, 5);
 
+        p->setOpacity(1);
         p->setPen(QPen(m_textBrush, 3));
         p->setFont(m_widgetMedium);
-        p->drawText(ptHighlight, ptLabel);
+        p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
         p->setPen(QPen(m_highlightBrush, 3));
     }
+    else
+    {
+        // Only draw current values and graph scale if tooltips are not being shown
+        p->setOpacity(1);
 
+        float dataToDraw = data.last().value;
+        bool drawDecimals = dataToDraw < 10;
 
+        QString printString;
+
+        if (drawDecimals)
+        {
+            printString = QString::asprintf("%0.2f", dataToDraw);
+        }
+        else
+        {
+            printString = QString::asprintf("%d", (int)dataToDraw);
+        }
+
+        p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
+                    Qt::AlignRight | Qt::AlignVCenter,
+                    printString);
+
+        p->setPen(QPen(m_textBrush, 1));
+        p->setOpacity(0.8);
+        m_widgetMedium.setPointSize(rect.height()/8);
+        p->setFont(m_widgetMedium);
+
+        // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
+        // created to fit the text nicely in the top right corner of the subgraph
+        p->drawText(QRect(rect.left(),
+                          rect.top()+1,
+                          rect.width() - 7,
+                          rect.height()*(1-MAX_GRAPH_SCALE)),
+                    Qt::AlignVCenter | Qt::AlignRight,
+                    QString::asprintf("%d", (int)scaleMax));
+
+        // The tick denoting the maximum value
+        p->drawLine(rect.right() - 5,
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                    rect.right(),
+                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2);
+
+        // Draw the minimum value
+        p->drawText(QRect(rect.left(),
+                          rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
+                          rect.width() - 7,
+                          rect.height()*(1-MAX_GRAPH_SCALE)),
+                    Qt::AlignVCenter | Qt::AlignRight,
+                    QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
+        // The tick denoting the minimum value
+        p->drawLine(rect.right() - 5,
+                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                    rect.right(),
+                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
+    }
+
+    // Reset the pen opacity for future use
+    p->setOpacity(1);
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
@@ -609,7 +788,6 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     QPen linePen(m_backgroundBrush, 4);
     linePen.setCapStyle(Qt::RoundCap);
     p->setPen(linePen);
-
 
     int abortConditions = m_alarmMapA.size();
     int warnConditions = m_alarmMapW.size();
