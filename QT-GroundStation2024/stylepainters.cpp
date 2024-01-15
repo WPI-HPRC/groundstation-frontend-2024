@@ -834,7 +834,7 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
 
         QPoint center = rescaledImageBox.center();
 
-        // p->drawEllipse(center, pointRadius, pointRadius);
+        p->drawEllipse(center, pointRadius, pointRadius);
 
         // Draw the target payload position
         p->setBrush(QBrush(QColor(180, 20, 20, 150)));
