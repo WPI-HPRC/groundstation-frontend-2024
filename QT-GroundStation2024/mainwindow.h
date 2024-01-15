@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QWebSocketServer>
 #include <QQuaternion>
+#include "hprcCircularBuffer.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -23,12 +24,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-
-    struct graphPoint {
-        float value = 0;
-        float time = 0;
-    };
-
     struct dataPoint {
         float acceleration = 0;
         float velocity = 0;
@@ -39,9 +34,9 @@ public:
         int groundTime = 0;
         float desiredAirbrakes = 0;
         float currentAirbrakes = 0;
-        QList<graphPoint> accData;
-        QList<graphPoint> velData;
-        QList<graphPoint> altData;
+        GraphPointCircularBuffer *accData;
+        GraphPointCircularBuffer *velData;
+        GraphPointCircularBuffer *altData;
         QQuaternion orientation;
         float gyroX = 0;
         float gyroY = 0;

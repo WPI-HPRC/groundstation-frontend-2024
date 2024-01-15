@@ -4,12 +4,16 @@
 #include "mainwindow.h"
 #include <QObject>
 #include <QWidget>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <QQuaternion>
 #include <QColor>
+
+#include "hprcsubgraph.h"
 
 class hprcDisplayWidget : public QWidget
 {
@@ -139,6 +143,17 @@ public:
 
     explicit hprcGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
+
+    QGraphicsView* graphicsView;
+    QGraphicsScene* graphicsScene;
+
+    QGraphicsRectItem* bgRect;
+    QGraphicsRectItem* outlineRect;
+
+    HPRCSubGraph* altSubGraph;
+    HPRCSubGraph* velSubGraph;
+    HPRCSubGraph* accelSubGraph;
+
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget

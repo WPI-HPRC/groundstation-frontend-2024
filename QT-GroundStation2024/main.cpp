@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "rocketwindow.h"
 #include "styles.h"
+#include <iostream>
 
 #include <QApplication>
 

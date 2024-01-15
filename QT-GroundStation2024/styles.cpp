@@ -59,7 +59,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 m_drawer->drawHPRCAttitudeWidget(painter, w);
                 return;
             case hprcDisplayWidget::HPRC_Graph:
-                m_drawer->drawHPRCGraph(painter, w);
+                m_drawer->drawHPRCGraph(painter, (hprcGraph *)w);
                 return;
             case hprcDisplayWidget::HPRC_Alarm:
                 m_drawer->drawHPRCAlarmPanel(painter, w);

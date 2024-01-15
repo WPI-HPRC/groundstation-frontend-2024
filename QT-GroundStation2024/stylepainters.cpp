@@ -11,6 +11,13 @@
 #include <math.h>
 #include <QQuaternion>
 
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsPolygonItem>
+#include <QVBoxLayout>
+
+#include "betterqgraphicstextitem.h"
+
 #define NUM_NAVBALL_CIRCLES 7
 
 #define MAX_GRAPH_SCALE 0.85
@@ -21,6 +28,9 @@
 #define MAX_GRAPH_SCALE 0.85
 #define GRAPH_TICK_DISTANCE 50
 #define MAX_DYNAMIC_GRAPH_SCALE 600
+
+#define TOOLTIP_WIDTH 50
+#define TOOLTIP_WIDTH_HALF 25
 
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
@@ -90,14 +100,14 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 {
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_panelBrush);
-    p->setPen(QPen(m_transparentBrush, 0));
+    p->setPen(QPen(m_transparentBrush, 1));
     p->drawRoundedRect(QRectF(o->rect).adjusted(0.5, 0.5, -0.5, -0.5), 10, 10);
 
 }
 
 
 void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
-{    
+{
     if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
         const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
         if (viewer) {
@@ -116,9 +126,10 @@ void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 {
 
+    if(w->rect().width() < 100)
+        return;
+
     // <------------------- math --------------------->//
-
-
 
     p->setRenderHint(QPainter::Antialiasing);
 
@@ -201,6 +212,9 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 {
+    if (w->rect().height() < 100)
+        return;
+
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_backgroundBrush);
     QPen bgPen(m_backgroundBrush, 5);
@@ -269,6 +283,9 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 {
+    if(w->width() < 100)
+        return;
+
     // -- Pen Setup --
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -456,11 +473,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
-void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 {
-    p->setRenderHint(QPainter::Antialiasing);
-    QPen textPen(m_textBrush, 3);
-
     int width= w->rect().width();
     int height = w->rect().height();
 
@@ -469,7 +483,9 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
     int margin = fmin(paddingRatio * width, paddingRatio * height);
 
-    QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+    QRectF drawBox = w->layout()->geometry().adjusted(margin, margin, -margin, -margin);
+
+    w->graphicsView->setSceneRect(w->layout()->geometry());
 
     // label padding = 7.5%
     int lMargin = drawBox.height() * 0.075;
@@ -490,46 +506,65 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
     QRectF middle(topLeftMiddle, bottomRightMiddle);
     QRectF bottom(topLeftBottom, bottomRightBottom);
 
-    double range = 5000; // Should maybe specify what this means?
-    double start = m_latest->rocketTime - range;
-    if(m_latest->altData.size() > 0)
-    {
-        range = m_latest->altData.last().time - m_latest->altData.at(0).time;
-        start = m_latest->altData.at(0).time;
-    }
+    double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
+    double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
 
 
     bool drawT = false;
-    // Adjust the box a little bit to fully encapsulate the entire visual area of the graph
-    if(drawBox.adjusted(0, 0, 0, 5).contains(w->m_mousePos))
+    if(drawBox.contains(w->m_mousePos))
     {
         drawT = true;
+
+        w->m_mousePos.setX(fmin(fmax(w->m_mousePos.x(), drawBox.x() + TOOLTIP_WIDTH_HALF + 2), drawBox.right() - TOOLTIP_WIDTH_HALF - 2));
     }
+
+
 
     // <---- draw ----> //
 
-    p->setPen(QPen(m_transparentBrush.color()));
-    p->setBrush(m_backgroundBrush);
+    w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
     // Do a little adjusting to help with tooltip rendering
-    p->drawRect(drawBox.adjusted(0, 0, 0, 2));
+    w->bgRect->setRect(drawBox.adjusted(0, 0, 0, 2));
+    w->bgRect->setPen(QPen(m_backgroundBrush, 6));
+    w->bgRect->setBrush(m_backgroundBrush);
+    w->bgRect->setZValue(-1);
 
     // Do a little adjusting to help with tooltip rendering
-    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, drawT);
-    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, drawT);
-    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, drawT);
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
+    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, w, w->graphicsScene, drawT);
+    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, w, w->graphicsScene, drawT);
 
-    p->setBrush(m_transparentBrush);
-    p->setPen(QPen(m_panelBrush, 4));
+    // Draw an outline to clean up weird border rendering
+    w->outlineRect->setRect(drawBox.adjusted(0, 0, 0, 3));
+    w->outlineRect->setBrush(m_transparentBrush);
+    w->outlineRect->setPen(QPen(m_backgroundBrush, 4));
+    w->outlineRect->setZValue(100);
 
-    p->setPen(QPen(m_textBrush, 5));
-
-    if(m_latest->altData.size() > 0)
-        p->drawText(drawBox.left(), drawBox.bottom() + margin/2, QString::asprintf("%0.2fs", m_latest->altData.at(0).time/1000));
+    w->graphicsView->viewport()->update();
 }
 
-void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> data, GraphType graphType,  double range, double start, const hprcDisplayWidget *w, bool drawTooltip)
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip)
 {
+    if (rect.height() < 10)
+        return;
+
+    HPRCSubGraph* graph;
+
+    switch (graphType)
+    {
+    case GRAPH_Altitude:
+        graph = w->altSubGraph;
+        break;
+    case GRAPH_Velocity:
+        graph = w->velSubGraph;
+        break;
+    case GRAPH_Acceleration:
+        graph = w->accelSubGraph;
+        break;
+    default:
+        break;
+    }
 
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 255));
 
@@ -541,20 +576,21 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     gradient.setColorAt(1, m_transparentBrush.color());
     bg.setAlphaF(1);
 
-    p->setPen(QPen(bg, 2));
-
     // Line at the bottom, subtract a pixel from each side to fit nicer
-    p->drawLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom());
+    graph->bottomLine->setLine(QLine(rect.left() + 1, rect.bottom(), rect.right() - 1, rect.bottom()));
+    graph->bottomLine->setPen(QPen(bg, 2));
+    graph->bottomLine->setZValue(0);;
 
-    QList<QPointF> pointsToDraw;
-    double scaleMax = std::numeric_limits<double>::min();
-    double scaleMin = std::numeric_limits<double>::max();
+    double maxValue = graphPointCircularBufferGetMaxValue(data);
+    double minValue = graphPointCircularBufferGetMinValue(data);
 
-    for(auto& value : data)
-    {
-        scaleMax = fmaxf(value.value, scaleMax);
-        scaleMin = fminf(value.value, scaleMin);
-    }
+    // These values are altered sometimes for graph scaling purposes. We need to keep the real max/min for later
+    double scaleMax = maxValue;
+    double scaleMin = minValue;
+
+    QList<QPoint> pointsToDraw;
+
+    scaleMax = fmaxf(scaleMax, 0);
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
@@ -589,29 +625,31 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
 
     double closestDist = std::numeric_limits<double>::max();
 
-    for(MainWindow::graphPoint g : data)
-    {
-        valX = rect.left() + 1 + (g.time - start) / range * (rect.width()-1); // This was Ben's math. It works
 
-        valYNormalized = g.value / scale;
+    for (int i = 0; i < CIRCULAR_BUFFER_LEN; i++)
+    {
+        GraphPoint *g = graphPointCircularBufferGetValueAtIndex(data, i);
+        valX = rect.left() + 1 + (g->time - start) / range * (rect.width()-1); // This was Ben's math. It works
+
+        valYNormalized = g->value / scale;
 
         // Multiply the normalized value by the distance between the center line and the top or the bottom
         // depending on whether the value is positive or negative. Use some boolean algebra to avoid an if statement
-        yMultiplier = ((g.value > 0) * (rect.height() - centerY) + (g.value < 0) * centerY) * MAX_GRAPH_SCALE;
+        yMultiplier = ((g->value > 0) * (rect.height() - centerY) + (g->value < 0) * centerY) * MAX_GRAPH_SCALE;
 
         // The actual y position to draw
         valY = centerLine - valYNormalized * yMultiplier;
 
         // If this point is closer to the mouse than the current closest, and if the point is not the first or last point
         // Ignore the first and last points for tooltip drawing, because they look bad
-        if(fabs(valX - w->m_mousePos.x()) < closestDist && g.time !=start && g.time != start+range)
+        if(fabs(valX - w->m_mousePos.x()) < closestDist && g->time !=start && g->time != start+range)
         {
             closestDist = fabs(valX - w->m_mousePos.x());
-            ptLabel = QString::number((int)g.value);
+            ptLabel = g->value > 5 ? QString::number((int)g->value) : QString::asprintf("%0.2f", g->value);
             highlighted = QPointF(roundf(w->m_mousePos.x()), roundf(valY));
         }
 
-        pointsToDraw.append(QPointF(valX, valY));
+        pointsToDraw.append(QPoint(round(valX), round(valY)));
     }
 
     bg.setAlphaF(0.4);
@@ -622,49 +660,22 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
     pointsToDraw.append(QPoint(rect.right(), rect.bottom() - centerY));
     pointsToDraw.append(QPoint(rect.left(), rect.bottom() - centerY));
 
-    p->setPen(QPen(bg, 2));
-    p->setBrush(QBrush(gradient));
-
-    p->drawPolygon(QPolygonF(pointsToDraw));
+    graph->polygon->setPolygon(QPolygon(pointsToDraw));
+    graph->polygon->setBrush(gradient);
+    graph->polygon->setPen(QPen(bg, 2));
+    graph->polygon->setZValue(0);
 
     // Scale the text
     m_widgetFancy.setPointSize(rect.height() * 2/3);
     m_widgetFancy.setWeight(QFont::Black);
-    p->setFont(m_widgetFancy);
 
-    bg.setAlphaF(0.7);
-    p->setPen(QPen(bg, 20));
+    graph->textLabel->geometry = rect.adjusted(5, 0, 0, 0);
 
-    // Make sure we always have a data point f
-    if(data.length() == 0)
-        data.append(MainWindow::graphPoint{0, 0});
-
-    QString textToDraw = "";
-
-    switch (graphType)
-    {
-    case GRAPH_Altitude:
-        textToDraw = "ALT (m)";
-        break;
-    case GRAPH_Velocity:
-        textToDraw = "VEL (m/s)";
-        break;
-    case GRAPH_Acceleration:
-        textToDraw = "ACCEL (m/s²)";
-        break;
-    default:
-        break;
-    }
-
-    // 5 pixels of padding to the left
-    p->drawText(rect.adjusted(5, 0, 0, 0), Qt::AlignVCenter, textToDraw);
-
+    graph->textLabel->setFont(m_widgetFancy);
+    graph->textLabel->setDefaultTextColor(bg);
 
     // Now we draw the ticks
     float y = 0;
-    p->setPen(QPen(m_textBrush, 1));
-    p->setOpacity(0.5);
-
     // Clamp the scale
     float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
 
@@ -675,110 +686,106 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<Main
         y = i/gScale * rect.height() * MAX_GRAPH_SCALE;
 
         // Drawing the actual ticks, 10 pixels from right to left centered about the right side of the rectangle
-        p->drawLine(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
-        p->drawLine(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+
+        QGraphicsLineItem* tick1 = new QGraphicsLineItem(rect.right() - 5, rect.center().y() + y, rect.right(), rect.center().y() + y);
+        tick1->setPen(QPen(m_textBrush, 1));
+        tick1->setOpacity(0.5);
+
+        QGraphicsLineItem* tick2 = new QGraphicsLineItem(rect.right() - 5, rect.center().y() - y, rect.right(), rect.center().y() - y);
+        tick2->setPen(QPen(m_textBrush, 1));
+        tick2->setOpacity(0.5);
+
+        //        scene->addItem(tick1);
+        //        scene->addItem(tick2);
     }
-
-    p->setOpacity(1);
-
-    p->setPen(QPen(bg, 1));
 
     // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
     // Shift it down by 0.5 before rounding to align things
-    ptHighlight = QRectF(w->m_mousePos.x() - 25, roundf(rect.top() - 0.5), 50, roundf(rect.height() + 0.5));
+    ptHighlight = QRect(round(w->m_mousePos.x() - TOOLTIP_WIDTH_HALF), roundf(rect.top() - 0.5), TOOLTIP_WIDTH, roundf(rect.height() + 0.5));
 
     if(drawTooltip)
     {
-        p->setOpacity(0.1);
+        graph->showTooltip();
 
-        p->setPen(QPen(m_transparentBrush, 0));
-        p->setBrush(lightHighlighterBrush);
-
-        // Shift one pixel down to look better
-//        p->drawRect(ptHighlight.adjusted(0, 1, 0, 1));
-        p->drawRect(ptHighlight);
-
-        p->setOpacity(0.3);
-        p->setPen(QPen(lightHighlighterBrush, 2));
+        graph->tooltipRect->setRect(ptHighlight);
+        graph->tooltipRect->setPen(QPen(m_transparentBrush, 1));
+        graph->tooltipRect->setBrush(lightHighlighterBrush);
+        graph->tooltipRect->setOpacity(0.1);
 
         // Draw a line from the top to the bottom of the rectangle, at the x coordinate of the mouse
         // Adjust the top 1 pixel down and the bottom 2 pixels up to make it fit well within the subgraph
-        p->drawLine(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
+        graph->tooltipCenterLine->setLine(w->m_mousePos.x(), roundf(rect.top() + 1), w->m_mousePos.x(), roundf(rect.bottom() - 2));
+        graph->tooltipCenterLine->setOpacity(0.3);
+        graph->tooltipCenterLine->setPen(QPen(lightHighlighterBrush, 2));
 
         bg.setAlphaF(1);
-
-        p->setBrush(bg);
-        p->setPen(bg);
-
-        p->setOpacity(1);
         // Circle at the data point
-        p->drawEllipse(highlighted, 5, 5);
+        graph->tooltipCircle->setRect(highlighted.x() - 2.5, highlighted.y() - 2.5, 5, 5);
+        graph->tooltipCircle->setBrush(bg);
+        graph->tooltipCircle->setPen(bg);
 
-        p->setOpacity(1);
-        p->setPen(QPen(m_textBrush, 3));
-        p->setFont(m_widgetMedium);
-        p->drawText(ptHighlight, Qt::AlignVCenter, ptLabel);
-        p->setPen(QPen(m_highlightBrush, 3));
+        graph->tooltipValue->geometry = ptHighlight;
+        graph->tooltipValue->text = ptLabel;
+        graph->tooltipValue->setDefaultTextColor(m_textBrush.color());
+        graph->tooltipValue->setFont(m_widgetMedium);
     }
-    else
+    else         // Only draw current values and graph scale if tooltips are not being shown
     {
-        // Only draw current values and graph scale if tooltips are not being shown
-        p->setOpacity(1);
+        graph->hideTooltip();
 
-        float dataToDraw = data.last().value;
-        bool drawDecimals = dataToDraw < 10;
+        float currentValue = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
 
-        QString printString;
+        graph->valueLabel->geometry = QRect(rect.right() - 200,
+                                            rect.top(),
+                                            190,
+                                            rect.height());
 
-        if (drawDecimals)
-        {
-            printString = QString::asprintf("%0.2f", dataToDraw);
-        }
-        else
-        {
-            printString = QString::asprintf("%d", (int)dataToDraw);
-        }
+        graph->valueLabel->text = abs(currentValue) < 10 ? QString::asprintf("%0.2f", currentValue) : QString::asprintf("%d", (int)currentValue);
 
-        p->drawText(QRect(rect.right() - 200, rect.top(), 190, rect.height()),
-                    Qt::AlignRight | Qt::AlignVCenter,
-                    printString);
+        graph->valueLabel->setDefaultTextColor(bg);
+        graph->valueLabel->setFont(m_widgetFancy);
 
-        p->setPen(QPen(m_textBrush, 1));
-        p->setOpacity(0.8);
         m_widgetMedium.setPointSize(rect.height()/8);
-        p->setFont(m_widgetMedium);
 
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
-        p->drawText(QRect(rect.left(),
-                          rect.top()+1,
-                          rect.width() - 7,
-                          rect.height()*(1-MAX_GRAPH_SCALE)),
-                    Qt::AlignVCenter | Qt::AlignRight,
-                    QString::asprintf("%d", (int)scaleMax));
+        graph->maxValueLabel->geometry = QRect(rect.left(),
+                                               rect.top()+1,
+                                               rect.width() - 7,
+                                               rect.height()*(1-MAX_GRAPH_SCALE));
+
+        graph->maxValueLabel->text = abs(maxValue) < 10 ? QString::asprintf("%0.2f", maxValue) : QString::asprintf("%d", (int)maxValue);
+        graph->maxValueLabel->setFont(m_widgetMedium);
+        graph->maxValueLabel->setOpacity(0.8);
+        graph->maxValueLabel->setDefaultTextColor(m_textBrush.color());
+
 
         // The tick denoting the maximum value
-        p->drawLine(rect.right() - 5,
-                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
-                    rect.right(),
-                    rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2);
+        graph->maxTick->setLine(QLine(rect.right() - 5,
+                                      rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                                      rect.right(),
+                                      rect.top() + rect.height()*(1-MAX_GRAPH_SCALE)/2));
+
+        graph->maxTick->setPen(QPen(m_textBrush, 1));
 
         // Draw the minimum value
-        p->drawText(QRect(rect.left(),
-                          rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
-                          rect.width() - 7,
-                          rect.height()*(1-MAX_GRAPH_SCALE)),
-                    Qt::AlignVCenter | Qt::AlignRight,
-                    QString::asprintf("%d", scaleMin < 0 ? (int)scaleMin : 0));
-        // The tick denoting the minimum value
-        p->drawLine(rect.right() - 5,
-                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
-                    rect.right(),
-                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2);
-    }
+        graph->minValueLabel->geometry = QRect(rect.left(),
+                                               rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
+                                               rect.width() - 7,
+                                               rect.height()*(1-MAX_GRAPH_SCALE));
 
-    // Reset the pen opacity for future use
-    p->setOpacity(1);
+        graph->minValueLabel->text = abs(minValue) < 10 ? QString::asprintf("%0.2f", minValue) : QString::asprintf("%d", (int)minValue);
+        graph->minValueLabel->setFont(m_widgetMedium);
+        graph->minValueLabel->setOpacity(0.8);
+        graph->minValueLabel->setDefaultTextColor(m_textBrush.color());
+
+        // The tick denoting the minimum value
+        graph->minTick->setLine(QLine(rect.right() - 5,
+                                      rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                                      rect.right(),
+                                      rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2));
+        graph->minTick->setPen(QPen(m_textBrush, 1));
+    }
 }
 
 void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
@@ -976,6 +983,9 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 {
 
+    if(w->width() < 100)
+        return;
+
     // setup
     p->setBrush(m_transparentBrush);
 
@@ -1124,6 +1134,9 @@ void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, 
 
 void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 {
+    if(w->width() < 100)
+        return;
+
     p->setRenderHint(QPainter::Antialiasing);
 
     QPen textPenRed = QPen(m_highlightBrush, 3);
@@ -1217,7 +1230,7 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 
     //Circle drawn on top of airbrakes
     p->setBrush(circleBrush);
-    p->setPen(QPen(m_transparentBrush, 0));
+    p->setPen(QPen(m_transparentBrush, 1));
     p->drawEllipse(QPointF(0, 0), circleRadius, circleRadius);
 
     //End rotation and translation of origin
