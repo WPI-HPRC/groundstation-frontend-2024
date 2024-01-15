@@ -191,6 +191,17 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     m_mapImage = new QImage(":/maps/spaceport-america.png");
 }
 
+QPoint hprcPayloadMap::calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor) {
+    double pixelsPerWidgetPixel = 1 / widgetScalingFactor;
+    double xScalingFactor = 1 / (hprcPayloadMap::longPerPixel * pixelsPerWidgetPixel);
+    double yScalingFactor = 1 / (hprcPayloadMap::latPerPixel * pixelsPerWidgetPixel);
+
+    double x = (globalPoint.x() - centerPoint.x()) * xScalingFactor;
+    double y = (centerPoint.y() - globalPoint.y()) * yScalingFactor;
+
+    return QPoint(x, y);
+}
+
 Qt3DCore::QEntity *createRocketScene();
 
 hprcViewer::hprcViewer(QWidget *parent) :
