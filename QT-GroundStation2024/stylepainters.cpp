@@ -695,8 +695,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         tick2->setPen(QPen(m_textBrush, 1));
         tick2->setOpacity(0.5);
 
-//        scene->addItem(tick1);
-//        scene->addItem(tick2);
+        //        scene->addItem(tick1);
+        //        scene->addItem(tick2);
     }
 
     // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
@@ -736,9 +736,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         float currentValue = graphPointCircularBufferGetValueAtIndex(data, -1)->value;
 
         graph->valueLabel->geometry = QRect(rect.right() - 200,
-                                     rect.top(),
-                                     190,
-                                     rect.height());
+                                            rect.top(),
+                                            190,
+                                            rect.height());
 
         graph->valueLabel->text = abs(currentValue) < 10 ? QString::asprintf("%0.2f", currentValue) : QString::asprintf("%d", (int)currentValue);
 
@@ -750,9 +750,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         // Draw text that is the current maximum value for this subgraph. Use text alignment flags to place the text inside of a rectangle that is
         // created to fit the text nicely in the top right corner of the subgraph
         graph->maxValueLabel->geometry = QRect(rect.left(),
-                                                                              rect.top()+1,
-                                                                              rect.width() - 7,
-                                                                              rect.height()*(1-MAX_GRAPH_SCALE));
+                                               rect.top()+1,
+                                               rect.width() - 7,
+                                               rect.height()*(1-MAX_GRAPH_SCALE));
 
         graph->maxValueLabel->text = abs(maxValue) < 10 ? QString::asprintf("%0.2f", maxValue) : QString::asprintf("%d", (int)maxValue);
         graph->maxValueLabel->setFont(m_widgetMedium);
@@ -770,9 +770,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
         // Draw the minimum value
         graph->minValueLabel->geometry = QRect(rect.left(),
-                                                                              rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
-                                                                              rect.width() - 7,
-                                                                              rect.height()*(1-MAX_GRAPH_SCALE));
+                                               rect.bottom()-1-rect.height()*(1-MAX_GRAPH_SCALE),
+                                               rect.width() - 7,
+                                               rect.height()*(1-MAX_GRAPH_SCALE));
 
         graph->minValueLabel->text = abs(minValue) < 10 ? QString::asprintf("%0.2f", minValue) : QString::asprintf("%d", (int)minValue);
         graph->minValueLabel->setFont(m_widgetMedium);
@@ -781,8 +781,8 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
 
         // The tick denoting the minimum value
         graph->minTick->setLine(QLine(rect.right() - 5,
-                    rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
-                    rect.right(),
+                                      rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2,
+                                      rect.right(),
                                       rect.bottom() - rect.height()*(1-MAX_GRAPH_SCALE)/2));
         graph->minTick->setPen(QPen(m_textBrush, 1));
     }
