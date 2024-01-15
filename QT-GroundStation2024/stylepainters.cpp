@@ -522,8 +522,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
 
     // <---- draw ----> //
 
-//    w->graphicsScene->clear();
-
     w->graphicsScene->setBackgroundBrush(m_transparentBrush);
 
     // Do a little adjusting to help with tooltip rendering
@@ -531,8 +529,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     w->bgRect->setPen(QPen(m_backgroundBrush, 6));
     w->bgRect->setBrush(m_backgroundBrush);
     w->bgRect->setZValue(-1);
-
-//    w->graphicsScene->addItem(bgRect);
 
     // Do a little adjusting to help with tooltip rendering
     drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, w, w->graphicsScene, drawT);
@@ -544,8 +540,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, hprcGraph *w)
     w->outlineRect->setBrush(m_transparentBrush);
     w->outlineRect->setPen(QPen(m_backgroundBrush, 4));
     w->outlineRect->setZValue(100);
-
-//    w->graphicsScene->addItem(outlineRect);
 
     w->graphicsView->viewport()->update();
 }

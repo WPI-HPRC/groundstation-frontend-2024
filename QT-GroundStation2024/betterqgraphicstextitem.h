@@ -13,7 +13,9 @@ public:
 
     explicit BetterQGraphicsTextItem(QRectF geometry, QFlags<Qt::Alignment::enum_type> alignment, QString text, QGraphicsItem *parent=0) :
         QGraphicsTextItem(parent), geometry(geometry), alignment(alignment), text(text)
-    {}
+    {
+        opacity = 1;
+    }
     virtual ~BetterQGraphicsTextItem() {}
     QRectF boundingRect() const { return geometry; }
 
