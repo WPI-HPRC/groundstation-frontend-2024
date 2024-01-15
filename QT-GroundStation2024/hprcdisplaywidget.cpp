@@ -11,6 +11,7 @@
 
 #include <QVBoxLayout>
 #include "mousetrackinggraphicsview.h"
+#include "betterqgraphicstextitem.h"
 
 // 3D imports
 #include <Qt3DCore/QEntity>
@@ -145,7 +146,6 @@ void hprcAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
-
     graphicsView = new MouseTrackingGraphicsView(this);
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -155,13 +155,20 @@ hprcGraph::hprcGraph(QWidget *parent) :
     // Set up layout
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(graphicsView);
-
     this->setLayout(layout);
-
 
     graphicsScene = new QGraphicsScene(this);
     graphicsView->setScene(graphicsScene);
-//    graphicsView->setMouseTracking(true);
+
+    this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
+    this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
+    this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
+
+    bgRect = new QGraphicsRectItem();
+    outlineRect = new QGraphicsRectItem();
+
+    graphicsScene->addItem(bgRect);
+    graphicsScene->addItem(outlineRect);
 
     setMouseTracking(true);
     m_widgetType = HPRC_Graph;

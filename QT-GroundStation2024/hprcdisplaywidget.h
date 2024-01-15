@@ -13,6 +13,8 @@
 #include <QQuaternion>
 #include <QColor>
 
+#include "hprcsubgraph.h"
+
 class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
@@ -144,6 +146,14 @@ public:
 
     QGraphicsView* graphicsView;
     QGraphicsScene* graphicsScene;
+
+    QGraphicsRectItem* bgRect;
+    QGraphicsRectItem* outlineRect;
+
+    HPRCSubGraph* altSubGraph;
+    HPRCSubGraph* velSubGraph;
+    HPRCSubGraph* accelSubGraph;
+
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget

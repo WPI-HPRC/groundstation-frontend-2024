@@ -2,9 +2,15 @@
 #define BETTERQGRAPHICSTEXTITEM_H
 
 #include <QGraphicsTextItem>
+#include <QFont>
+#include <QPainter>
 
 class BetterQGraphicsTextItem: public QGraphicsTextItem {
 public:
+    QRectF geometry;
+    QString text;
+    QFlags<Qt::Alignment::enum_type> alignment;
+
     explicit BetterQGraphicsTextItem(QRectF geometry, QFlags<Qt::Alignment::enum_type> alignment, QString text, QGraphicsItem *parent=0) :
         QGraphicsTextItem(parent), geometry(geometry), alignment(alignment), text(text)
     {}
@@ -41,10 +47,9 @@ public:
         color = c;
     }
 
+
 private:
-    QRectF geometry;
-    QString text;
-    QFlags<Qt::Alignment::enum_type> alignment;
+
 
     float opacity;
     QFont font;
