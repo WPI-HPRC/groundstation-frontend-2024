@@ -121,6 +121,31 @@ hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
         }
 }
 
+hprcRollGauge::hprcRollGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "ROLL";
+    m_max = 100;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(rollUpdated(int)), this, SLOT(updateFilled(int)));
+        }
+}
+
+hprcPitchGauge::hprcPitchGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "PITCH";
+    m_max = 100;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(pitchUpdated(int)), this, SLOT(updateFilled(int)));
+        }
+}
+
+
 hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
     hprcDisplayWidget(parent)
 {

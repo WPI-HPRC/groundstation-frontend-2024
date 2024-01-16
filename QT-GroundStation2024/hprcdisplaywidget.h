@@ -125,6 +125,26 @@ public:
 
 };
 
+class hprcRollGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcRollGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcPitchGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcPitchGauge(QWidget *parent = nullptr);
+
+};
+
 class hprcAttitudeWidget: public hprcDisplayWidget
 {
 
