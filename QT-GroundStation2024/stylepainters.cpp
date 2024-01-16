@@ -1134,9 +1134,10 @@ void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, 
 
 void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 {
+    /*
     if(w->width() < 100)
         return;
-
+*/
     p->setRenderHint(QPainter::Antialiasing);
 
     QPen textPenRed = QPen(m_highlightBrush, 3);
@@ -1149,6 +1150,8 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 
     std::string currentText = "Current: " + std::to_string((int) round(m_latest->currentAirbrakes * 100)) + "%";
     std::string desiredText = "Desired: " + std::to_string((int) round(m_latest->desiredAirbrakes * 100)) + "%";
+
+//    std::cout << currentText << std::endl;
 
     m_widgetLarge.setPointSize(w->width()/20);
     p->setFont(m_widgetLarge);

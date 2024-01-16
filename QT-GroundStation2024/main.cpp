@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     w.show();
     r.show();
     w.showMaximized();
-//    r.showMaximized();
+    r.showMaximized();
     w.update();
     r.update();
 

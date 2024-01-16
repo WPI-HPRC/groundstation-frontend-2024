@@ -101,6 +101,10 @@ void MainWindow::updateData(dataPoint p)
     if(p.gyroX != m_currentData.gyroX || p.gyroY != m_currentData.gyroY || p.gyroZ != m_currentData.gyroZ)
     {
         m_currentData.gyroX = p.gyroX;
+        m_currentData.gyroY = p.gyroY;
+        m_currentData.gyroZ = p.gyroZ;
+        emit gyroUpdated();
+    }
     if(p.currentAirbrakes != m_currentData.currentAirbrakes) {
         m_currentData.currentAirbrakes = p.currentAirbrakes;
         emit currentAirbrakesUpdated(p.currentAirbrakes);
@@ -109,10 +113,7 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.desiredAirbrakes = p.desiredAirbrakes;
         emit desiredAirbrakesUpdated(p.desiredAirbrakes);
     }
-        m_currentData.gyroY = p.gyroY;
-        m_currentData.gyroZ = p.gyroZ;
-        emit gyroUpdated();
-    }
+
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
 
@@ -123,6 +124,7 @@ void MainWindow::update()
         m_dataBuffer.groundTime = m_groundLaunchTime.msecsTo(QDateTime::currentDateTimeUtc());
     }
     pts += 1;
+
     updateData(m_dataBuffer);
 }
 
@@ -163,6 +165,27 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("State").toLower())
         {
             m_dataBuffer.state = elementSplit.at(1).toInt();
+        }
+        else if(elementSplit.at(0).toLower() == QString("AirbrakesDeploy").toLower())
+        {
+            m_dataBuffer.currentAirbrakes = elementSplit.at(1).toFloat()/200;
+            m_dataBuffer.desiredAirbrakes = m_dataBuffer.currentAirbrakes * 2;
+        }
+        else if(elementSplit.at(0).toLower() == QString("i"))
+        {
+            m_dataBuffer.orientation.setX(elementSplit.at(1).toFloat());
+        }
+        else if(elementSplit.at(0).toLower() == QString("j"))
+        {
+            m_dataBuffer.orientation.setY(elementSplit.at(1).toFloat());
+        }
+        else if(elementSplit.at(0).toLower() == QString("k"))
+        {
+            m_dataBuffer.orientation.setZ(elementSplit.at(1).toFloat());
+        }
+        else if(elementSplit.at(0).toLower() == QString("w"))
+        {
+            m_dataBuffer.orientation.setScalar(elementSplit.at(1).toFloat());
         }
     }
 
