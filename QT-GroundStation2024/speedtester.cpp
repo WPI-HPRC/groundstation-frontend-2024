@@ -4,10 +4,10 @@
 #include <QWidget>
 
 #define NUM_DURATION_FOR_AVERAGE 200
-#define TIME_INDIVIDUAL_WIDGETS false
+#define TIME_INDIVIDUAL_WIDGETS true
 
-#define RUN_SINGLE_TEST false
-#define SINGULAR_WIDGET_TEST_NAME "widget"
+#define RUN_SINGLE_TEST true
+#define SINGULAR_WIDGET_TEST_NAME "Graphs"
 
 #include <iostream>
 #include <iomanip>
@@ -60,7 +60,8 @@ void SpeedTester::runSpeedTests()
     std::vector<SpeedTester_TimeDuration> widgetTimeDurations;
     for(QWidget* w : allWidgets)
     {
-        if(w->findChildren<QWidget*>().length() != 0)
+        if((w->findChildren<QWidget*>().length() != 0 && w->objectName() != QString("Graphs"))
+            || w->parent()->objectName() == QString("Graphs")) // QGraphicsView is weird
             continue;
 
 #if RUN_SINGLE_TEST

@@ -588,6 +588,9 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     double scaleMax = maxValue;
     double scaleMin = minValue;
 
+    maxValue = fmax(maxValue, 0);
+    minValue = fmin(minValue, 0);
+
     QList<QPoint> pointsToDraw;
 
     scaleMax = fmaxf(scaleMax, 0);

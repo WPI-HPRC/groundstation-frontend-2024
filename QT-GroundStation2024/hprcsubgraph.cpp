@@ -6,19 +6,26 @@ HPRCSubGraph::HPRCSubGraph(QString labelText, QGraphicsScene* graphicsScene)
 
     this->textLabel = new BetterQGraphicsTextItem(QRectF(0, 0, 0, 0), Qt::AlignVCenter, labelText);
     graphicsScene->addItem(this->textLabel);
+    this->textLabel->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     this->valueLabel = new BetterQGraphicsTextItem(QRectF(0, 0, 0, 0), Qt::AlignVCenter | Qt::AlignRight, labelText);
     graphicsScene->addItem(this->valueLabel);
+//    this->valueLabel->setCacheMode(QGraphicsItem::ItemCoordinateCache);
 
     this->bottomLine = new QGraphicsLineItem();
     graphicsScene->addItem(this->bottomLine);
+    this->bottomLine->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
 
     this->polygon = new QGraphicsPolygonItem();
     graphicsScene->addItem(this->polygon);
 
     this->maxTick = new QGraphicsLineItem();
     graphicsScene->addItem(this->maxTick);
+    this->maxTick->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
     this->minTick = new QGraphicsLineItem();
     graphicsScene->addItem(this->minTick);
+    this->minTick->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
     this->maxValueLabel = new BetterQGraphicsTextItem(QRectF(0, 0, 0, 0), Qt::AlignVCenter | Qt::AlignRight, "0");
     graphicsScene->addItem(this->maxValueLabel);
@@ -27,10 +34,16 @@ HPRCSubGraph::HPRCSubGraph(QString labelText, QGraphicsScene* graphicsScene)
 
     this->tooltipRect = new QGraphicsRectItem();
     graphicsScene->addItem(tooltipRect);
+    this->tooltipRect->setCacheMode(QGraphicsItem::ItemCoordinateCache);
+
     this->tooltipCenterLine = new QGraphicsLineItem();
     graphicsScene->addItem(tooltipCenterLine);
+    this->tooltipCenterLine->setCacheMode(QGraphicsItem::ItemCoordinateCache);
+
     this->tooltipCircle = new QGraphicsEllipseItem();
     graphicsScene->addItem(tooltipCircle);
+    this->tooltipCircle->setCacheMode(QGraphicsItem::ItemCoordinateCache);
+
     this->tooltipValue = new BetterQGraphicsTextItem(QRectF(0, 0, 0, 0), Qt::AlignVCenter, "0");
     graphicsScene->addItem(tooltipValue);
 }

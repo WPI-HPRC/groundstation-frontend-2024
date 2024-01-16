@@ -157,6 +157,8 @@ hprcGraph::hprcGraph(QWidget *parent) :
     layout->addWidget(graphicsView);
     this->setLayout(layout);
 
+    graphicsView->setObjectName("Graphs");
+
     graphicsScene = new QGraphicsScene(this);
     graphicsView->setScene(graphicsScene);
 
@@ -166,6 +168,7 @@ hprcGraph::hprcGraph(QWidget *parent) :
 
     bgRect = new QGraphicsRectItem();
     outlineRect = new QGraphicsRectItem();
+
 
     graphicsScene->addItem(bgRect);
     graphicsScene->addItem(outlineRect);
