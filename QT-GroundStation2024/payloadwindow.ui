@@ -58,10 +58,10 @@
           <widget class="hprcPitchGauge" name="widget_6" native="true"/>
          </item>
          <item>
-          <widget class="QWidget" name="widget_5" native="true"/>
+          <widget class="hprcPayloadAttitudeWidget" name="widget_5" native="true"/>
          </item>
          <item>
-          <widget class="QWidget" name="widget_4" native="true"/>
+          <widget class="hprcPayloadCurrent" name="widget_4" native="true"/>
          </item>
         </layout>
        </widget>
@@ -87,6 +87,18 @@
   </customwidget>
   <customwidget>
    <class>hprcPitchGauge</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadCurrent</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

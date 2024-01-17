@@ -443,6 +443,193 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
+void HPRCStyle::drawHPRCPayloadAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
+{
+    // -- Pen Setup --
+
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setBrush(m_backgroundBrush);
+
+    QPen bgPen(m_backgroundBrush, 5);
+
+    bgPen.setCapStyle(Qt::RoundCap);
+
+    // -- Create bounding box --
+
+    QRectF boundingBox(w->rect().adjusted(15, 30, -15, 30));
+
+    double scaleF = 0.5;
+
+    int oWidth = boundingBox.width();
+
+    int sizeMin = fmin(boundingBox.height(), boundingBox.width() * scaleF);
+
+    boundingBox.adjust(oWidth/2 - sizeMin/2, 0, oWidth/2 - sizeMin/2, 0);
+
+    boundingBox.setHeight(sizeMin);
+    boundingBox.setWidth(sizeMin);
+
+    // For testing purposes
+
+    /*
+    QQuaternion quat(1, ((w->m_mousePos.y() - boundingBox.y()) / boundingBox.height() - 0.5) * 2,
+                     ((w->m_mousePos.x() - boundingBox.x()) /boundingBox.width() - 0.5) * 2, 0);
+*/
+
+    float crossWidth = sizeMin/10;
+    crossWidth /= 2;
+
+    bgPen.setWidth(crossWidth);
+
+    // -- Get the angles and use them --
+
+    float pitch, yaw, roll;
+    m_latest->orientation.getEulerAngles(&pitch, &yaw, &roll);
+    roll = m_latest->gyroZ;
+    //    quat.getEulerAngles(&pitch, &yaw, &roll);
+
+    // Clamp to values
+    pitch = fminf(m_AttitudeDegreeOffsetPitch + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetPitch - m_AttitudeMaxDegreeRange, pitch));
+    yaw = fminf(m_AttitudeDegreeOffsetYaw + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetYaw - m_AttitudeMaxDegreeRange, yaw));
+
+    // Normalize between -1 -> +1
+    float pitchNormalized = (pitch - m_AttitudeDegreeOffsetPitch)/m_AttitudeMaxDegreeRange;
+    float yawNormalized = (yaw - m_AttitudeDegreeOffsetYaw)/m_AttitudeMaxDegreeRange;
+
+    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
+    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
+
+
+    // -- Draw the info --
+
+    // Center dot
+
+    p->setPen(QPen(m_textBrush, 2));
+
+    float circleLocation;
+
+    std::vector<float> vec = m_AttitudeCircleLocationsDegrees[m_latest->state];
+
+    bool rocketIsWithinGraph = pitch * pitch + yaw * yaw < vec.back() * vec.back();
+
+    std::reverse(vec.begin(), vec.end());
+
+    QColor bgCol = bgPen.color();
+    bgCol.setAlphaF(0.5);
+
+    QPen outline = QPen(QBrush(bgCol), 4);
+
+    QColor fgCol = m_highlightBrush.color();
+
+    for(float circleLocationDegrees: vec) {
+
+        circleLocation = circleLocationDegrees / (m_AttitudeMaxDegreeRange);
+
+        float dist = hypot(yaw, pitch) - circleLocationDegrees;
+
+        p->setPen(outline);
+
+        if(rocketIsWithinGraph){
+            fgCol.setAlphaF(fminf(
+                powf(1 - fabsf(dist)/m_AttitudeMaxDegreeRange, 4),
+                powf((dist + circleLocationDegrees)/m_AttitudeMaxDegreeRange, 3)));
+        }
+        else {
+            fgCol.setAlphaF(1);
+        }
+
+        p->setBrush(QBrush(fgCol));
+
+
+        p->drawEllipse(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation),
+                       roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation),
+                       roundf(boundingBox.width()*circleLocation), roundf(boundingBox.width()*circleLocation));
+    }
+
+    // Crosshair
+    p->setOpacity(1);
+    p->setPen(QPen(m_textBrush, 2));
+    QPoint center((int)pitchX, (int)yawY);
+
+    p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
+    p->drawLine(center.x(), center.y() - 4, center.x(), center.y() + 4);
+
+    if(rocketIsWithinGraph)
+        p->setPen(QPen(m_textBrush, 2));
+    else
+        p->setPen(QPen(m_highlightBrush, 2));
+
+    m_widgetLarge.setPointSize(crossWidth*3);
+
+    p->setFont(m_widgetLarge);
+
+    m_widgetLarge.setPointSize(crossWidth*2);
+
+
+    p->setPen(QPen(m_textBrush, 2));
+    p->setFont(m_widgetLarge);
+
+    p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
+                      boundingBox.y()-30,
+                      crossWidth * 10,
+                      crossWidth * 3
+                      ),
+                Qt::AlignVCenter,
+                "PITCH");
+
+    m_widgetLarge.setPointSize(crossWidth * 2);
+    p->setFont(m_widgetLarge);
+
+    /*p->drawText(QRect(boundingBox.x() - 20,
+                      boundingBox.y() + boundingBox.height() + 17,
+                      boundingBox.width() + 40,
+                      crossWidth * 3
+                      ),
+                Qt::AlignCenter,
+                QString::asprintf("ROLL RATE: %.0lf rpm", roll));*/ // TODO: change this to the actual value
+
+    m_widgetLarge.setPointSize(crossWidth*2);
+
+    p->setFont(m_widgetLarge);
+
+    if(rocketIsWithinGraph)
+        p->setPen(QPen(m_textBrush, 2));
+    else
+        p->setPen(QPen(m_highlightBrush, 2));
+
+    p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
+                      boundingBox.y()-30 + crossWidth*3,
+                      crossWidth * 6,
+                      crossWidth * 3
+                      ),
+                Qt::AlignCenter,
+                QString::asprintf("%.0lfº", pitch));
+
+
+    p->setPen(QPen(m_textBrush, 2));
+
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*5,
+                      boundingBox.y()-30,
+                      crossWidth * 10,
+                      crossWidth * 3
+                      ),
+                Qt::AlignCenter,
+                "ROLL");
+
+    if(rocketIsWithinGraph)
+        p->setPen(QPen(m_textBrush, 2));
+    else
+        p->setPen(QPen(m_highlightBrush, 2));
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
+                      boundingBox.y()-30 + crossWidth*3,
+                      crossWidth * 6,
+                      crossWidth * 3
+                      ),
+                Qt::AlignCenter,
+                QString::asprintf("%.0lfº", yaw));
+
+}
+
 void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 {
 
@@ -847,6 +1034,58 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
         // QPoint target = rescaledImageBox.center() + QPoint(30, 30);
 
         p->drawEllipse(samplePoint, pointRadius, pointRadius);
+    }
+}
+
+void HPRCStyle::drawHPRCPayloadCurrent(QPainter *p, const hprcDisplayWidget *w)
+{
+    const QRect boundingBox = w->rect();
+
+    p->setPen(QPen(m_textBrush, 2));
+    p->setFont(m_widgetLarge);
+
+    const int titleWidth = boundingBox.width() / 3;
+    const int titleHeight = titleWidth / 4;
+
+    // Draw a title for the widget
+    p->drawText(QRect(boundingBox.x() + 10,
+                      boundingBox.y(),
+                      titleWidth,
+                      titleHeight
+                      ),
+                Qt::AlignLeft,
+                "CURRENT");
+
+    const int bottomOfTitle = boundingBox.y() + titleHeight;
+
+    const int servos = 4;
+    const int gap = 12;
+    const int servoHeight = (boundingBox.height() - (titleWidth / 2)) / servos - gap;
+    const int servoWidth = boundingBox.width() / 3.5;
+
+    // Draw each "servo"
+
+    for (int i = 0; i < servos; i++) {
+        p->setBrush(m_transparentBrush);
+        p->setPen(QPen(QBrush(QColor(255, 255, 255)), 2));
+        p->setRenderHint(QPainter::Antialiasing, true);
+
+        const QRect servoBox = QRect(boundingBox.x() + 10,
+                                     bottomOfTitle + (servoHeight * i) + gap * (i + 1),
+                                     servoWidth,
+                                     servoHeight);
+
+        p->drawRect(servoBox);
+
+        // Draw the servo label
+        p->drawText(servoBox,
+                    Qt::AlignCenter,
+                    "SERVO " + QString::fromStdString(std::to_string(i + 1)));
+
+        const QRect ampBox = QRect(servoBox.topRight().x(), servoBox.topRight().y(), servoBox.width() * 2, servoBox.height());
+
+        // Draw the current amperage
+        p->drawText(ampBox, Qt:: AlignRight, "0.00 AMPS");
     }
 }
 

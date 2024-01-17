@@ -24,6 +24,8 @@ public:
         HPRC_Timeline,
         HPRC_Gauge,
         HPRC_Attitude,
+        HPRC_PayloadAttitude,
+        HPRC_PayloadCurrent,
         HPRC_Graph,
         HPRC_Alarm,
         HPRC_Clock,
@@ -154,6 +156,15 @@ public:
     void mouseMoveEvent(QMouseEvent *e);
 };
 
+class hprcPayloadAttitudeWidget: public hprcDisplayWidget
+{
+
+public:
+
+    explicit hprcPayloadAttitudeWidget(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
+};
+
 class hprcGraph : public hprcDisplayWidget
 {
 public:
@@ -236,6 +247,12 @@ public:
 
     /* Returns a point relative to the center of the widget the corresponds to the GPS coordinate. */
     static QPoint calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor);
+};
+
+class hprcPayloadCurrent : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadCurrent(QWidget *parent = nullptr);
 };
 
 

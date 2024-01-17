@@ -164,6 +164,25 @@ void hprcAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
     m_mousePos = e->pos();
 }
 
+hprcPayloadAttitudeWidget::hprcPayloadAttitudeWidget(QWidget *parent):
+    hprcDisplayWidget(parent)
+{
+    //    setMouseTracking(true);
+    m_widgetType = HPRC_PayloadAttitude;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(orientationUpdated()), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(gyroUpdated()), this, SLOT(repaint()));
+        }
+}
+
+void hprcPayloadAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    m_mousePos = e->pos();
+}
+
+
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
@@ -205,6 +224,12 @@ hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_RocketVisual;
+}
+
+hprcPayloadCurrent::hprcPayloadCurrent(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_PayloadCurrent;
 }
 
 hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
