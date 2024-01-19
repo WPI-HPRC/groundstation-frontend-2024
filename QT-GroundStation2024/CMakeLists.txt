@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.21.1)
 
 project(QT-GroundStation2024 VERSION 0.1 LANGUAGES CXX)
 

@@ -176,7 +176,18 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     QRect drawBox(drawX, drawY, drawWidth, drawHeight);
     QPoint bottomRight(drawX + (0.9 - scaleF) * drawWidth, drawBox.bottom());
     QPoint topLeftSlot(drawX + (0.9 - scaleF) * drawWidth, drawY);
-    QPoint topLeftFill(drawX + (0.9 - scaleF) * drawWidth, drawY + drawHeight - (drawHeight * (w->m_filledPercent / 100.0)));
+
+    float percent = 0;
+    if(w->m_filledPercent == 3) {
+        percent = 0.15;
+    } else if(w->m_filledPercent == 4 || w->m_filledPercent == 5) {
+        percent = 0.5;
+    } else if(w->m_filledPercent == 6 || w->m_filledPercent == 7) {
+        percent = 0.75;
+    } else if(w->m_filledPercent > 7) {
+        percent = 1;
+    }
+    QPoint topLeftFill(drawX + (0.9 - scaleF) * drawWidth, drawY + drawHeight - (drawHeight * (percent)));
 
     QRect timelineSlot(topLeftSlot, bottomRight);
     QRect timelineFill(topLeftFill, bottomRight);
@@ -189,7 +200,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     if(w->m_filledPercent > 1)
         p->drawRoundedRect(timelineFill, (scaleF*drawWidth/2), (scaleF*drawWidth/2));
     p->setPen(tickPen);
-
+    int tickIndex = 0;
     for(const auto& [position, label] : m_stateMap)
     {
         p->setFont(m_widgetLarge);
@@ -199,11 +210,18 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
 
         if(label.startsWith("-"))
         {
-            p->setPen(bgPen);
+            if(!m_latest->timelineActivated[tickIndex]) {
+                p->setPen(bgPen);
+            }
+            else {
+
+                p->setPen(tickPen);
+            }
             p->setFont(m_widgetMedium);
-            p->drawText(p->font().pointSize() * -8 + 20, 0, QString("00:00:00"));
+            p->drawText(p->font().pointSize() * -8 + 20, 0, m_latest->timelineTimes[tickIndex]);
             p->setFont(m_widgetLarge);
             p->setPen(tickPen);
+            tickIndex++;
         }
     }
 
@@ -974,7 +992,6 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
         QDateTime currentUTC = QDateTime::currentDateTimeUtc();
         p->drawText(w->rect(), currentUTC.toString("hh:mm:ss dddd, MMMM dd yyyy"));
-
 
 
     }

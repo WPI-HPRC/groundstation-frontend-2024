@@ -41,6 +41,8 @@ public:
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        bool timelineActivated[5] = {false, false, false, false, false};
+        QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
     };
 
 #if RUN_SPEED_TESTS

@@ -7,6 +7,7 @@
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT3D_RENDERER", "opengl");
     QApplication a(argc, argv);
     a.setStyle(new HPRCDarkStyle(nullptr));
     MainWindow w;

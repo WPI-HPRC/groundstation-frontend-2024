@@ -27,11 +27,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             [=](QAbstractSocket::SocketError error){
                 if(error == QAbstractSocket::ConnectionRefusedError || error == QAbstractSocket::RemoteHostClosedError)
-                    m_webSocket.open(QUrl(QString("ws://localhost:8000"))); // Retry the connection
+                    m_webSocket.open(QUrl(QString("ws://130.215.215.85:8000"))); // Retry the connection
                 qDebug() << error;
             });
 
-    m_webSocket.open(QUrl(QString("ws://localhost:8000")));
+    m_webSocket.open(QUrl(QString("ws://130.215.215.85:8000")));
 }
 
 MainWindow::~MainWindow()
@@ -65,10 +65,134 @@ void MainWindow::updateData(dataPoint p)
     }
     if(p.state != m_currentData.state)
     {
-        if(p.state == 2)
+
+
+        if(p.state == 2) // 2: launch 3: coast 4: drogue 6: main 8: landing
         {
             m_groundLaunchTime = QDateTime::currentDateTimeUtc();
             m_rocketLaunchTime = p.rocketTime;
+            m_currentData.timelineActivated[4] = true;
+        } else if(p.state == 3) {
+            m_currentData.timelineActivated[3] = true;
+            double t = m_currentData.rocketTimeSinceLaunch / 1000.0;
+
+            int wholeNumSecs = t;
+            int hours = wholeNumSecs / 60 / 60;
+            int minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+            double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+            int rseconds = seconds * 100;
+            seconds = rseconds/100;
+
+            using namespace std;
+
+            string hourString(to_string(hours));
+            string minuteString(to_string(minutes));
+            string secondString(to_string(seconds));
+
+            if(hourString.length() == 1)
+                hourString.insert(0, "0");
+            if(minuteString.length() == 1)
+                minuteString.insert(0, "0");
+            if(secondString.at(1) == *".")
+                secondString.insert(0, "0");
+            secondString = secondString.substr(0, 2);
+            QString timeString = QString::fromStdString(hourString + ":" + minuteString + ":" + secondString);
+            m_currentData.timelineTimes[3] = timeString;
+        } else if(p.state == 4) {
+            m_currentData.timelineActivated[2] = true;
+            double t = m_currentData.rocketTimeSinceLaunch / 1000.0;
+
+            int wholeNumSecs = t;
+            int hours = wholeNumSecs / 60 / 60;
+            int minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+            double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+            int rseconds = seconds * 100;
+            seconds = rseconds/100;
+
+            using namespace std;
+
+            string hourString(to_string(hours));
+            string minuteString(to_string(minutes));
+            string secondString(to_string(seconds));
+
+            if(hourString.length() == 1)
+                hourString.insert(0, "0");
+            if(minuteString.length() == 1)
+                minuteString.insert(0, "0");
+            if(secondString.at(1) == *".")
+                secondString.insert(0, "0");
+            secondString = secondString.substr(0, 2);
+            QString timeString = QString::fromStdString(hourString + ":" + minuteString + ":" + secondString);
+            m_currentData.timelineTimes[2] = timeString;//            m_currentData.timelineTimes[2] = m_currentData.rocketTimeSinceLaunch;
+        } else if(p.state == 6) {
+            m_currentData.timelineActivated[1] = true;
+            double t = m_currentData.rocketTimeSinceLaunch / 1000.0;
+
+            int wholeNumSecs = t;
+            int hours = wholeNumSecs / 60 / 60;
+            int minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+            double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+            int rseconds = seconds * 100;
+            seconds = rseconds/100;
+
+            using namespace std;
+
+            string hourString(to_string(hours));
+            string minuteString(to_string(minutes));
+            string secondString(to_string(seconds));
+
+            if(hourString.length() == 1)
+                hourString.insert(0, "0");
+            if(minuteString.length() == 1)
+                minuteString.insert(0, "0");
+            if(secondString.at(1) == *".")
+                secondString.insert(0, "0");
+            secondString = secondString.substr(0, 2);
+            QString timeString = QString::fromStdString(hourString + ":" + minuteString + ":" + secondString);
+            m_currentData.timelineTimes[1] = timeString;//            m_currentData.timelineTimes[1] = m_currentData.rocketTimeSinceLaunch;
+        } else if(p.state == 8) {
+            m_currentData.timelineActivated[0] = true;
+            double t = m_currentData.rocketTimeSinceLaunch / 1000.0;
+
+            int wholeNumSecs = t;
+            int hours = wholeNumSecs / 60 / 60;
+            int minutes = (wholeNumSecs - hours * 60 * 60) / 60;
+            double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
+
+            int rseconds = seconds * 100;
+            seconds = rseconds/100;
+
+            using namespace std;
+
+            string hourString(to_string(hours));
+            string minuteString(to_string(minutes));
+            string secondString(to_string(seconds));
+
+            if(hourString.length() == 1)
+                hourString.insert(0, "0");
+            if(minuteString.length() == 1)
+                minuteString.insert(0, "0");
+            if(secondString.at(1) == *".")
+                secondString.insert(0, "0");
+            secondString = secondString.substr(0, 2);
+            QString timeString = QString::fromStdString(hourString + ":" + minuteString + ":" + secondString);
+            m_currentData.timelineTimes[0] = timeString;//            m_currentData.timelineTimes[0] = m_currentData.rocketTimeSinceLaunch;
+        } else if(p.state == 1) { // reset when data returns to initial state
+            m_currentData.timelineActivated[0] = false;
+            m_currentData.timelineActivated[1] = false;
+            m_currentData.timelineActivated[2] = false;
+            m_currentData.timelineActivated[3] = false;
+            m_currentData.timelineActivated[4] = false;
+            m_currentData.timelineTimes[0] = "00:00:00";
+            m_currentData.timelineTimes[1] = "00:00:00";
+            m_currentData.timelineTimes[2] = "00:00:00";
+            m_currentData.timelineTimes[3] = "00:00:00";
+            m_currentData.timelineTimes[4] = "00:00:00";
+
+
         }
         m_currentData.state = p.state;
         emit stateUpdated(p.state);
