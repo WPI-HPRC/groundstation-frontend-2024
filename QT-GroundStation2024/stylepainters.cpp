@@ -1290,25 +1290,25 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     p->rotate(-45);
 }
 
-void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float y, float width) {
+void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float width) {
     //Draw a happy servo picture
     p->setPen(QPen(m_textBrush, w->rect().width() / 200));
     p->setBrush(m_transparentBrush);
-    float servoRectWidth = w->rect().width() / 8;
-    float servoRectHeight = w->rect().width() / 5;
+    float servoRectWidth = w->rect().width() / 5;
+    float servoRectHeight = w->rect().width() / 8;
     float servoRect2Width = servoRectHeight / 4;
-    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, y, servoRectWidth, servoRectHeight);
+    float yMargin = servoRectHeight * 1.75;
+    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, w->rect().bottom() - yMargin, servoRectWidth, servoRectHeight);
     p->drawRect(servoRect);
-    p->drawRect(QRect(servoRect.right(), servoRect.y() + servoRect.height() / 4, servoRect.height() / 4, servoRect.height() / 12));
+    p->drawRect(QRect(servoRect.x() + servoRect.width() / 4, servoRect.top(), servoRect.width() / 12, -servoRect.width() / 4));
 
     float textMargin = w->rect().width() / 50;
 
     //Draw title
-    m_widgetLarge.setPointSize(w->width() / 28);
+    m_widgetLarge.setPointSize(servoRect.height() / 4);
     p->setFont(m_widgetLarge);
-    p->drawText(QRect(x - width / 2, y - m_widgetLarge.pointSize() - textMargin,
-                      width, 100),
-                Qt::AlignHCenter, title);
+    p->drawText(servoRect,
+                Qt::AlignCenter, title);
 
     //Draw encoder value
     QString valueString = QString::number(encoderPosition, 'f', 2);
@@ -1322,14 +1322,19 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 
     m_widgetLarge.setPointSize(w->width() / 42);
     p->setFont(m_widgetLarge);
-    p->drawText(QRect(x - width / 2, y + servoRect.height() + textMargin,
+    p->drawText(QRect(x - width / 2, servoRect.y() + servoRect.height() + textMargin,
                       width, 100),
                 Qt::AlignHCenter, "Encoder Position: " + valueString);
+
+
+    //Draw position indicator
+    QRect measuredPositionRect = QRect();
+    QRect desiredPositionRect = QRect();
 }
 
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w, "Servo 1", 0.5, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().y(), w->rect().center().x() - w->rect().x());
-    drawServoStatusServo(p, w, "Servo 2", 0.5, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().y(), w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 1", 0.5, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", 0.5, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
 }

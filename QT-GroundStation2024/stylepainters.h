@@ -58,7 +58,7 @@ public:
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
-    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float y, float width);
+    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float width);
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
 
 
@@ -93,8 +93,6 @@ public:
         }
     };
 
-
-private:
 
 private:
     struct Range {
