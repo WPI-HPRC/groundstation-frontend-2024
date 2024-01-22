@@ -121,6 +121,31 @@ hprcAccelerationGauge::hprcAccelerationGauge(QWidget *parent) :
         }
 }
 
+hprcRollGauge::hprcRollGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "ROLL";
+    m_max = 100;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(rollUpdated(int)), this, SLOT(updateFilled(int)));
+        }
+}
+
+hprcPitchGauge::hprcPitchGauge(QWidget *parent) :
+    hprcGauge{parent}
+{
+    m_label = "PITCH";
+    m_max = 100;
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(pitchUpdated(int)), this, SLOT(updateFilled(int)));
+        }
+}
+
+
 hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
     hprcDisplayWidget(parent)
 {
@@ -206,6 +231,32 @@ hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_RocketVisual;
+}
+
+hprcPayloadCurrent::hprcPayloadCurrent(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_PayloadCurrent;
+}
+
+hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
+    hprcDisplayWidget(parent)
+{
+    m_widgetType = HPRC_PayloadMap;
+
+    // Load the map image. In the future this will determine the correct map by location.
+    m_mapImage = new QImage(":/maps/spaceport-america.png");
+}
+
+QPoint hprcPayloadMap::calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor) {
+    double pixelsPerWidgetPixel = 1 / widgetScalingFactor;
+    double xScalingFactor = 1 / (hprcPayloadMap::longPerPixel * pixelsPerWidgetPixel);
+    double yScalingFactor = 1 / (hprcPayloadMap::latPerPixel * pixelsPerWidgetPixel);
+
+    double x = (globalPoint.x() - centerPoint.x()) * xScalingFactor;
+    double y = (centerPoint.y() - globalPoint.y()) * yScalingFactor;
+
+    return QPoint(x, y);
 }
 
 Qt3DCore::QEntity *createRocketScene();

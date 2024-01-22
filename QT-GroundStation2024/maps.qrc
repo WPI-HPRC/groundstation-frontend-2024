@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>maps/spaceport-america.png</file>
+    </qresource>
+</RCC>

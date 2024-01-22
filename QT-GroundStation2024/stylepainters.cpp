@@ -1038,6 +1038,113 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 }
 
+void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
+{
+    if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
+        const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
+
+        const QRectF mapBox = w->rect();
+
+        auto image = *(mapWidget->m_mapImage);
+
+        // Rescale the image to fit correctly in the widget
+        const QRectF imageBox = image.rect();
+
+        // Calcluate the scalar to multiply image dimensions by to make it fit correctly
+        double scalingFactor = mapBox.width() / imageBox.width();
+
+        // Recalculate the scaling factor based on height if width wasn't enough
+        if (scalingFactor * imageBox.height() > mapBox.height()) {
+            scalingFactor = mapBox.height() / imageBox.height();
+        }
+
+        double newWidth = imageBox.width() * scalingFactor;
+        double newHeight = imageBox.height() * scalingFactor;
+        double left = mapBox.center().x() - newWidth / 2.0;
+        double top = mapBox.center().y() - newHeight / 2.0;
+
+        QRect rescaledImageBox(left, top, newWidth, newHeight);
+
+        // Draw the image onto the widget
+        p->drawImage(rescaledImageBox, image);
+
+        // Draw the current payload position
+        p->setBrush(QBrush(QColor(20, 20, 180, 150)));
+        p->setPen(QPen(QBrush(QColor(20, 20, 180)), 3));
+        p->setRenderHint(QPainter::Antialiasing, true);
+
+        int pointRadius = newHeight / 40.0;
+
+        QPoint center = rescaledImageBox.center();
+
+        p->drawEllipse(center, pointRadius, pointRadius);
+
+        // Draw the target payload position
+        p->setBrush(QBrush(QColor(180, 20, 20, 150)));
+        p->setPen(QPen(QBrush(QColor(180, 20, 20)), 3));
+
+        QPointF mapPoint = mapWidget->centerGlobalPoint + QPointF(0.005,0.005);
+
+        QPoint samplePoint = center + hprcPayloadMap::calculateWidgetPoint(mapWidget->centerGlobalPoint, mapPoint, scalingFactor);
+
+        // QPoint target = rescaledImageBox.center() + QPoint(30, 30);
+
+        p->drawEllipse(samplePoint, pointRadius, pointRadius);
+    }
+}
+
+void HPRCStyle::drawHPRCPayloadCurrent(QPainter *p, const hprcDisplayWidget *w)
+{
+    const QRect boundingBox = w->rect();
+
+    p->setPen(QPen(m_textBrush, 2));
+    p->setFont(m_widgetLarge);
+
+    const int titleWidth = boundingBox.width() / 3;
+    const int titleHeight = titleWidth / 4;
+
+    // Draw a title for the widget
+    p->drawText(QRect(boundingBox.x() + 10,
+                      boundingBox.y(),
+                      titleWidth,
+                      titleHeight
+                      ),
+                Qt::AlignLeft,
+                "CURRENT");
+
+    const int bottomOfTitle = boundingBox.y() + titleHeight;
+
+    const int servos = 4;
+    const int gap = 12;
+    const int servoHeight = (boundingBox.height() - (titleWidth / 2)) / servos - gap;
+    const int servoWidth = boundingBox.width() / 3.5;
+
+    // Draw each "servo"
+
+    for (int i = 0; i < servos; i++) {
+        p->setBrush(m_transparentBrush);
+        p->setPen(QPen(QBrush(QColor(255, 255, 255)), 2));
+        p->setRenderHint(QPainter::Antialiasing, true);
+
+        const QRect servoBox = QRect(boundingBox.x() + 10,
+                                     bottomOfTitle + (servoHeight * i) + gap * (i + 1),
+                                     servoWidth,
+                                     servoHeight);
+
+        p->drawRect(servoBox);
+
+        // Draw the servo label
+        p->drawText(servoBox,
+                    Qt::AlignCenter,
+                    "SERVO " + QString::fromStdString(std::to_string(i + 1)));
+
+        const QRect ampBox = QRect(servoBox.topRight().x(), servoBox.topRight().y(), servoBox.width() * 2, servoBox.height());
+
+        // Draw the current amperage
+        p->drawText(ampBox, Qt:: AlignRight, "0.00 AMPS");
+    }
+}
+
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 {
 

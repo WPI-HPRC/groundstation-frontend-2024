@@ -32,7 +32,8 @@ public:
         HPRC_Hidden,
         HPRC_Viewer,
         HPRC_AIRBRAKES,
-        HPRC_SERVO_STATUS
+        HPRC_SERVO_STATUS,
+	HPRC_PayloadMap
     };
 
     enum hprcDataType // TODO
@@ -236,5 +237,30 @@ class hprcServoStatusWidget: public hprcDisplayWidget
 public:
     explicit hprcServoStatusWidget(QWidget *parent = nullptr);
 };
+
+class hprcPayloadMap : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadMap(QWidget *parent = nullptr);
+
+    // Store a reference to the map image here for rendering
+    QImage *m_mapImage;
+
+    inline static double longPerPixel = 0.000303399269104;
+    inline static double latPerPixel = 0.000251667206953;
+
+    QPointF centerGlobalPoint = QPointF(-106.97552837089243, 32.98990645338422); // Long, lat
+
+    /* Returns a point relative to the center of the widget the corresponds to the GPS coordinate. */
+    static QPoint calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor);
+};
+
+class hprcPayloadCurrent : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadCurrent(QWidget *parent = nullptr);
+};
+
+
 
 #endif // HPRCDISPLAYWIDGET_H

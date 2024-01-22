@@ -50,6 +50,7 @@ public:
     void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
@@ -58,6 +59,8 @@ public:
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadCurrent(QPainter *p, const hprcDisplayWidget *w);
     void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float width);
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
 
