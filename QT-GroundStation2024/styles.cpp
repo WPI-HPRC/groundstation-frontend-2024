@@ -58,9 +58,9 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_Attitude:
                 m_drawer->drawHPRCAttitudeWidget(painter, w);
                 return;
-            case hprcDisplayWidget::HPRC_PayloadAttitude:
-                m_drawer->drawHPRCPayloadAttitudeWidget(painter, w);
-                return;
+            //case hprcDisplayWidget::HPRC_PayloadAttitude:
+            //    m_drawer->drawHPRCPayloadAttitudeWidget(painter, w);
+            //    return;
             case hprcDisplayWidget::HPRC_Graph:
                 m_drawer->drawHPRCGraph(painter, w);
                 return;

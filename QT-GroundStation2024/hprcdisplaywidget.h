@@ -33,7 +33,9 @@ public:
         HPRC_Viewer,
         HPRC_AIRBRAKES,
         HPRC_SERVO_STATUS,
-	HPRC_PayloadMap
+        HPRC_PayloadMap,
+        HPRC_PayloadAttitude,
+        HPRC_PayloadCurrent
     };
 
     enum hprcDataType // TODO
@@ -261,6 +263,24 @@ public:
     explicit hprcPayloadCurrent(QWidget *parent = nullptr);
 };
 
+class hprcRollGauge : public hprcGauge
+{
 
+
+public:
+
+    explicit hprcRollGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcPitchGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcPitchGauge(QWidget *parent = nullptr);
+
+};
 
 #endif // HPRCDISPLAYWIDGET_H
