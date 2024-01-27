@@ -3,11 +3,53 @@
     <head>
         <link rel="stylesheet" charset="utf-8" href="qrc:/map/leaflet.css" />
         <script type="text/javascript" charset="utf-8" src="qrc:/map/leaflet.js"></script>
+<!--        <script type="text/javascript" charset="utf-8" src="qrc:///qtwebchannel/qwebchannel.js"></script>-->
         <script>
             function onLoad() {
-                const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13);
+                const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13)
 
-                L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg', { maxZoom: 13, minZoom: 11 }).addTo(map);
+                L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg', { maxZoom: 13, minZoom: 11 }).addTo(map)
+
+                // Testing
+                const payloadConfig = {
+                    color: "#2222ff",
+                    radius: 10,
+                    fillOpacity: 0.3
+                }
+                const payloadPosition = [32.99020169835385 + 0.01, -106.97596734602624 + 0.01]
+                const payload = L.circleMarker(payloadPosition, payloadConfig)
+                payload.addTo(map)
+
+                const targetConfig = {
+                    color: "#ff2222",
+                    radius: 10,
+                    fillOpacity: 0.3
+                }
+                const targetPosition = [32.99020169835385 - 0.01, -106.97596734602624 - 0.01]
+                const target = L.circleMarker(targetPosition, targetConfig)
+                target.addTo(map)
+
+                setInterval(() => {
+                    const point = target.getLatLng()
+                    target.setLatLng(L.latLng(point.lat + 0.001, point.lng + 0.001))
+                }, 300)
+
+                function centerMap(lat, lng) {
+                    if (map.getCenter().lat != lat && map.getCenter().lng != lng) {
+                        map.setView([lat, lng], map.zoom)
+                    }
+                }
+
+                // Initialize QT connection
+                if (typeof qt != 'undefined') new QWebChannel(qt.webChannelTransport, () => {
+                    window.qtLeaflet = channel.objects.qtLeaflet
+
+                    qtLeaflet.setCenterMap.connect((latitude, longitude) => {
+                        if (typeof qtLeaflet != 'undefined') {
+                            centerMap(qtLeaflet.latitude, qtLeaflet.longitude)
+                        }
+                    })
+                })
             }
         </script>
     </head>
