@@ -987,53 +987,10 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 
-        const QRectF mapBox = w->rect();
-
-        auto image = *(mapWidget->m_mapImage);
-
-        // Rescale the image to fit correctly in the widget
-        const QRectF imageBox = image.rect();
-
-        // Calcluate the scalar to multiply image dimensions by to make it fit correctly
-        double scalingFactor = mapBox.width() / imageBox.width();
-
-        // Recalculate the scaling factor based on height if width wasn't enough
-        if (scalingFactor * imageBox.height() > mapBox.height()) {
-            scalingFactor = mapBox.height() / imageBox.height();
+        if (mapWidget) {
+            // Resize the map to match the container widget
+            mapWidget->m_view->resize(w->size());
         }
-
-        double newWidth = imageBox.width() * scalingFactor;
-        double newHeight = imageBox.height() * scalingFactor;
-        double left = mapBox.center().x() - newWidth / 2.0;
-        double top = mapBox.center().y() - newHeight / 2.0;
-
-        QRect rescaledImageBox(left, top, newWidth, newHeight);
-
-        // Draw the image onto the widget
-        p->drawImage(rescaledImageBox, image);
-
-        // Draw the current payload position
-        p->setBrush(QBrush(QColor(20, 20, 180, 150)));
-        p->setPen(QPen(QBrush(QColor(20, 20, 180)), 3));
-        p->setRenderHint(QPainter::Antialiasing, true);
-
-        int pointRadius = newHeight / 40.0;
-
-        QPoint center = rescaledImageBox.center();
-
-        p->drawEllipse(center, pointRadius, pointRadius);
-
-        // Draw the target payload position
-        p->setBrush(QBrush(QColor(180, 20, 20, 150)));
-        p->setPen(QPen(QBrush(QColor(180, 20, 20)), 3));
-
-        QPointF mapPoint = mapWidget->centerGlobalPoint + QPointF(0.005,0.005);
-
-        QPoint samplePoint = center + hprcPayloadMap::calculateWidgetPoint(mapWidget->centerGlobalPoint, mapPoint, scalingFactor);
-
-        // QPoint target = rescaledImageBox.center() + QPoint(30, 30);
-
-        p->drawEllipse(samplePoint, pointRadius, pointRadius);
     }
 }
 

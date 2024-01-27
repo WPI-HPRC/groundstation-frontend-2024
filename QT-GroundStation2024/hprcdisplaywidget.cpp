@@ -18,6 +18,7 @@
 #include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <Qt3DExtras/Qt3DWindow>
+#include <QWebEngineView>
 
 hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     : QWidget{parent}
@@ -237,19 +238,10 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
 {
     m_widgetType = HPRC_PayloadMap;
 
-    // Load the map image. In the future this will determine the correct map by location.
-    m_mapImage = new QImage(":/maps/spaceport-america.png");
-}
+    m_view = new QWebEngineView(this);
+    m_view->load(QUrl("qrc:/map/index.html"));
 
-QPoint hprcPayloadMap::calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor) {
-    double pixelsPerWidgetPixel = 1 / widgetScalingFactor;
-    double xScalingFactor = 1 / (hprcPayloadMap::longPerPixel * pixelsPerWidgetPixel);
-    double yScalingFactor = 1 / (hprcPayloadMap::latPerPixel * pixelsPerWidgetPixel);
-
-    double x = (globalPoint.x() - centerPoint.x()) * xScalingFactor;
-    double y = (centerPoint.y() - globalPoint.y()) * yScalingFactor;
-
-    return QPoint(x, y);
+    m_view->resize(this->size());
 }
 
 Qt3DCore::QEntity *createRocketScene();

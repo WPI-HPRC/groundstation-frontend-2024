@@ -39,8 +39,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         rocketwindow.h rocketwindow.cpp rocketwindow.ui
 
         speedtester.h speedtester.cpp
-        maps.qrc
+
         payloadwindow.h payloadwindow.cpp payloadwindow.ui
+        map.qrc
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT-GroundStation2024 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -90,7 +92,7 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 target_link_libraries(QT-GroundStation2024 PRIVATE Qt6::WebSockets)
 
-find_package(Qt6 REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender Core Gui)
+find_package(Qt6 REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender Core Gui WebEngineWidgets)
 target_link_libraries(QT-GroundStation2024 PRIVATE
     Qt::3DCore
     Qt::3DExtras
@@ -98,4 +100,5 @@ target_link_libraries(QT-GroundStation2024 PRIVATE
     Qt::3DRender
     Qt::Core
     Qt::Gui
+    Qt::WebEngineWidgets
 )

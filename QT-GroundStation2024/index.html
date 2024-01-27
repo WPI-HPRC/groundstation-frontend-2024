@@ -1,0 +1,20 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title>Leaflet offline map</title>
+                <link rel="stylesheet" charset="utf-8" href="qrc:/map/leaflet.css" />
+            <script type="text/javascript" charset="utf-8" src="qrc:/map/leaflet.js"></script>
+		<script>
+			function onLoad() {
+
+				var mymap = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13);
+
+                                L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg',
+				{    maxZoom: 13  }).addTo(mymap);
+			}
+		</script>	
+	</head>
+	<body onload="onLoad();"> 
+		<div id="spaceport" style="height: 500px;"></div>
+	</body>
+</html>

@@ -10,6 +10,7 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <QQuaternion>
 #include <QColor>
+#include <QWebEngineView>
 
 class hprcDisplayWidget : public QWidget
 {
@@ -237,16 +238,7 @@ class hprcPayloadMap : public hprcDisplayWidget
 public:
     explicit hprcPayloadMap(QWidget *parent = nullptr);
 
-    // Store a reference to the map image here for rendering
-    QImage *m_mapImage;
-
-    inline static double longPerPixel = 0.000303399269104;
-    inline static double latPerPixel = 0.000251667206953;
-
-    QPointF centerGlobalPoint = QPointF(-106.97552837089243, 32.98990645338422); // Long, lat
-
-    /* Returns a point relative to the center of the widget the corresponds to the GPS coordinate. */
-    static QPoint calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor);
+    QWebEngineView *m_view;
 };
 
 class hprcPayloadCurrent : public hprcDisplayWidget
