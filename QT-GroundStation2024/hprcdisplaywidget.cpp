@@ -233,10 +233,10 @@ hprcRocketVisualizer::hprcRocketVisualizer(QWidget *parent) :
     m_widgetType = HPRC_RocketVisual;
 }
 
-hprcPayloadCurrent::hprcPayloadCurrent(QWidget *parent) :
+hprcPayloadBatteryVoltage::hprcPayloadBatteryVoltage(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
-    m_widgetType = HPRC_PayloadCurrent;
+    m_widgetType = HPRC_PayloadBatteryVoltage;
 }
 
 hprcPayloadMap::hprcPayloadMap(QWidget *parent) :

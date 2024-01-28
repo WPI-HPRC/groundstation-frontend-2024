@@ -68,8 +68,8 @@ void MainWindow::updateData(dataPoint p)
             m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
         }
 
-        if(p.state >= 5 && p.state <= 10) { //If the rocket is descending then the payload window needs data to stay in memory for longer
-            dataDeletionTime = 60000*10; //10 minutes
+        if(p.state >= RocketState::DROGUE_DESCENT && p.state <= RocketState::MAIN_DESCENT) { //If the rocket is descending then the payload window needs data to stay in memory for longer
+            dataDeletionTime = 60000*15; //15 minutes
         } else {
             dataDeletionTime = 5000;
         }

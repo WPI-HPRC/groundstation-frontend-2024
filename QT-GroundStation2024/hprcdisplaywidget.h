@@ -35,7 +35,7 @@ public:
         HPRC_SERVO_STATUS,
         HPRC_PayloadMap,
         HPRC_PayloadAttitude,
-        HPRC_PayloadCurrent
+        HPRC_PayloadBatteryVoltage
     };
 
     enum hprcDataType // TODO
@@ -257,10 +257,10 @@ public:
     static QPoint calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor);
 };
 
-class hprcPayloadCurrent : public hprcDisplayWidget
+class hprcPayloadBatteryVoltage : public hprcDisplayWidget
 {
 public:
-    explicit hprcPayloadCurrent(QWidget *parent = nullptr);
+    explicit hprcPayloadBatteryVoltage(QWidget *parent = nullptr);
 };
 
 class hprcRollGauge : public hprcGauge

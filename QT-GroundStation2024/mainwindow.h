@@ -24,6 +24,10 @@ class MainWindow : public QMainWindow
 
 public:
 
+    enum RocketState {
+        PRE_LAUNCH, LAUNCH, COAST, DROGUE_DESCENT, MAIN_DESCENT, RECOVERY
+    };
+
     struct graphPoint {
         float value = 0;
         float time = 0;

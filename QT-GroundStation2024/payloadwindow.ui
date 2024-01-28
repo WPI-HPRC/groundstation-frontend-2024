@@ -27,13 +27,13 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,3,2">
          <item>
-          <widget class="QWidget" name="widget_3" native="true"/>
+          <widget class="hprcPayloadGraph" name="widget_3" native="true"/>
          </item>
          <item>
           <widget class="hprcPayloadMap" name="widget_2" native="true"/>
          </item>
          <item>
-          <widget class="QWidget" name="widget" native="true"/>
+          <widget class="hprcServoStatusWidget" name="widget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -58,10 +58,10 @@
           <widget class="hprcPitchGauge" name="widget_6" native="true"/>
          </item>
          <item>
-          <widget class="hprcPayloadAttitudeWidget" name="widget_5" native="true"/>
+          <widget class="hprcAttitudeWidget" name="widget_5" native="true"/>
          </item>
          <item>
-          <widget class="hprcPayloadCurrent" name="widget_4" native="true"/>
+          <widget class="hprcPayloadBatteryVoltage" name="widget_4" native="true"/>
          </item>
         </layout>
        </widget>
@@ -92,13 +92,25 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>hprcPayloadAttitudeWidget</class>
+   <class>hprcAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadBatteryVoltage</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>hprcPayloadCurrent</class>
+   <class>hprcServoStatusWidget</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadGraph</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
    <container>1</container>

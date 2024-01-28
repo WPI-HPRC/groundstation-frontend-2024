@@ -85,8 +85,8 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_PayloadMap:
                 m_drawer->drawHPRCPayloadMap(painter, w);
                 return;
-            case hprcDisplayWidget::HPRC_PayloadCurrent:
-                m_drawer->drawHPRCPayloadCurrent(painter, w);
+            case hprcDisplayWidget::HPRC_PayloadBatteryVoltage:
+                m_drawer->drawHPRCPayloadBatteryVoltage(painter, w);
                 return;
             case hprcServoStatusWidget::HPRC_SERVO_STATUS:
                 m_drawer->drawHprcServoStatus(painter, w);

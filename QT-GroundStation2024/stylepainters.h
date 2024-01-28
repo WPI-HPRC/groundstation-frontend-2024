@@ -60,7 +60,7 @@ public:
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w);
-    void drawHPRCPayloadCurrent(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w);
     void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float width);
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
 

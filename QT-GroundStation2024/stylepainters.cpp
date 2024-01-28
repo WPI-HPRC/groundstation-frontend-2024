@@ -1093,56 +1093,31 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-void HPRCStyle::drawHPRCPayloadCurrent(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w)
 {
     const QRect boundingBox = w->rect();
 
-    p->setPen(QPen(m_textBrush, 2));
+    p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
     p->setFont(m_widgetLarge);
 
-    const int titleWidth = boundingBox.width() / 3;
-    const int titleHeight = titleWidth / 4;
-
     // Draw a title for the widget
-    p->drawText(QRect(boundingBox.x() + 10,
-                      boundingBox.y(),
-                      titleWidth,
-                      titleHeight
-                      ),
-                Qt::AlignLeft,
-                "CURRENT");
+    p->drawText(boundingBox,
+                Qt::AlignHCenter,
+                "Battery Voltage");
 
-    const int bottomOfTitle = boundingBox.y() + titleHeight;
+    //Draw battery visual
+    const float batteryWidth = boundingBox.width() / 4;
+    const float batteryHeight = boundingBox.height() / 2;
+    QList<QRect> batteryRects;
+    batteryRects.append(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 - batteryHeight / 2, batteryWidth, batteryHeight));
+    QRect* batteryRect = &batteryRects[0];
+    const float leadWidth = batteryRect->width() / 4.0;
+    const float leadHeight = batteryRect->height() / 8.0;
+    batteryRects.append(QRect(batteryRect->x() + batteryWidth / 2 - leadWidth / 2, batteryRect->y() - leadHeight, leadWidth, leadHeight));
 
-    const int servos = 4;
-    const int gap = 12;
-    const int servoHeight = (boundingBox.height() - (titleWidth / 2)) / servos - gap;
-    const int servoWidth = boundingBox.width() / 3.5;
-
-    // Draw each "servo"
-
-    for (int i = 0; i < servos; i++) {
-        p->setBrush(m_transparentBrush);
-        p->setPen(QPen(QBrush(QColor(255, 255, 255)), 2));
-        p->setRenderHint(QPainter::Antialiasing, true);
-
-        const QRect servoBox = QRect(boundingBox.x() + 10,
-                                     bottomOfTitle + (servoHeight * i) + gap * (i + 1),
-                                     servoWidth,
-                                     servoHeight);
-
-        p->drawRect(servoBox);
-
-        // Draw the servo label
-        p->drawText(servoBox,
-                    Qt::AlignCenter,
-                    "SERVO " + QString::fromStdString(std::to_string(i + 1)));
-
-        const QRect ampBox = QRect(servoBox.topRight().x(), servoBox.topRight().y(), servoBox.width() * 2, servoBox.height());
-
-        // Draw the current amperage
-        p->drawText(ampBox, Qt:: AlignRight, "0.00 AMPS");
-    }
+    // Draw the current voltage
+    p->drawText(boundingBox, Qt::AlignBottom | Qt::AlignHCenter, "0.00 V");
+    p->drawRects(batteryRects);
 }
 
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
