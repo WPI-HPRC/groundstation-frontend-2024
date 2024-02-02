@@ -990,6 +990,8 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
         if (mapWidget) {
             // Resize the map to match the container widget
             mapWidget->m_view->resize(w->size());
+
+            // mapWidget->m_interface->updatePayloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
         }
     }
 }

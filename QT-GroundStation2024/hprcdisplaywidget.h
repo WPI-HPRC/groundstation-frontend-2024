@@ -233,12 +233,21 @@ public:
     QQuaternion m_rocketOrientVertically = QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f);
 };
 
+class JsInterface: public QObject
+{
+    Q_OBJECT
+public:
+    Q_SIGNAL void updatePayloadPoint(double lat, double lng);
+    Q_SIGNAL void updateTargetPoint(double lat, double lng);
+};
+
 class hprcPayloadMap : public hprcDisplayWidget
 {
 public:
     explicit hprcPayloadMap(QWidget *parent = nullptr);
 
     QWebEngineView *m_view;
+    JsInterface *m_interface;
 };
 
 class hprcPayloadCurrent : public hprcDisplayWidget

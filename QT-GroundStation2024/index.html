@@ -1,9 +1,9 @@
 <!DOCTYPE html> 
 <html> 
     <head>
+        <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
         <link rel="stylesheet" charset="utf-8" href="qrc:/map/leaflet.css" />
         <script type="text/javascript" charset="utf-8" src="qrc:/map/leaflet.js"></script>
-<!--        <script type="text/javascript" charset="utf-8" src="qrc:///qtwebchannel/qwebchannel.js"></script>-->
         <script>
             function onLoad() {
                 const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13)
@@ -40,13 +40,31 @@
                 const target = L.circleMarker(targetPosition, targetConfig)
                 target.addTo(map)
 
-                setInterval(() => {
+                /*setInterval(() => {
                     const point = payload.getLatLng()
                     path.addLatLng(point)
                     const rand1 = Math.random() * 2 - 1
                     const rand2 = Math.random() * 2 - 1
                     payload.setLatLng(L.latLng(point.lat + 0.005 * rand1, point.lng + 0.005 * rand2))
-                }, 200)
+                }, 200) */
+
+                function addPayloadPoint(lat, lng) {
+                    const latLng = L.latLng(lat, lng)
+
+                    // Add the last payload point to the path, and update it
+                    path.addLatLng(payload.getLatLng())
+                    payload.setLatLng(latLng)
+                }
+
+                function addTargetPoint(lat, lng) {
+                    const latLng = L.latLng(lat, lng)
+
+                    target.setLatLng(latLng)
+                }
+
+                function reset() {
+                    // TODO
+                }
 
                 function centerMap(lat, lng) {
                     if (map.getCenter().lat != lat && map.getCenter().lng != lng) {
@@ -54,14 +72,21 @@
                     }
                 }
 
+
                 // Initialize QT connection
-                if (typeof qt != 'undefined') new QWebChannel(qt.webChannelTransport, () => {
+                if (typeof qt != 'undefined') new QWebChannel(qt.webChannelTransport, (channel) => {
+                    addPayloadPoint(32.99020169835385 + 0.07, -106.97596734602624 + 0.07)
+
                     window.qtLeaflet = channel.objects.qtLeaflet
 
-                    qtLeaflet.setCenterMap.connect((latitude, longitude) => {
-                        if (typeof qtLeaflet != 'undefined') {
-                            centerMap(qtLeaflet.latitude, qtLeaflet.longitude)
-                        }
+                    // Connect to the payload point signal
+                    qtLeaflet.updatePayloadPoint.connect((latitude, longitude) => {
+                        addPayloadPoint(latitude, longitude)
+                    })
+
+                    // Connect to the target point signal
+                    qtLeaflet.updateTargetPoint.connect((latitude, longitude) => {
+                        addTargetPoint(latitude, longitude)
                     })
                 })
             }

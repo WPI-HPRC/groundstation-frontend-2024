@@ -19,6 +19,7 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <Qt3DExtras/Qt3DWindow>
 #include <QWebEngineView>
+#include <QWebChannel>
 
 hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     : QWidget{parent}
@@ -240,6 +241,13 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
 
     m_view = new QWebEngineView(this);
     m_view->load(QUrl("qrc:/map/index.html"));
+    QWebChannel* channel = new QWebChannel(m_view->page());
+    m_interface = new JsInterface();
+
+    m_view->page()->setWebChannel(channel);
+    channel->registerObject(QString("qtLeaflet"), m_interface);
+
+    // m_interface->updatePayloadPoint(32.99020169835385 + 0.08, -106.97596734602624 + 0.08);
 
     m_view->resize(this->size());
 }

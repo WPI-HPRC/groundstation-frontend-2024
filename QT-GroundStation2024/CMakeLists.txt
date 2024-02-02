@@ -101,5 +101,5 @@ target_link_libraries(QT-GroundStation2024 PRIVATE
     Qt::Core
     Qt::Gui
     Qt::WebEngineWidgets
-    Qt::WebChannel
+    Qt6::WebChannel
 )
