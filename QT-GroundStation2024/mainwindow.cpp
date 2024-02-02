@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
                 qDebug() << error;
             });
 
-    m_webSocket.open(QUrl(QString("ws://130.215.215.85:8000")));
+    m_webSocket.open(QUrl(QString("wss://hprc-test.entflammen.com:8000")));
 }
 
 MainWindow::~MainWindow()
