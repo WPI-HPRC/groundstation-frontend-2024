@@ -54,6 +54,7 @@ public:
         float payloadServo2Position;
         float desiredPayloadServo1Position;
         float desiredPayloadServo2Position;
+        float payloadBatteryVoltage;
     };
 
 #if RUN_SPEED_TESTS

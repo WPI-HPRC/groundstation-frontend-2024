@@ -271,7 +271,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     // -- Create bounding box --
 
-    QRectF boundingBox(w->rect().adjusted(15, 30, -15, 30));
+    QRectF boundingBox(w->rect()); //Used to be rect.adjusted(15, 30, -15, 30). took out to remove margin
 
     double scaleF = 0.5;
 
@@ -1115,8 +1115,26 @@ void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidg
     const float leadHeight = batteryRect->height() / 8.0;
     batteryRects.append(QRect(batteryRect->x() + batteryWidth / 2 - leadWidth / 2, batteryRect->y() - leadHeight, leadWidth, leadHeight));
 
+    float batteryVoltage = m_latest->payloadBatteryVoltage;
+
     // Draw the current voltage
-    p->drawText(boundingBox, Qt::AlignBottom | Qt::AlignHCenter, "0.00 V");
+    QString valueString = QString::number(batteryVoltage, 'f', 2);
+    //Make sure there are no trailing zeros
+    while(valueString.length() > 0 && valueString.back() == '0') {
+        valueString.remove(valueString.length() - 1, 1);
+    }
+    if(valueString.back() == '.') {
+        valueString.remove(valueString.length() - 1, 1);
+    }
+
+    hprcPayloadBatteryVoltage* batteryWidget = (hprcPayloadBatteryVoltage*) p;
+    QBrush batteryBrush = batteryVoltage > batteryWidget->LOW_THRESHOLD ? QBrush(QColor(0, 255, 0)) : QBrush(QColor(255, 0, 0));
+    float batteryCharge = std::min(std::max((batteryVoltage - hprcPayloadBatteryVoltage::MIN_VOLTAGE) / (hprcPayloadBatteryVoltage::MAX_VOLTAGE - hprcPayloadBatteryVoltage::MIN_VOLTAGE), 0.0f), 1.0f);
+    p->setPen(QPen(m_textBrush, 0));
+    p->fillRect(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 + batteryHeight / 2 - batteryHeight * batteryCharge, batteryWidth, batteryHeight * batteryCharge), batteryBrush);
+
+    p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
+    p->drawText(boundingBox, Qt::AlignBottom | Qt::AlignHCenter, valueString + " V");
     p->drawRects(batteryRects);
 }
 
@@ -1372,7 +1390,7 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     p->rotate(-45);
 }
 
-void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, float encoderPosition, float x, float width) {
+void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width) {
     //Draw a happy servo picture
     p->setPen(QPen(m_textBrush, w->rect().width() / 200));
     p->setBrush(m_transparentBrush);
@@ -1393,20 +1411,18 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
                 Qt::AlignCenter, title);
 
     //Draw encoder value
-    QString valueString = QString::number(encoderPosition, 'f', 2);
-    //Make sure there are no trailing zeros
-    while(valueString.length() > 0 && valueString.back() == '0') {
-        valueString.remove(valueString.length() - 1, 1);
-    }
-    if(valueString.back() == '.') {
-        valueString.remove(valueString.length() - 1, 1);
-    }
+    QString valueString = QString::number(position);
+    QString desiredValueString = QString::number(desiredPosition);
 
-    m_widgetLarge.setPointSize(w->width() / 42);
+    float textSize = w->width() / 42.0;
+    m_widgetLarge.setPointSize(textSize);
     p->setFont(m_widgetLarge);
     p->drawText(QRect(x - width / 2, servoRect.y() + servoRect.height() + textMargin,
                       width, 100),
-                Qt::AlignHCenter, "Encoder Position: " + valueString);
+                Qt::AlignHCenter, "Measured Position: " + valueString);
+    p->drawText(QRect(x - width / 2, servoRect.y() + servoRect.height() + textMargin + textSize + textMargin,
+                      width, 100),
+                Qt::AlignHCenter, "Desired Position: " + desiredValueString);
 
 
     //Draw position indicator
@@ -1417,6 +1433,6 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w, "Servo 1", 0.5, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
-    drawServoStatusServo(p, w, "Servo 2", 0.5, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 1", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", m_latest->payloadServo2Position, m_latest->desiredPayloadServo2Position, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
 }

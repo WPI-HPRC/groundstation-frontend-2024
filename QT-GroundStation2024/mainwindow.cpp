@@ -124,6 +124,10 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.desiredPayloadServo2Position = p.desiredPayloadServo2Position;
     }
 
+    if(p.payloadBatteryVoltage != m_currentData.payloadBatteryVoltage) {
+        m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
+    }
+
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
 
