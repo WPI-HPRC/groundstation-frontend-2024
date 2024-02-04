@@ -24,12 +24,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    /*
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             [=](QAbstractSocket::SocketError error){
                 if(error == QAbstractSocket::ConnectionRefusedError || error == QAbstractSocket::RemoteHostClosedError)
                     m_webSocket.open(QUrl(QString("ws://130.215.215.85:8000"))); // Retry the connection
                 qDebug() << error;
             });
+*/
 
     m_webSocket.open(QUrl(QString("wss://hprc-test.entflammen.com:8000")));
 }
