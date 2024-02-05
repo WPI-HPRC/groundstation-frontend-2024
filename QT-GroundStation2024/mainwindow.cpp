@@ -22,18 +22,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(TIMER_TICK_MS);
 
-    connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
-    connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
-    /*
-    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-            [=](QAbstractSocket::SocketError error){
-                if(error == QAbstractSocket::ConnectionRefusedError || error == QAbstractSocket::RemoteHostClosedError)
-                    m_webSocket.open(QUrl(QString("ws://130.215.215.85:8000"))); // Retry the connection
-                qDebug() << error;
-            });
-*/
-
-    m_webSocket.open(QUrl(QString("wss://hprc-test.entflammen.com:8000")));
+    m_websocket = new HPRCWebSocket("hprc-test.entflammen.com", 8000);
+    connect(m_websocket, SIGNAL(onTextMessageReceived(QString)), this, SLOT(onTextMessageReceived(QString)));
+    m_websocket->connectToServer();
 }
 
 MainWindow::~MainWindow()
@@ -260,13 +251,6 @@ void MainWindow::update()
     updateData(m_dataBuffer);
 }
 
-void MainWindow::onConnected()
-{
-    connect(&m_webSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(onTextMessageReceived(QString)));
-
-}
-
-void MainWindow::onDisconnected() {}
 
 void MainWindow::onTextMessageReceived(QString message)
 {
