@@ -130,7 +130,7 @@
   <customwidget>
    <class>hprcTimeline</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
    <slots>
     <slot>updateFilled(int)</slot>
@@ -139,43 +139,43 @@
   <customwidget>
    <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcVelocityGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAccelerationGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcGraph</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAlarmPanel</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcUTCClock</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

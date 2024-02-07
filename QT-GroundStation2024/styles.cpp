@@ -1,5 +1,5 @@
 #include "styles.h"
-#include "hprcdisplaywidget.h"
+#include "Widgets/hprcdisplaywidget.h"
 #include "stylepainters.h"
 #include <iostream>
 
