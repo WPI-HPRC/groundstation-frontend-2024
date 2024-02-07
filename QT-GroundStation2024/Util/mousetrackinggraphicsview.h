@@ -3,23 +3,24 @@
 
 #include <QGraphicsView>
 #include <QPoint>
-#include <Widgets/hprcdisplaywidget.h>
+#include <QMouseEvent>
+#include "../Widgets/hprcdisplaywidget.h"
 
 class MouseTrackingGraphicsView : public QGraphicsView
 {
 public:
 
     QPointF mousePos;
-    hprcDisplayWidget* graph;
+    hprcDisplayWidget* widget;
 
-    MouseTrackingGraphicsView(hprcGraph* parent = nullptr) : QGraphicsView(parent), graph(parent) {
+    MouseTrackingGraphicsView(hprcDisplayWidget* parent = nullptr) : QGraphicsView(parent), widget(parent) {
         setMouseTracking(true);
     }
 
 protected:
     void mouseMoveEvent(QMouseEvent* event) override {
         // It's getting shifted for some reason, so shift it back
-        graph->m_mousePos = QPoint(event->pos().x(), event->pos().y());
+        widget->m_mousePos = QPoint(event->pos().x(), event->pos().y());
     }
 
     virtual void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE {
