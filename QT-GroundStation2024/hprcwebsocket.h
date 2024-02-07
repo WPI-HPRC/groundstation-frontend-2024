@@ -15,38 +15,32 @@ public:
     int port;
 
     void connectToServer();
+    void close();
 
 private:
     QWebSocket* m_socket;
+    QThread thread;
+    void _ping();
 
 public slots:
     void onConnected();
     void onDisconnected();
-    void readyRead();
-    void errorOccurred(QAbstractSocket::SocketError err);
     void sslErrors(QList<QSslError> errs);
     void stateChanged(QAbstractSocket::SocketState state);
-    void alertReceived(QSsl::AlertLevel level, QSsl::AlertType type, const QString &description);
-    void alertSent(QSsl::AlertLevel level, QSsl::AlertType type, const QString &description);
-    void encrypted();
-    void encryptedBytesWritten(qint64 written);
     void handshakeInterruptedOnError(const QSslError &error);
-    void modeChanged(QSslSocket::SslMode mode);
-    void newSessionTicketReceived();
     void peerVerifyError(const QSslError &error);
-    void preSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator *authenticator);
-    void hostFound();
-    void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
     void aboutToClose();
     void bytesWritten(qint64 bytes);
-    void channelBytesWritten(int channel, qint64 bytes);
-    void channelReadyRead(int channel);
     void readChannelFinished();
     void messageReceived(QString message);
+    void _connectToServer();
+
 
 signals:
     void onTextMessageReceived(QString message);
-
+    void open(QUrl);
+    void closeTheSocket(QWebSocketProtocol::CloseCode,QString);
+    void ping(QByteArray);
 };
 
 #endif // HPRCWEBSOCKET_H
