@@ -46,17 +46,6 @@ void hprcDisplayWidget::paintEvent(QPaintEvent *e)
     QApplication::style()->drawPrimitive(QStyle::PE_CustomBase, &opt, &p, this);
 }
 
-hprcTimeline::hprcTimeline(QWidget *parent)
-    : hprcDisplayWidget{parent}
-{
-    m_widgetType = HPRC_Timeline;
-    foreach (QWidget *w, qApp->topLevelWidgets())
-        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
-        {
-            connect(mainWin, SIGNAL(stateUpdated(int)), this, SLOT(updateFilled(int)));
-        }
-}
-
 hprcGauge::hprcGauge(QWidget *parent)
     : hprcDisplayWidget{parent}
 {

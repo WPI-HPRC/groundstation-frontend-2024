@@ -78,15 +78,6 @@ signals:
 
 };
 
-class hprcTimeline : public hprcDisplayWidget
-{
-    Q_OBJECT
-public:
-    explicit hprcTimeline(QWidget *parent = nullptr);
-
-signals:
-};
-
 class hprcGauge : public hprcDisplayWidget
 {
     Q_OBJECT
