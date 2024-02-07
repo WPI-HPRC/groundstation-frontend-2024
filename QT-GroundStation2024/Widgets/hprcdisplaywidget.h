@@ -1,7 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>

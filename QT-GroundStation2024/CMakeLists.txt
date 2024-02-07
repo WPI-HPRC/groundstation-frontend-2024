@@ -18,9 +18,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        Windows/mainwindow.cpp
+        Windows/mainwindow.h
+        Windows/mainwindow.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -35,7 +35,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         models.qrc
 
 
-        rocketwindow.h rocketwindow.cpp rocketwindow.ui
+        Windows/rocketwindow.h Windows/rocketwindow.cpp Windows/rocketwindow.ui
 
         Util/speedtester.h Util/speedtester.cpp
         Util/hprcCircularBuffer.h

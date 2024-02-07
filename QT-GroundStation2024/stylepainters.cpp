@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <QFontDatabase>
-#include "mainwindow.h"
+#include "Windows/mainwindow.h"
 #include <QDateTime>
 #include <math.h>
 #include <QQuaternion>
