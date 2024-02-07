@@ -11,8 +11,10 @@
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QAbstractSocket>
 #include <QQuaternion>
 #include "hprcCircularBuffer.h"
+#include "hprcwebsocket.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -61,7 +63,7 @@ public:
     dataPoint m_currentData;
     dataPoint m_dataBuffer;
 
-    QWebSocket m_webSocket;
+    HPRCWebSocket* m_websocket;
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
@@ -81,8 +83,6 @@ signals:
 
 public slots:
     void update();
-    void onConnected();
-    void onDisconnected();
     void onTextMessageReceived(QString message);
 
 private:
