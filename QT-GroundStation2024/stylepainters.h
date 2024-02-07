@@ -4,7 +4,7 @@
 #include "Widgets/hprcdisplaywidget.h"
 #include <QStyle>
 #include <QPainter>
-#include "mainwindow.h"
+#include "Windows/mainwindow.h"
 
 class HPRCStyle
 {

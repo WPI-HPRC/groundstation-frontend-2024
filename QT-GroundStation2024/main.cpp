@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "rocketwindow.h"
+#include "Windows/mainwindow.h"
+#include "Windows/rocketwindow.h"
 #include "styles.h"
 #include <iostream>
 

@@ -1,5 +1,5 @@
 #include "hprcdisplaywidget.h"
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include "qapplication.h"
 #include "qpainter.h"
 #include "qstyle.h"
