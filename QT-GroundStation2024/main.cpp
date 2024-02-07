@@ -22,5 +22,9 @@ int main(int argc, char *argv[])
     w.update();
     r.update();
 
-    return a.exec();
+    int code = a.exec();
+
+    w.m_websocket->close();
+
+    return code;
 }
