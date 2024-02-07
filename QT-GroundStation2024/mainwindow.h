@@ -5,7 +5,7 @@
 #define TIMER_TICK_MS 1
 
 #if RUN_SPEED_TESTS
-    #include "speedtester.h"
+    #include "Util/speedtester.h"
 #endif
 #include "qdatetime.h"
 #include "qwebsocket.h"
