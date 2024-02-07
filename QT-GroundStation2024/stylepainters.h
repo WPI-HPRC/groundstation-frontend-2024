@@ -1,7 +1,7 @@
 #ifndef HPRCSTYLE_H
 #define HPRCSTYLE_H
 
-#include "hprcdisplaywidget.h"
+#include "Widgets/hprcdisplaywidget.h"
 #include <QStyle>
 #include <QPainter>
 #include "mainwindow.h"

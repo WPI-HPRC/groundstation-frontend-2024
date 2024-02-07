@@ -30,7 +30,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         styles.h styles.cpp
         stylepainters.h stylepainters.cpp
 
-        hprcdisplaywidget.h hprcdisplaywidget.cpp
         fonts.qrc
         images.qrc
         models.qrc
@@ -42,8 +41,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Util/hprcCircularBuffer.h
         Util/mousetrackinggraphicsview.h
         Util/betterqgraphicstextitem.h
-        hprcsubgraph.h hprcsubgraph.cpp
         Util/hprcwebsocket.h Util/hprcwebsocket.cpp
+
+        Widgets/hprcdisplaywidget.h Widgets/hprcdisplaywidget.cpp
+        Widgets/hprcsubgraph.h Widgets/hprcsubgraph.cpp
 
 
     )

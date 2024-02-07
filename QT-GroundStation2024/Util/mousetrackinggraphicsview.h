@@ -3,7 +3,7 @@
 
 #include <QGraphicsView>
 #include <QPoint>
-#include <hprcdisplaywidget.h>
+#include <Widgets/hprcdisplaywidget.h>
 
 class MouseTrackingGraphicsView : public QGraphicsView
 {
