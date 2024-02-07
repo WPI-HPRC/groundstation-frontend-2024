@@ -10,8 +10,8 @@
 #include <QQuaternion>
 
 #include <QVBoxLayout>
-#include "mousetrackinggraphicsview.h"
-#include "betterqgraphicstextitem.h"
+#include "Util/mousetrackinggraphicsview.h"
+#include "Util/betterqgraphicstextitem.h"
 
 // 3D imports
 #include <Qt3DCore/QEntity>

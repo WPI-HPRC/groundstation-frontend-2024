@@ -16,7 +16,7 @@
 #include <QGraphicsPolygonItem>
 #include <QVBoxLayout>
 
-#include "betterqgraphicstextitem.h"
+#include "Util/betterqgraphicstextitem.h"
 
 #define NUM_NAVBALL_CIRCLES 7
 

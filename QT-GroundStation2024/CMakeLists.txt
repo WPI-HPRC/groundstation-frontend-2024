@@ -39,11 +39,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         rocketwindow.h rocketwindow.cpp rocketwindow.ui
 
         speedtester.h speedtester.cpp
-        hprcCircularBuffer.h
-        mousetrackinggraphicsview.h
-        betterqgraphicstextitem.h
+        Util/hprcCircularBuffer.h
+        Util/mousetrackinggraphicsview.h
+        Util/betterqgraphicstextitem.h
         hprcsubgraph.h hprcsubgraph.cpp
-        hprcwebsocket.h hprcwebsocket.cpp
+        Util/hprcwebsocket.h Util/hprcwebsocket.cpp
 
 
     )
