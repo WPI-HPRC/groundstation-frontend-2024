@@ -37,7 +37,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         rocketwindow.h rocketwindow.cpp rocketwindow.ui
 
-        speedtester.h speedtester.cpp
+        Util/speedtester.h Util/speedtester.cpp
         Util/hprcCircularBuffer.h
         Util/mousetrackinggraphicsview.h
         Util/betterqgraphicstextitem.h
