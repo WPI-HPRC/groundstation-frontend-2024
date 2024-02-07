@@ -128,15 +128,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>hprcTimeline</class>
-   <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
-   <container>1</container>
-   <slots>
-    <slot>updateFilled(int)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
    <header>Widgets/hprcdisplaywidget.h</header>
@@ -176,6 +167,12 @@
    <class>hprcMETClock</class>
    <extends>QWidget</extends>
    <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcTimeline</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprctimeline.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
