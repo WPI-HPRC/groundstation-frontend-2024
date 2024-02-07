@@ -4,6 +4,7 @@
 HPRCWebSocket::HPRCWebSocket(QString hostname, int port): hostname(hostname), port(port)
 {
     m_socket = new QWebSocket();
+    retryConnection = true;
 
 
     connect(m_socket, SIGNAL(connected()), this, SLOT(onConnected()));
@@ -35,6 +36,7 @@ void HPRCWebSocket::connectToServer()
 
 void HPRCWebSocket::_connectToServer()
 {
+    qDebug("Attemtping to connect to server");
     emit open(QUrl("wss://hprc-test.entflammen.com:8000"));
 }
 
@@ -45,6 +47,7 @@ void HPRCWebSocket::_ping()
 
 void HPRCWebSocket::close()
 {
+    retryConnection = false;
     emit closeTheSocket(QWebSocketProtocol::CloseCodeNormal, "Closing time");
 }
 
@@ -61,6 +64,12 @@ void HPRCWebSocket::onConnected()
 void HPRCWebSocket::onDisconnected()
 {
     qDebug("Websocket Disconnected");
+
+    if(retryConnection)
+    {
+        qDebug("Trying to reconnect");
+        QTimer::singleShot(3000, this, &HPRCWebSocket::_connectToServer);
+    }
 }
 
 void HPRCWebSocket::sslErrors(QList<QSslError> errs)

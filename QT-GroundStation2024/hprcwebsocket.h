@@ -21,6 +21,7 @@ private:
     QWebSocket* m_socket;
     QThread thread;
     void _ping();
+    bool retryConnection;
 
 public slots:
     void onConnected();
