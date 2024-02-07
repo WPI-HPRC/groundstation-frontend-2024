@@ -2,6 +2,7 @@
 #define HPRCSTYLE_H
 
 #include "Widgets/hprcdisplaywidget.h"
+#include "Widgets/hprcgraph.h"
 #include <QStyle>
 #include <QPainter>
 #include "Windows/mainwindow.h"

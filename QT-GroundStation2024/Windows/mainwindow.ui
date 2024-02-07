@@ -146,12 +146,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>hprcGraph</class>
-   <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>hprcAlarmPanel</class>
    <extends>QWidget</extends>
    <header>Widgets/hprcdisplaywidget.h</header>
@@ -173,6 +167,12 @@
    <class>hprcTimeline</class>
    <extends>QWidget</extends>
    <header>Widgets/hprctimeline.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcGraph</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcgraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

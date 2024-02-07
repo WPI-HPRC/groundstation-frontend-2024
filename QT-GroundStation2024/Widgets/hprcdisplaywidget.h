@@ -13,8 +13,6 @@
 #include <QQuaternion>
 #include <QColor>
 
-#include "hprcsubgraph.h"
-
 class hprcDisplayWidget : public QWidget
 {
     Q_OBJECT
@@ -126,25 +124,6 @@ public:
 
     explicit hprcAttitudeWidget(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
-};
-
-class hprcGraph : public hprcDisplayWidget
-{
-public:
-
-    explicit hprcGraph(QWidget *parent = nullptr);
-    void mouseMoveEvent(QMouseEvent *e);
-
-    QGraphicsView* graphicsView;
-    QGraphicsScene* graphicsScene;
-
-    QGraphicsRectItem* bgRect;
-    QGraphicsRectItem* outlineRect;
-
-    HPRCSubGraph* altSubGraph;
-    HPRCSubGraph* velSubGraph;
-    HPRCSubGraph* accelSubGraph;
-
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget
