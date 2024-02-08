@@ -4,9 +4,12 @@
 #include <iostream>
 
 #include <QApplication>
+#include "Util/hprcStateMap.h"
 
 int main(int argc, char *argv[])
 {
+    hprcStateMaps::makeMaps();
+
     qputenv("QT3D_RENDERER", "opengl");
     QApplication a(argc, argv);
     a.setStyle(new HPRCDarkStyle(nullptr));

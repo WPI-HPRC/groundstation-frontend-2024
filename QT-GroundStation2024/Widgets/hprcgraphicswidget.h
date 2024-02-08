@@ -2,6 +2,7 @@
 #define HPRCGRAPHICSWIDGET_H
 
 #include "hprcdisplaywidget.h"
+#include <QGraphicsView>
 
 class hprcGraphicsWidget : public hprcDisplayWidget
 {

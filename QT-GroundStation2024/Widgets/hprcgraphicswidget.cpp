@@ -4,6 +4,7 @@
 
 hprcGraphicsWidget::hprcGraphicsWidget(QWidget *parent, bool mouseTracking): hprcDisplayWidget(parent)
 {
+
     graphicsView = mouseTracking ? new MouseTrackingGraphicsView(this) : new QGraphicsView(this);
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -12,10 +13,9 @@ hprcGraphicsWidget::hprcGraphicsWidget(QWidget *parent, bool mouseTracking): hpr
 
     // Set up layout
     QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->setObjectName("GraphicsWidget Layout");
     layout->addWidget(graphicsView);
     this->setLayout(layout);
-
-    graphicsView->setObjectName("Graphs");
 
     graphicsScene = new QGraphicsScene(this);
     graphicsView->setScene(graphicsScene);

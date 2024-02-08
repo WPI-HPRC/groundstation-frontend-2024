@@ -17,6 +17,8 @@
 #include <QVBoxLayout>
 
 #include "Util/betterqgraphicstextitem.h"
+#include "Util/hprcStateMap.h"
+#include "Widgets/hprctimeline.h"
 
 #define NUM_NAVBALL_CIRCLES 7
 
@@ -31,6 +33,11 @@
 
 #define TOOLTIP_WIDTH 50
 #define TOOLTIP_WIDTH_HALF 25
+
+
+std::map<double, QString> hprcStateMaps::stateMap;
+std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapW;
+std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapA;
 
 
 HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
@@ -53,31 +60,6 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_widgetLarge = QFont(overpassMono, 20, 5, false);
     m_widgetMedium = QFont(overpassMono, 15, 5, false);
     m_widgetSmall = QFont(overpassMono, 10, 5, false);
-
-    double ticks[5] = {1, 0.85, 0.5, 0.25, 0}; // these need to be ordered bottom to top.  the system draws from top-left so "1" is the bottom (top - 1 * height)
-    QString states[4] = {"BOOST", "CRUISE", "DROGUE", "MAIN"}; // will be associated with the space between [n] and [n+1] eg BOOST is between 1 and 0.85
-    for(int index = 0; index < (sizeof(ticks)/sizeof(ticks[0])) - 1; index++)
-    {
-        double start = ticks[index];
-        double end = ticks[index + 1];
-        double middle = (start - end) / 2.0 + end;
-        m_stateMap.insert(std::make_pair(start, QString("-")));
-        m_stateMap.insert(std::make_pair(middle, states[index]));
-
-    }
-    m_stateMap.insert(std::make_pair(ticks[sizeof(ticks)/sizeof(ticks[0]) - 1], QString("-")));
-
-    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_MasterAbort, true));
-    m_alarmMapA.insert(std::make_pair(HPRCStyle::ALARM_Pitch, true));
-
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MasterWarn, true));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_PowerLoss, false));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_LowPower, false));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_SignalLoss, true));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_EarlyChute, true));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_Ballistic, false));
-    m_alarmMapW.insert(std::make_pair(HPRCStyle::ALARM_MainDeployFail, false));
-
 
     // get a pointer to the current data's location
 
@@ -123,7 +105,7 @@ void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
+void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
 {
 
     if(w->rect().width() < 100)
@@ -174,6 +156,8 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     double scaleF = 0.03;
 
     QRect drawBox(drawX, drawY, drawWidth, drawHeight);
+    w->graphicsView->setSceneRect(w->layout()->geometry());
+
     QPoint bottomRight(drawX + (0.9 - scaleF) * drawWidth, drawBox.bottom());
     QPoint topLeftSlot(drawX + (0.9 - scaleF) * drawWidth, drawY);
 
@@ -189,6 +173,28 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
     }
     QPoint topLeftFill(drawX + (0.9 - scaleF) * drawWidth, drawY + drawHeight - (drawHeight * (percent)));
 
+    w->graphicsScene->setBackgroundBrush(m_transparentBrush);
+
+    w->timelineSlot->setRect(QRect(topLeftSlot, bottomRight));
+    w->timelineSlot->setPen(bgPen);
+    w->timelineSlot->setRadii(scaleF*drawWidth/2, scaleF*drawWidth/2);
+
+    w->timelineFill->setRect(QRect(topLeftFill, bottomRight));
+    w->timelineFill->setPen(fgPen);
+    w->timelineFill->setRadii(scaleF*drawWidth/2, scaleF*drawWidth/2);
+
+    if(w->m_filledPercent > 1)
+    {
+        w->timelineFill->show();
+    }
+    else
+    {
+        w->timelineFill->hide();
+    }
+
+    w->graphicsView->viewport()->update();
+
+
     QRect timelineSlot(topLeftSlot, bottomRight);
     QRect timelineFill(topLeftFill, bottomRight);
 
@@ -201,7 +207,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w)
         p->drawRoundedRect(timelineFill, (scaleF*drawWidth/2), (scaleF*drawWidth/2));
     p->setPen(tickPen);
     int tickIndex = 0;
-    for(const auto& [position, label] : m_stateMap)
+    for(const auto& [position, label] : hprcStateMaps::stateMap)
     {
         p->setFont(m_widgetLarge);
         QTransform rPt(1, 0, 0, 1, topLeftSlot.x() - (p->font().pointSize()) * label.length(), position * drawHeight + drawY + p->font().pointSize() * 0.3);
@@ -817,8 +823,8 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     linePen.setCapStyle(Qt::RoundCap);
     p->setPen(linePen);
 
-    int abortConditions = m_alarmMapA.size();
-    int warnConditions = m_alarmMapW.size();
+    int abortConditions = hprcStateMaps::alarmMapA.size();
+    int warnConditions = hprcStateMaps::alarmMapW.size();
 
     int total = abortConditions + warnConditions + 1;
 
@@ -845,7 +851,7 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
 
     p->drawLine(startX, startYA, startX, w->rect().y() + hPadding + (height * (abortConditions - 1) / total + size * 0.5));
 
-    for(const auto& [type, active] : m_alarmMapA)
+    for(const auto& [type, active] : hprcStateMaps::alarmMapA)
     {
         int y = w->rect().y() + hPadding + (height * i / total);
         drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYA);
@@ -858,7 +864,7 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     p->drawLine(startX, startYW, startX, startYW + (size * (warnConditions - 1)));
 
 
-    for(const auto& [type, active] : m_alarmMapW)
+    for(const auto& [type, active] : hprcStateMaps::alarmMapW)
     {
         int y = w->rect().y() + hPadding + (height * i / total);
         drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYW);

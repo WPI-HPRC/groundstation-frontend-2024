@@ -1,7 +1,7 @@
 #ifndef HPRCGRAPH_H
 #define HPRCGRAPH_H
 
-#include "hprcgraphicswidget.h".h"
+#include "hprcgraphicswidget.h"
 #include "hprcsubgraph.h"
 #include "./Util/mousetrackinggraphicsview.h"
 #include "qapplication.h"
@@ -20,6 +20,9 @@ public:
     explicit hprcGraph(QWidget *parent = nullptr) :
         hprcGraphicsWidget(parent, true)
     {
+
+        graphicsView->setObjectName("Graphs");
+
         this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
         this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
         this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
