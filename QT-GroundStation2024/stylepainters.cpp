@@ -113,18 +113,11 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
 
     // <------------------- math --------------------->//
 
-    p->setRenderHint(QPainter::Antialiasing);
-
-    p->setFont(m_widgetLarge);
-    p->setBrush(m_transparentBrush);
     QPen bgPen(m_backgroundBrush, 15);
-    bgPen.setCapStyle(Qt::RoundCap);
 
     QPen fgPen(m_highlightBrush, 16);
-    fgPen.setCapStyle(Qt::RoundCap);
 
     QPen tickPen(m_textBrush, 20);
-    tickPen.setCapStyle(Qt::FlatCap);
 
     double aspect = 4; // height / width
 
