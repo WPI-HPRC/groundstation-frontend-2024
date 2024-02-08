@@ -19,7 +19,8 @@ hprcTimeline::hprcTimeline(QWidget *parent): hprcGraphicsWidget(parent, false)
 
     for(const auto& [position, label] : hprcStateMaps::stateMap)
     {
-        BetterQGraphicsTextItem *textItem = new BetterQGraphicsTextItem(QRect(0, 0, 0, 0), Qt::AlignRight | Qt::AlignVCenter, label);
+        QString actualLabel = label;
+        BetterQGraphicsTextItem *textItem = new BetterQGraphicsTextItem(QRect(0, 0, 0, 0), Qt::AlignRight | Qt::AlignVCenter, actualLabel.startsWith("-") ? "-" : actualLabel);
         textItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
         this->graphicsScene->addItem(textItem);
 

@@ -200,7 +200,8 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
         textItem->setFont(m_widgetLarge);
         textItem->setDefaultTextColor(tickPen.color());
         float ypos = position * drawHeight + drawY + p->font().pointSize() * 0.3;
-        textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - 20, ypos + 100));
+        textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - drawWidth/10, ypos + 100));
+
 
         if(label.startsWith("-"))
         {
@@ -212,7 +213,6 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
                 textItem->setDefaultTextColor(tickPen.color());
             }
             textItem->setFont(m_widgetMedium);
-            textItem->setPos(p->font().pointSize() * -8 + 20, 0);
             textItem->setPlainText(m_latest->timelineTimes[tickIndex]);
             tickIndex++;
         }
@@ -740,7 +740,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         graph->tooltipCircle->setPen(bg);
 
         graph->tooltipValue->geometry = ptHighlight;
-        graph->tooltipValue->text = ptLabel;
+        graph->tooltipValue->setPlainText(ptLabel);
         graph->tooltipValue->setDefaultTextColor(m_textBrush.color());
         graph->tooltipValue->setFont(m_widgetMedium);
     }
@@ -755,7 +755,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
                                             190,
                                             rect.height());
 
-        graph->valueLabel->text = abs(currentValue) < 10 && abs(currentValue) > 0.01 ? QString::asprintf("%0.2f", currentValue) : QString::asprintf("%d", (int)currentValue);
+        graph->valueLabel->setPlainText(abs(currentValue) < 10 && abs(currentValue) > 0.01 ? QString::asprintf("%0.2f", currentValue) : QString::asprintf("%d", (int)currentValue));
 
         graph->valueLabel->setDefaultTextColor(bg);
         graph->valueLabel->setFont(m_widgetFancy);
@@ -769,7 +769,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
                                                rect.width() - 7,
                                                rect.height()*(1-MAX_GRAPH_SCALE));
 
-        graph->maxValueLabel->text = abs(maxValue) < 10 && abs(maxValue) > 0.01 ? QString::asprintf("%0.2f", maxValue) : QString::asprintf("%d", (int)maxValue);
+        graph->maxValueLabel->setPlainText(abs(maxValue) < 10 && abs(maxValue) > 0.01 ? QString::asprintf("%0.2f", maxValue) : QString::asprintf("%d", (int)maxValue));
         graph->maxValueLabel->setFont(m_widgetMedium);
         graph->maxValueLabel->setOpacity(0.8);
         graph->maxValueLabel->setDefaultTextColor(m_textBrush.color());
@@ -789,7 +789,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
                                                rect.width() - 7,
                                                rect.height()*(1-MAX_GRAPH_SCALE));
 
-        graph->minValueLabel->text = abs(minValue) < 10 && abs(minValue) > 0.01 ? QString::asprintf("%0.2f", minValue) : QString::asprintf("%d", (int)minValue);
+        graph->minValueLabel->setPlainText(abs(minValue) < 10 && abs(minValue) > 0.01 ? QString::asprintf("%0.2f", minValue) : QString::asprintf("%d", (int)minValue));
         graph->minValueLabel->setFont(m_widgetMedium);
         graph->minValueLabel->setOpacity(0.8);
         graph->minValueLabel->setDefaultTextColor(m_textBrush.color());

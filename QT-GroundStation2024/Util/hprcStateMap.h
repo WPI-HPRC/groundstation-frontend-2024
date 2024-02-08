@@ -22,12 +22,13 @@ public:
         QString states[4] = {"BOOST", "CRUISE", "DROGUE", "MAIN"}; // will be associated with the space between [n] and [n+1] eg BOOST is between 1 and 0.85
         for(int index = 0; index < (sizeof(ticks)/sizeof(ticks[0])) - 1; index++)
         {
+            QString value = QString::asprintf("-%d", index);
             double start = ticks[index];
             double end = ticks[index + 1];
             double middle = (start - end) / 2.0 + end;
-            stateMap.insert(std::make_pair(start, QString("-")));
+            stateMap.insert(std::make_pair(start, value));
             stateMap.insert(std::make_pair(middle, states[index]));
-
+            std::cout << value.toStdString() << std::endl;
         }
         stateMap.insert(std::make_pair(ticks[sizeof(ticks)/sizeof(ticks[0]) - 1], QString("-")));
 
