@@ -47,6 +47,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Widgets/hprcsubgraph.h Widgets/hprcsubgraph.cpp
         Widgets/hprctimeline.h
         Widgets/hprcgraph.h
+        Widgets/hprcgraphicswidget.h Widgets/hprcgraphicswidget.cpp
 
 
     )
