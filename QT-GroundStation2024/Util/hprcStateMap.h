@@ -28,7 +28,6 @@ public:
             double middle = (start - end) / 2.0 + end;
             stateMap.insert(std::make_pair(start, value));
             stateMap.insert(std::make_pair(middle, states[index]));
-            std::cout << value.toStdString() << std::endl;
         }
         stateMap.insert(std::make_pair(ticks[sizeof(ticks)/sizeof(ticks[0]) - 1], QString("-")));
 

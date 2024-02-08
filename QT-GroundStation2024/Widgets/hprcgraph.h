@@ -17,30 +17,7 @@ public:
     HPRCSubGraph* velSubGraph;
     HPRCSubGraph* accelSubGraph;
 
-    explicit hprcGraph(QWidget *parent = nullptr) :
-        hprcGraphicsWidget(parent, true)
-    {
-
-        graphicsView->setObjectName("Graphs");
-
-        this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
-        this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
-        this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
-
-        bgRect = new QGraphicsRectItem();
-        outlineRect = new QGraphicsRectItem();
-
-        graphicsScene->addItem(bgRect);
-        graphicsScene->addItem(outlineRect);
-
-        setMouseTracking(true);
-        m_widgetType = HPRC_Graph;
-        foreach (QWidget *w, qApp->topLevelWidgets())
-            if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
-            {
-                connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
-            }
-    }
+    explicit hprcGraph(QWidget *parent = nullptr);
 };
 
 #endif // HPRCGRAPH_H

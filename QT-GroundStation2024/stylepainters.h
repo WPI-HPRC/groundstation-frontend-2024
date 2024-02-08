@@ -8,6 +8,19 @@
 #include "Windows/mainwindow.h"
 #include "Widgets/hprctimeline.h"
 
+#define TOOLTIP_WIDTH 50
+#define TOOLTIP_WIDTH_HALF 25
+
+#define NUM_NAVBALL_CIRCLES 7
+
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
 class HPRCStyle
 {
 public:

@@ -51,6 +51,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Util/roundedQGraphicsRectItem.h
         Util/hprcStateMap.h
         Widgets/hprctimeline.cpp
+        Widgets/hprcgraph.cpp
 
 
     )
