@@ -1,18 +1,15 @@
 #ifndef HPRCGRAPH_H
 #define HPRCGRAPH_H
 
-#include "hprcdisplaywidget.h"
+#include "hprcgraphicswidget.h".h"
 #include "hprcsubgraph.h"
 #include "./Util/mousetrackinggraphicsview.h"
 #include "qapplication.h"
 #include <QVBoxLayout>
 
-class hprcGraph : public hprcDisplayWidget
+class hprcGraph : public hprcGraphicsWidget
 {
 public:
-    QGraphicsView* graphicsView;
-    QGraphicsScene* graphicsScene;
-
     QGraphicsRectItem* bgRect;
     QGraphicsRectItem* outlineRect;
 
@@ -21,31 +18,14 @@ public:
     HPRCSubGraph* accelSubGraph;
 
     explicit hprcGraph(QWidget *parent = nullptr) :
-        hprcDisplayWidget(parent)
+        hprcGraphicsWidget(parent, true)
     {
-        graphicsView = new MouseTrackingGraphicsView(this);
-        graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-        graphicsView->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
-
-        // Set up layout
-        QVBoxLayout* layout = new QVBoxLayout(this);
-        layout->addWidget(graphicsView);
-        this->setLayout(layout);
-
-        graphicsView->setObjectName("Graphs");
-
-        graphicsScene = new QGraphicsScene(this);
-        graphicsView->setScene(graphicsScene);
-
         this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
         this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
         this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
 
         bgRect = new QGraphicsRectItem();
         outlineRect = new QGraphicsRectItem();
-
 
         graphicsScene->addItem(bgRect);
         graphicsScene->addItem(outlineRect);
@@ -58,12 +38,6 @@ public:
                 connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
             }
     }
-
-    void mouseMoveEvent(QMouseEvent *e)
-    {
-        m_mousePos = e->pos();
-    }
-
 };
 
 #endif // HPRCGRAPH_H
