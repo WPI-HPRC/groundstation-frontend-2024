@@ -191,46 +191,34 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
     {
         w->timelineFill->hide();
     }
-
-    w->graphicsView->viewport()->update();
-
-
-    QRect timelineSlot(topLeftSlot, bottomRight);
-    QRect timelineFill(topLeftFill, bottomRight);
-
     // <------------------- draw --------------------->//
 
-    p->setPen(bgPen);
-    p->drawRoundedRect(timelineSlot, (scaleF*drawWidth/2), (scaleF*drawWidth/2));
-    p->setPen(fgPen);
-    if(w->m_filledPercent > 1)
-        p->drawRoundedRect(timelineFill, (scaleF*drawWidth/2), (scaleF*drawWidth/2));
-    p->setPen(tickPen);
     int tickIndex = 0;
     for(const auto& [position, label] : hprcStateMaps::stateMap)
     {
-        p->setFont(m_widgetLarge);
-        QTransform rPt(1, 0, 0, 1, topLeftSlot.x() - (p->font().pointSize()) * label.length(), position * drawHeight + drawY + p->font().pointSize() * 0.3);
-        p->setTransform(rPt);
-        p->drawText(0, 0, label);
+        BetterQGraphicsTextItem* textItem = (*w->textItems)[label];
+        textItem->setFont(m_widgetLarge);
+        textItem->setDefaultTextColor(tickPen.color());
+        float ypos = position * drawHeight + drawY + p->font().pointSize() * 0.3;
+        textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - 20, ypos + 100));
 
         if(label.startsWith("-"))
         {
             if(!m_latest->timelineActivated[tickIndex]) {
-                p->setPen(bgPen);
+                textItem->setDefaultTextColor(bgPen.color());
             }
             else {
 
-                p->setPen(tickPen);
+                textItem->setDefaultTextColor(tickPen.color());
             }
-            p->setFont(m_widgetMedium);
-            p->drawText(p->font().pointSize() * -8 + 20, 0, m_latest->timelineTimes[tickIndex]);
-            p->setFont(m_widgetLarge);
-            p->setPen(tickPen);
+            textItem->setFont(m_widgetMedium);
+            textItem->setPos(p->font().pointSize() * -8 + 20, 0);
+            textItem->setPlainText(m_latest->timelineTimes[tickIndex]);
             tickIndex++;
         }
     }
 
+    w->graphicsView->viewport()->update();
 
 }
 
