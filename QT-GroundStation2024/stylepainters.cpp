@@ -193,7 +193,7 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
         textItem->setFont(m_widgetLarge);
         textItem->setDefaultTextColor(tickPen.color());
         float ypos = position * drawHeight + drawY + p->font().pointSize() * 0.3;
-        textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - drawWidth/10, ypos + 100));
+        textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - drawWidth/5, ypos + 100));
 
 
         if(label.startsWith("-"))
@@ -206,7 +206,9 @@ void HPRCStyle::drawHPRCTimeline(QPainter *p, const hprcTimeline *w)
                 textItem->setDefaultTextColor(tickPen.color());
             }
             textItem->setFont(m_widgetMedium);
-            textItem->setPlainText(m_latest->timelineTimes[tickIndex]);
+            QString theLabel = m_latest->timelineTimes[tickIndex];
+            textItem->setPlainText(theLabel.append(" -"));
+            textItem->geometry = QRectF(QPointF(w->geometry().left(), ypos - 100), QPointF(topLeftSlot.x() - 10, ypos + 100));
             tickIndex++;
         }
     }
