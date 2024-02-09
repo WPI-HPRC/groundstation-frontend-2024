@@ -82,7 +82,7 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 
 
 void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
-{    
+{
     if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
         const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
         if (viewer) {
@@ -984,6 +984,9 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
 {
+
+    qDebug() << "Here we go";
+
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 
@@ -991,7 +994,9 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
             // Resize the map to match the container widget
             mapWidget->m_view->resize(w->size());
 
-            // mapWidget->m_interface->updatePayloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
+            // qDebug() << "Here we go";
+
+            // mapWidget->m_interface->payloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
         }
     }
 }

@@ -4,95 +4,110 @@
         <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
         <link rel="stylesheet" charset="utf-8" href="qrc:/map/leaflet.css" />
         <script type="text/javascript" charset="utf-8" src="qrc:/map/leaflet.js"></script>
-        <script>
+        <!--<script>
             function onLoad() {
-                const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13)
 
-                L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg', { maxZoom: 13, minZoom: 11 }).addTo(map)
-
-                // Create a line tracking the path of the payload
-                const pathConfig = {
-                    color: "#2222ff",
-                    dashArray: [11,11],
-                    opacity: 0.8,
-                    smoothFactor: 1.0,
-                }
-                const path = L.polyline([], pathConfig)
-                path.addTo(map)
-
-                // Create the payload marker
-                const payloadConfig = {
-                    color: "#2222ff",
-                    radius: 10,
-                    fillOpacity: 0.3
-                }
-                const payloadPosition = [32.99020169835385 + 0.01, -106.97596734602624 + 0.01]
-                const payload = L.circleMarker(payloadPosition, payloadConfig)
-                payload.addTo(map)
-
-                // Create the target marker
-                const targetConfig = {
-                    color: "#ff2222",
-                    radius: 10,
-                    fillOpacity: 0.3
-                }
-                const targetPosition = [32.99020169835385 - 0.01, -106.97596734602624 - 0.01]
-                const target = L.circleMarker(targetPosition, targetConfig)
-                target.addTo(map)
-
-                /*setInterval(() => {
-                    const point = payload.getLatLng()
-                    path.addLatLng(point)
-                    const rand1 = Math.random() * 2 - 1
-                    const rand2 = Math.random() * 2 - 1
-                    payload.setLatLng(L.latLng(point.lat + 0.005 * rand1, point.lng + 0.005 * rand2))
-                }, 200) */
-
-                function addPayloadPoint(lat, lng) {
-                    const latLng = L.latLng(lat, lng)
-
-                    // Add the last payload point to the path, and update it
-                    path.addLatLng(payload.getLatLng())
-                    payload.setLatLng(latLng)
-                }
-
-                function addTargetPoint(lat, lng) {
-                    const latLng = L.latLng(lat, lng)
-
-                    target.setLatLng(latLng)
-                }
-
-                function reset() {
-                    // TODO
-                }
-
-                function centerMap(lat, lng) {
-                    if (map.getCenter().lat != lat && map.getCenter().lng != lng) {
-                        map.setView([lat, lng], map.zoom)
-                    }
-                }
-
-
-                // Initialize QT connection
-                if (typeof qt != 'undefined') new QWebChannel(qt.webChannelTransport, (channel) => {
-                    addPayloadPoint(32.99020169835385 + 0.07, -106.97596734602624 + 0.07)
-
-                    window.qtLeaflet = channel.objects.qtLeaflet
-
-                    // Connect to the payload point signal
-                    qtLeaflet.updatePayloadPoint.connect((latitude, longitude) => {
-                        addPayloadPoint(latitude, longitude)
-                    })
-
-                    // Connect to the target point signal
-                    qtLeaflet.updateTargetPoint.connect((latitude, longitude) => {
-                        addTargetPoint(latitude, longitude)
-                    })
-                })
             }
-        </script>
+        </script>-->
     </head>
-    <body onload="onLoad();" style="margin: 0; padding: 0;">
+    <body style="margin: 0; padding: 0;">
         <div id="spaceport" style="height: 100vh; width: 100vw;"></div>
+        <script>
+        const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13)
+
+        L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg', { maxZoom: 13, minZoom: 11 }).addTo(map)
+
+        // Create a line tracking the path of the payload
+        const pathConfig = {
+            color: "#2222ff",
+            dashArray: [11,11],
+            opacity: 0.8,
+            smoothFactor: 1.0,
+        }
+        const path = L.polyline([], pathConfig)
+        path.addTo(map)
+
+        // Create the payload marker
+        const payloadConfig = {
+            color: "#2222ff",
+            radius: 10,
+            fillOpacity: 0.3
+        }
+        const payloadPosition = [32.99020169835385 + 0.01, -106.97596734602624 + 0.01]
+        const payload = L.circleMarker(payloadPosition, payloadConfig)
+        payload.addTo(map)
+
+        // Create the target marker
+        const targetConfig = {
+            color: "#ff2222",
+            radius: 10,
+            fillOpacity: 0.3
+        }
+        const targetPosition = [32.99020169835385 - 0.01, -106.97596734602624 - 0.01]
+        const target = L.circleMarker(targetPosition, targetConfig)
+        target.addTo(map)
+
+        /*setInterval(() => {
+            const point = payload.getLatLng()
+            path.addLatLng(point)
+            const rand1 = Math.random() * 2 - 1
+            const rand2 = Math.random() * 2 - 1
+            payload.setLatLng(L.latLng(point.lat + 0.005 * rand1, point.lng + 0.005 * rand2))
+        }, 200) */
+
+        function addPayloadPoint(lat, lng) {
+            const latLng = L.latLng(lat, lng)
+
+            // Add the last payload point to the path, and update it
+            path.addLatLng(payload.getLatLng())
+            payload.setLatLng(latLng)
+        }
+
+        function addTargetPoint(lat, lng) {
+            const latLng = L.latLng(lat, lng)
+
+            target.setLatLng(latLng)
+        }
+
+        function reset() {
+            // TODO
+        }
+
+        function centerMap(lat, lng) {
+            if (map.getCenter().lat != lat && map.getCenter().lng != lng) {
+                map.setView([lat, lng], map.zoom)
+            }
+        }
+
+
+        // Initialize QT connection
+        if (typeof qt != 'undefined') new QWebChannel(qt.webChannelTransport, (channel) => {
+
+
+            window.qtLeaflet = channel.objects.qtLeaflet
+
+            if (channel.objects.qtLeaflet !== undefined) {
+                //addPayloadPoint(32.99020169835385 + 0.07, -106.97596734602624 + 0.07)
+            }
+
+            qtLeaflet.log("JS is working" + JSON.stringify(qtLeaflet.updatePayloadPoint.connect))
+
+            // Connect to the payload point signal
+            qtLeaflet.updatePayloadPoint.connect(function (latitude, longitude) {
+                qtLeaflet.log("Payload point")
+                addPayloadPoint(latitude, longitude)
+            })
+
+            // Connect to the target point signal
+            qtLeaflet.updateTargetPoint.connect(function (latitude, longitude) {
+                qtLeaflet.log("Target point")
+                addTargetPoint(latitude, longitude)
+            })
+
+            qtLeaflet.log("We got here")
+
+            qtLeaflet.payloadPoint(32.99020169835385 + 0.07, -106.97596734602624 + 0.07)
+        })
+        </script>
     </body>
 </html>

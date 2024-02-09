@@ -234,6 +234,18 @@ hprcPayloadCurrent::hprcPayloadCurrent(QWidget *parent) :
     m_widgetType = HPRC_PayloadCurrent;
 }
 
+void JsInterface::payloadPoint(double lat, double lng) {
+    emit updatePayloadPoint(lat, lng);
+}
+
+void JsInterface::log(const QString& str) {
+    qDebug() << "Log from JS: " << str;
+}
+
+void JsInterface::targetPoint(double lat, double lng) {
+    emit updateTargetPoint(lat, lng);
+}
+
 hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
@@ -242,14 +254,22 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     m_view = new QWebEngineView(this);
     m_view->load(QUrl("qrc:/map/index.html"));
     QWebChannel* channel = new QWebChannel(m_view->page());
-    m_interface = new JsInterface();
-
     m_view->page()->setWebChannel(channel);
+
+    m_interface = new JsInterface();
     channel->registerObject(QString("qtLeaflet"), m_interface);
 
-    // m_interface->updatePayloadPoint(32.99020169835385 + 0.08, -106.97596734602624 + 0.08);
+    // m_interface->payloadPoint(32.99020169835385 + 0.08, -106.97596734602624 + 0.08);
 
     m_view->resize(this->size());
+
+    // Connect each instance of the widget to the payload update signal
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(payloadUpdated(QPoint)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(payloadTargetUpdated(QPoint)), this, SLOT(repaint()));
+        }
 }
 
 Qt3DCore::QEntity *createRocketScene();
