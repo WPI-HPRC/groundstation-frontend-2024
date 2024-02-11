@@ -11,11 +11,29 @@
         </script>-->
     </head>
     <body style="margin: 0; padding: 0;">
-        <div id="spaceport" style="height: 100vh; width: 100vw;"></div>
+        <div id="map" style="height: 100vh; width: 100vw;"></div>
         <script>
-        const map = L.map('spaceport').setView([32.99020169835385, -106.97596734602624], 13)
 
-        L.tileLayer('qrc:/map/spaceport/{z}/{x}/{y}.jpg', { maxZoom: 13, minZoom: 11 }).addTo(map)
+        const maps = {
+            spaceport: {
+                name: "spaceport",
+                center: [32.99020169835385, -106.97596734602624],
+                minZoom: 11,
+                maxZoom: 13
+            },
+            albans: {
+                name: "albans",
+                center: [44.823991, -73.165806],
+                minZoom: 13,
+                maxZoom: 15
+            }
+        }
+
+        let currentMap = maps["albans"]
+
+        const map = L.map("map").setView(currentMap.center, currentMap.maxZoom)
+
+        L.tileLayer(`qrc:/map/${currentMap.name}/{z}/{x}/{y}.jpg`, { maxZoom: currentMap.maxZoom, minZoom: currentMap.minZoom }).addTo(map)
 
         // Create a line tracking the path of the payload
         const pathConfig = {
