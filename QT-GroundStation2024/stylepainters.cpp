@@ -510,6 +510,7 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
 {
+    /*
     hprcPayloadGraph* widget = (hprcPayloadGraph*) w;
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -645,6 +646,7 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setPen(textPen);
     p->drawLine(top.topRight(), bottom.bottomRight());
     p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
+    */
 
 }
 

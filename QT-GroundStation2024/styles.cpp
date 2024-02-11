@@ -90,6 +90,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 return;
             case hprcServoStatusWidget::HPRC_SERVO_STATUS:
                 m_drawer->drawHprcServoStatus(painter, w);
+                return;
             default:
                 return;
             }
