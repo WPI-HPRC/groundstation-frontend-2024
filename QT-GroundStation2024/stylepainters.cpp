@@ -323,6 +323,8 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     float circleLocation;
 
+    //Possible cause of issue?
+    std::cout << "state (also index of array): " << m_latest->state << std::endl;
     std::vector<float> vec = m_AttitudeCircleLocationsDegrees[m_latest->state];
 
     bool rocketIsWithinGraph = pitch * pitch + yaw * yaw < vec.back() * vec.back();
@@ -510,7 +512,6 @@ void HPRCStyle::drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
 {
-    /*
     hprcPayloadGraph* widget = (hprcPayloadGraph*) w;
 
     p->setRenderHint(QPainter::Antialiasing);
@@ -646,8 +647,6 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setPen(textPen);
     p->drawLine(top.topRight(), bottom.bottomRight());
     p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
-    */
-
 }
 
 HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint>* data) {

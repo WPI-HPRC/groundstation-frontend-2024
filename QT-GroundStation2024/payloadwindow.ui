@@ -58,7 +58,7 @@
           <widget class="hprcPitchGauge" name="widget_6" native="true"/>
          </item>
          <item>
-          <widget class="hprcAttitudeWidget" name="widget_5" native="true"/>
+          <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
          </item>
          <item>
           <widget class="hprcPayloadBatteryVoltage" name="widget_4" native="true"/>
@@ -73,6 +73,12 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>hprcAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header>hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>hprcPayloadMap</class>
    <extends>QWidget</extends>
@@ -89,12 +95,6 @@
    <class>hprcPitchGauge</class>
    <extends>QWidget</extends>
    <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>hprcAttitudeWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
