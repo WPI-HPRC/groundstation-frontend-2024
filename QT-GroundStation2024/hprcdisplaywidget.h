@@ -253,6 +253,7 @@ public:
 
     QWebEngineView *m_view;
     JsInterface *m_interface;
+    QWebChannel* m_channel;
 };
 
 class hprcPayloadCurrent : public hprcDisplayWidget

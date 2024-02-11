@@ -21,6 +21,8 @@
 #include <QWebEngineView>
 #include <QWebChannel>
 
+#include <QVBoxLayout>
+
 hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
     : QWidget{parent}
 {
@@ -251,17 +253,20 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
 {
     m_widgetType = HPRC_PayloadMap;
 
+    // Create a web engine view, and display an offline leaflet map webpage inside it
     m_view = new QWebEngineView(this);
     m_view->load(QUrl("qrc:/map/index.html"));
-    QWebChannel* channel = new QWebChannel(m_view->page());
-    m_view->page()->setWebChannel(channel);
+    m_channel = new QWebChannel(m_view->page());
+    m_view->page()->setWebChannel(m_channel);
 
+    // Create an interface for sending information to the leaflet map
     m_interface = new JsInterface();
-    channel->registerObject(QString("qtLeaflet"), m_interface);
+    m_channel->registerObject(QString("qtLeaflet"), m_interface);
 
-    // m_interface->payloadPoint(32.99020169835385 + 0.08, -106.97596734602624 + 0.08);
-
-    m_view->resize(this->size());
+    // Create a layout inside this widget to resize the webpage automatically
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(m_view);
+    setLayout(layout);
 
     // Connect each instance of the widget to the payload update signal
     foreach (QWidget *w, qApp->topLevelWidgets())

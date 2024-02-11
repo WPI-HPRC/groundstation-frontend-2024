@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <math.h>
 #include <QQuaternion>
+#include <QRandomGenerator>
 
 #define NUM_NAVBALL_CIRCLES 7
 
@@ -984,19 +985,14 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
 {
-
-    qDebug() << "Here we go";
-
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 
         if (mapWidget) {
-            // Resize the map to match the container widget
-            mapWidget->m_view->resize(w->size());
-
-            // qDebug() << "Here we go";
-
-            // mapWidget->m_interface->payloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
+            // Uncomment to test random points on the map
+            // double rand1 = QRandomGenerator::global()->bounded(0.04);
+            // double rand2 = QRandomGenerator::global()->bounded(0.04);
+            // mapWidget->m_interface->payloadPoint(32.99020169835385 + rand1, -106.97596734602624 + rand2);
         }
     }
 }
