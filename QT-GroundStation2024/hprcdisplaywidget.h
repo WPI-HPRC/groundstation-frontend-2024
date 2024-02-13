@@ -10,6 +10,7 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <QQuaternion>
 #include <QColor>
+#include <QWebEngineView>
 
 class hprcDisplayWidget : public QWidget
 {
@@ -155,7 +156,7 @@ public:
     void mouseMoveEvent(QMouseEvent *e);
 
     QList<MainWindow::graphPoint> verticalSpeedData;
-    static const int MAX_RENDERED_POINTS = 50;
+    static const int MAX_RENDERED_POINTS = 9999999;
 
     QTransform transform;
     QPolygonF graphPolygonAltitude;
@@ -163,10 +164,11 @@ public:
     int startIndexAltitude;
     int startIndexVerticalSpeed;
 
-    //DEBUG; REMOVE THIS WHEN NOT IN USE
+    /*DEBUG; REMOVE THIS WHEN NOT IN USE
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTime = std::chrono::high_resolution_clock::now();
     int fps = 0;
     int frames = 0;
+    */
 
 private:
     MainWindow* mainWindow;
@@ -240,21 +242,27 @@ public:
     explicit hprcServoStatusWidget(QWidget *parent = nullptr);
 };
 
+class JsInterface: public QObject
+{
+    Q_OBJECT
+public slots:
+    void log(const QString& str);
+    void payloadPoint(double lat, double lng);
+    void targetPoint(double lat, double lng);
+
+signals:
+    void updatePayloadPoint(double lat, double lng);
+    void updateTargetPoint(double lat, double lng);
+};
+
 class hprcPayloadMap : public hprcDisplayWidget
 {
 public:
     explicit hprcPayloadMap(QWidget *parent = nullptr);
 
-    // Store a reference to the map image here for rendering
-    QImage *m_mapImage;
-
-    inline static double longPerPixel = 0.000303399269104;
-    inline static double latPerPixel = 0.000251667206953;
-
-    QPointF centerGlobalPoint = QPointF(-106.97552837089243, 32.98990645338422); // Long, lat
-
-    /* Returns a point relative to the center of the widget the corresponds to the GPS coordinate. */
-    static QPoint calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor);
+    QWebEngineView *m_view;
+    JsInterface *m_interface;
+    QWebChannel* m_channel;
 };
 
 class hprcPayloadBatteryVoltage : public hprcDisplayWidget

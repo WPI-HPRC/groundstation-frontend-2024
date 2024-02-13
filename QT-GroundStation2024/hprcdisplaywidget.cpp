@@ -8,6 +8,8 @@
 #include "QPropertyAnimation"
 #include <QMouseEvent>
 #include <QQuaternion>
+#include <QWebChannel>
+#include <QVBoxLayout>
 
 // 3D imports
 #include <Qt3DCore/QEntity>
@@ -239,24 +241,45 @@ hprcPayloadBatteryVoltage::hprcPayloadBatteryVoltage(QWidget *parent) :
     m_widgetType = HPRC_PayloadBatteryVoltage;
 }
 
+void JsInterface::payloadPoint(double lat, double lng) {
+    emit updatePayloadPoint(lat, lng);
+}
+
+void JsInterface::log(const QString& str) {
+    qDebug() << "Log from JS: " << str;
+}
+
+void JsInterface::targetPoint(double lat, double lng) {
+    emit updateTargetPoint(lat, lng);
+}
+
 hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
     m_widgetType = HPRC_PayloadMap;
 
-    // Load the map image. In the future this will determine the correct map by location.
-    m_mapImage = new QImage(":/maps/spaceport-america.png");
-}
+    // Create a web engine view, and display an offline leaflet map webpage inside it
+    m_view = new QWebEngineView(this);
+    m_view->load(QUrl("qrc:/map/index.html"));
+    m_channel = new QWebChannel(m_view->page());
+    m_view->page()->setWebChannel(m_channel);
 
-QPoint hprcPayloadMap::calculateWidgetPoint(QPointF centerPoint, QPointF globalPoint, double widgetScalingFactor) {
-    double pixelsPerWidgetPixel = 1 / widgetScalingFactor;
-    double xScalingFactor = 1 / (hprcPayloadMap::longPerPixel * pixelsPerWidgetPixel);
-    double yScalingFactor = 1 / (hprcPayloadMap::latPerPixel * pixelsPerWidgetPixel);
+    // Create an interface for sending information to the leaflet map
+    m_interface = new JsInterface();
+    m_channel->registerObject(QString("qtLeaflet"), m_interface);
 
-    double x = (globalPoint.x() - centerPoint.x()) * xScalingFactor;
-    double y = (centerPoint.y() - globalPoint.y()) * yScalingFactor;
+    // Create a layout inside this widget to resize the webpage automatically
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(m_view);
+    setLayout(layout);
 
-    return QPoint(x, y);
+    // Connect each instance of the widget to the payload update signal
+    foreach (QWidget *w, qApp->topLevelWidgets())
+        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
+        {
+            connect(mainWin, SIGNAL(payloadUpdated(QPoint)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(payloadTargetUpdated(QPoint)), this, SLOT(repaint()));
+        }
 }
 
 Qt3DCore::QEntity *createRocketScene();

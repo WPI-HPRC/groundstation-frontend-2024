@@ -517,7 +517,7 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
 
-    //UNCOMMENT SECTION BELOW WHEN NOT DEBUG
+    /*UNCOMMENT SECTION BELOW WHEN NOT DEBUG
     if(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - ((hprcPayloadGraph*) w)->lastTime).count() >= 1) {
         ((hprcPayloadGraph*) w)->fps = (int) ((hprcPayloadGraph*) w)->frames;
         ((hprcPayloadGraph*) w)->lastTime = std::chrono::high_resolution_clock::now();
@@ -529,6 +529,7 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->setFont(m_widgetLarge);
     p->drawText(QRect(50, 30, 500, 500),
                     Qt::AlignHCenter, QString::fromStdString("FPS: " + std::to_string(((hprcPayloadGraph*) w)->fps)));
+    */
 
     int width= w->rect().width();
     int height = w->rect().height();
@@ -538,13 +539,16 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
 
     int margin = fmin(paddingRatio * width, paddingRatio * height);
 
-    QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+    //QRectF drawBox = w->rect().adjusted(margin, margin, -margin, -margin);
+
+    QRectF drawBox = w->rect();
+    drawBox.adjust(margin, 0, 0, -margin / 4);
 
     // label padding = 7.5%
-    int lMargin = drawBox.height() * 0.075;
-    drawBox.adjust(lMargin, 0, 0, -lMargin);
+    //int lMargin = drawBox.height() * 0.075;
+    //drawBox.adjust(lMargin, 0, 0, -lMargin);
 
-    float fontSize = drawBox.height() / 16;
+    float fontSize = drawBox.height() / 28;
 
     QPointF topRightTop = QPointF(drawBox.topRight().x(), drawBox.topRight().y() + fontSize * 2);
     QPointF bottomLeftBottom = drawBox.bottomLeft();
@@ -591,8 +595,15 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     p->drawRect(drawBox);
 
     //Draw label text
-    std::string altitudeText = "Altitude: " + std::to_string((int) round(m_latest->altitude)) + " [m]";
-    std::string descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->velocity)) + " [m/s]";
+    std::string altitudeText;
+    std::string descentRateText;
+    if(m_latest->state == MainWindow::RocketState::DROGUE_DESCENT && m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
+        altitudeText = "Altitude: " + std::to_string((int) round(m_latest->altitude)) + " [m]";
+        descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->velocity)) + " [m/s]";
+    } else {
+        altitudeText = "Altitude: X [m]";
+        descentRateText = "Vertical Speed: X [m/s]";
+    }
     p->setPen(textPen);
     m_widgetLarge.setPointSize(fontSize);
     p->setFont(m_widgetLarge);
@@ -609,44 +620,46 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     //    m_latest->altData.append(MainWindow::graphPoint{(float) m_latest->altData.length() + 100, (float) start + 1000}); //(float) (m_latest->rocketTime - range)
     //}
 
-    Range altitudeSubGraphRange = drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData, range, start, w, drawT, 0, m_latest->altData.length() > 0 ? m_latest->altData[0].value : 1300, false, false, &((hprcPayloadGraph*) w)->startIndexAltitude, &((hprcPayloadGraph*) w)->graphPolygonAltitude);
-    Range yRange = getDataYRange(&((hprcPayloadGraph*) w)->verticalSpeedData);
-    drawHPRCSubGraph(p, bottom, m_highlightBrush.color(), &((hprcPayloadGraph*) w)->verticalSpeedData, range, start, w, drawT, yRange.min, yRange.max, false, false, &((hprcPayloadGraph*) w)->startIndexVerticalSpeed, &((hprcPayloadGraph*) w)->graphPolygonVerticalSpeed);
-    //drawHPRCSubGraph(p, bottom, QColor("#FFFF00"), widget->altitudeData, range, start, w, drawT);
+    if(m_latest->state == MainWindow::RocketState::DROGUE_DESCENT && m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
+        Range altitudeSubGraphRange = drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData, range, start, w, drawT, 0, m_latest->altData.length() > 0 ? m_latest->altData[0].value : 1300, false, false, &((hprcPayloadGraph*) w)->startIndexAltitude, &((hprcPayloadGraph*) w)->graphPolygonAltitude);
+        Range yRange = getDataYRange(&((hprcPayloadGraph*) w)->verticalSpeedData);
+        drawHPRCSubGraph(p, bottom, m_highlightBrush.color(), &((hprcPayloadGraph*) w)->verticalSpeedData, range, start, w, drawT, yRange.min, yRange.max, false, false, &((hprcPayloadGraph*) w)->startIndexVerticalSpeed, &((hprcPayloadGraph*) w)->graphPolygonVerticalSpeed);
+        //drawHPRCSubGraph(p, bottom, QColor("#FFFF00"), widget->altitudeData, range, start, w, drawT);
 
-    //Draw a fun parachute graphic for the altitude graph
-    if(m_latest->altData.length() > 0) {
-        float lastGraphX = -(m_latest->altData[m_latest->altData.length() - 1].time - start) / (range) * (top.width()) + top.right();
-        double subGraphScale = fmax(1.0, altitudeSubGraphRange.max - altitudeSubGraphRange.min);
-        float lastGraphY = -((m_latest->altData[m_latest->altData.length() - 1].value - altitudeSubGraphRange.min) / subGraphScale) * (top.height() * 0.97) + top.bottom();
-        float boxWidth = drawBox.height() / 24.0;
-        float boxHeight = drawBox.height() / 24.0;
-        QRect parachuteRect(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, boxWidth, boxHeight);
+        //Draw a fun parachute graphic for the altitude graph
+        if(m_latest->altData.length() > 0) {
+            float lastGraphX = -(m_latest->altData[m_latest->altData.length() - 1].time - start) / (range) * (top.width()) + top.right();
+            double subGraphScale = fmax(1.0, altitudeSubGraphRange.max - altitudeSubGraphRange.min);
+            float lastGraphY = -((m_latest->altData[m_latest->altData.length() - 1].value - altitudeSubGraphRange.min) / subGraphScale) * (top.height() * 0.97) + top.bottom();
+            float boxWidth = drawBox.height() / 24.0;
+            float boxHeight = drawBox.height() / 24.0;
+            QRect parachuteRect(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, boxWidth, boxHeight);
 
-        QBrush parachuteBrush = QBrush(QColor(255, 255, 255, 128));
-        QPen transparentPen = QPen(QColor(255, 255, 255, 0));
-        QPen linePen = QPen(QColor(255, 255, 255, 128));
-        p->setBrush(parachuteBrush);
-        p->setPen(transparentPen);
-        p->drawRect(parachuteRect);
+            QBrush parachuteBrush = QBrush(QColor(255, 255, 255, 128));
+            QPen transparentPen = QPen(QColor(255, 255, 255, 0));
+            QPen linePen = QPen(QColor(255, 255, 255, 128));
+            p->setBrush(parachuteBrush);
+            p->setPen(transparentPen);
+            p->drawRect(parachuteRect);
 
-        QPainterPath semiCirclePath;
-        float parachuteX = lastGraphX - boxWidth;
-        float parachuteY = lastGraphY - boxWidth * 1.5;
-        semiCirclePath.moveTo(parachuteX, parachuteY);
-        semiCirclePath.arcTo(parachuteX, parachuteY - boxHeight, boxWidth * 2.0, boxHeight * 2.0, 0, 180);
+            QPainterPath semiCirclePath;
+            float parachuteX = lastGraphX - boxWidth;
+            float parachuteY = lastGraphY - boxWidth * 1.5;
+            semiCirclePath.moveTo(parachuteX, parachuteY);
+            semiCirclePath.arcTo(parachuteX, parachuteY - boxHeight, boxWidth * 2.0, boxHeight * 2.0, 0, 180);
 
-        p->drawPath(semiCirclePath);
+            p->drawPath(semiCirclePath);
 
-        p->setPen(linePen);
-        p->drawLine(QLine(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX - boxWidth, lastGraphY - boxHeight * 1.5));
-        p->drawLine(QLine(lastGraphX + boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX + boxWidth, lastGraphY - boxHeight * 1.5));
+            p->setPen(linePen);
+            p->drawLine(QLine(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX - boxWidth, lastGraphY - boxHeight * 1.5));
+            p->drawLine(QLine(lastGraphX + boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX + boxWidth, lastGraphY - boxHeight * 1.5));
+        }
+
+        p->setBrush(m_transparentBrush);
+        p->setPen(textPen);
+        p->drawLine(top.topRight(), bottom.bottomRight());
+        p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
     }
-
-    p->setBrush(m_transparentBrush);
-    p->setPen(textPen);
-    p->drawLine(top.topRight(), bottom.bottomRight());
-    p->drawLine(bottom.bottomRight(), bottom.bottomLeft());
 }
 
 HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint>* data) {
@@ -1041,56 +1054,20 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
 {
+
+    qDebug() << "Here we go";
+
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 
-        const QRectF mapBox = w->rect();
+        if (mapWidget) {
+            // Resize the map to match the container widget
+            mapWidget->m_view->resize(w->size());
 
-        auto image = *(mapWidget->m_mapImage);
+            // qDebug() << "Here we go";
 
-        // Rescale the image to fit correctly in the widget
-        const QRectF imageBox = image.rect();
-
-        // Calcluate the scalar to multiply image dimensions by to make it fit correctly
-        double scalingFactor = mapBox.width() / imageBox.width();
-
-        // Recalculate the scaling factor based on height if width wasn't enough
-        if (scalingFactor * imageBox.height() > mapBox.height()) {
-            scalingFactor = mapBox.height() / imageBox.height();
+            // mapWidget->m_interface->payloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
         }
-
-        double newWidth = imageBox.width() * scalingFactor;
-        double newHeight = imageBox.height() * scalingFactor;
-        double left = mapBox.center().x() - newWidth / 2.0;
-        double top = mapBox.center().y() - newHeight / 2.0;
-
-        QRect rescaledImageBox(left, top, newWidth, newHeight);
-
-        // Draw the image onto the widget
-        p->drawImage(rescaledImageBox, image);
-
-        // Draw the current payload position
-        p->setBrush(QBrush(QColor(20, 20, 180, 150)));
-        p->setPen(QPen(QBrush(QColor(20, 20, 180)), 3));
-        p->setRenderHint(QPainter::Antialiasing, true);
-
-        int pointRadius = newHeight / 40.0;
-
-        QPoint center = rescaledImageBox.center();
-
-        p->drawEllipse(center, pointRadius, pointRadius);
-
-        // Draw the target payload position
-        p->setBrush(QBrush(QColor(180, 20, 20, 150)));
-        p->setPen(QPen(QBrush(QColor(180, 20, 20)), 3));
-
-        QPointF mapPoint = mapWidget->centerGlobalPoint + QPointF(0.005,0.005);
-
-        QPoint samplePoint = center + hprcPayloadMap::calculateWidgetPoint(mapWidget->centerGlobalPoint, mapPoint, scalingFactor);
-
-        // QPoint target = rescaledImageBox.center() + QPoint(30, 30);
-
-        p->drawEllipse(samplePoint, pointRadius, pointRadius);
     }
 }
 

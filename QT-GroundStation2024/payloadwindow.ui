@@ -33,7 +33,14 @@
           <widget class="hprcPayloadMap" name="widget_2" native="true"/>
          </item>
          <item>
-          <widget class="hprcServoStatusWidget" name="widget" native="true"/>
+          <widget class="hprcServoStatusWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
