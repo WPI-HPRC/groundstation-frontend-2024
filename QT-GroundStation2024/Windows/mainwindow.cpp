@@ -270,7 +270,7 @@ void MainWindow::onTextMessageReceived(QString message)
         e.remove(QRegularExpression("[\"']"));
         QStringList elementSplit = e.split(":");
 
-        if(elementSplit[0] == QString("altitude"))
+        if(elementSplit.at(0).toLower() == QString("altitude").toLower())
         {
             QString altData = elementSplit.at(1);
             altData.remove("}");
