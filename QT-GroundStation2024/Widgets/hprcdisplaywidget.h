@@ -1,7 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>
@@ -12,8 +12,6 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <QQuaternion>
 #include <QColor>
-
-#include "hprcsubgraph.h"
 
 class hprcDisplayWidget : public QWidget
 {
@@ -78,15 +76,6 @@ signals:
 
 };
 
-class hprcTimeline : public hprcDisplayWidget
-{
-    Q_OBJECT
-public:
-    explicit hprcTimeline(QWidget *parent = nullptr);
-
-signals:
-};
-
 class hprcGauge : public hprcDisplayWidget
 {
     Q_OBJECT
@@ -135,25 +124,6 @@ public:
 
     explicit hprcAttitudeWidget(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
-};
-
-class hprcGraph : public hprcDisplayWidget
-{
-public:
-
-    explicit hprcGraph(QWidget *parent = nullptr);
-    void mouseMoveEvent(QMouseEvent *e);
-
-    QGraphicsView* graphicsView;
-    QGraphicsScene* graphicsScene;
-
-    QGraphicsRectItem* bgRect;
-    QGraphicsRectItem* outlineRect;
-
-    HPRCSubGraph* altSubGraph;
-    HPRCSubGraph* velSubGraph;
-    HPRCSubGraph* accelSubGraph;
-
 };
 
 class hprcAlarmPanel : public hprcDisplayWidget

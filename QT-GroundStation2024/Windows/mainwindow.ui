@@ -114,9 +114,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="hprcTimeline" name="timeline" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout"/>
-          </widget>
+          <widget class="hprcTimeline" name="timeline" native="true"/>
          </item>
         </layout>
        </widget>
@@ -128,54 +126,51 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>hprcTimeline</class>
-   <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-   <slots>
-    <slot>updateFilled(int)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>hprcAltitudeGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcVelocityGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAccelerationGauge</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>hprcGraph</class>
-   <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAlarmPanel</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcUTCClock</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcMETClock</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcTimeline</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprctimeline.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcGraph</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcgraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

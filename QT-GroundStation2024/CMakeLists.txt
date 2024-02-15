@@ -18,9 +18,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        Windows/mainwindow.cpp
+        Windows/mainwindow.h
+        Windows/mainwindow.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -30,20 +30,28 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         styles.h styles.cpp
         stylepainters.h stylepainters.cpp
 
-        hprcdisplaywidget.h hprcdisplaywidget.cpp
         fonts.qrc
         images.qrc
         models.qrc
 
 
-        rocketwindow.h rocketwindow.cpp rocketwindow.ui
+        Windows/rocketwindow.h Windows/rocketwindow.cpp Windows/rocketwindow.ui
 
-        speedtester.h speedtester.cpp
-        hprcCircularBuffer.h
-        mousetrackinggraphicsview.h
-        betterqgraphicstextitem.h
-        hprcsubgraph.h hprcsubgraph.cpp
-        hprcwebsocket.h hprcwebsocket.cpp
+        Util/speedtester.h Util/speedtester.cpp
+        Util/hprcCircularBuffer.h
+        Util/mousetrackinggraphicsview.h
+        Util/betterqgraphicstextitem.h
+        Util/hprcwebsocket.h Util/hprcwebsocket.cpp
+
+        Widgets/hprcdisplaywidget.h Widgets/hprcdisplaywidget.cpp
+        Widgets/hprcsubgraph.h Widgets/hprcsubgraph.cpp
+        Widgets/hprctimeline.h
+        Widgets/hprcgraph.h
+        Widgets/hprcgraphicswidget.h Widgets/hprcgraphicswidget.cpp
+        Util/roundedQGraphicsRectItem.h
+        Util/hprcStateMap.h
+        Widgets/hprctimeline.cpp
+        Widgets/hprcgraph.cpp
 
 
     )
