@@ -1,5 +1,6 @@
 #include "styles.h"
-#include "hprcdisplaywidget.h"
+#include "Widgets/hprcdisplaywidget.h"
+#include "Widgets/hprctimeline.h"
 #include "stylepainters.h"
 #include <iostream>
 
@@ -50,7 +51,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             switch(w->getType())
             {
             case hprcDisplayWidget::HPRC_Timeline:
-                m_drawer->drawHPRCTimeline(painter, w);
+                m_drawer->drawHPRCTimeline(painter, (hprcTimeline *)w);
                 return;
             case hprcDisplayWidget::HPRC_Gauge:
                 m_drawer->drawHPRCGauge(painter, w);
@@ -59,7 +60,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 m_drawer->drawHPRCAttitudeWidget(painter, w);
                 return;
             case hprcDisplayWidget::HPRC_Graph:
-                m_drawer->drawHPRCGraph(painter, w);
+                m_drawer->drawHPRCGraph(painter, (hprcGraph *)w);
                 return;
             case hprcDisplayWidget::HPRC_Alarm:
                 m_drawer->drawHPRCAlarmPanel(painter, w);

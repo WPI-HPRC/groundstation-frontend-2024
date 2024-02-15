@@ -1,9 +1,11 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include <QObject>
 #include <QWidget>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/Qt3DWindow>
@@ -74,15 +76,6 @@ signals:
 
 };
 
-class hprcTimeline : public hprcDisplayWidget
-{
-    Q_OBJECT
-public:
-    explicit hprcTimeline(QWidget *parent = nullptr);
-
-signals:
-};
-
 class hprcGauge : public hprcDisplayWidget
 {
     Q_OBJECT
@@ -130,14 +123,6 @@ class hprcAttitudeWidget: public hprcDisplayWidget
 public:
 
     explicit hprcAttitudeWidget(QWidget *parent = nullptr);
-    void mouseMoveEvent(QMouseEvent *e);
-};
-
-class hprcGraph : public hprcDisplayWidget
-{
-public:
-
-    explicit hprcGraph(QWidget *parent = nullptr);
     void mouseMoveEvent(QMouseEvent *e);
 };
 

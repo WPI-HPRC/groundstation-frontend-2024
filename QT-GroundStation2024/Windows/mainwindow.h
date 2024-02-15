@@ -5,13 +5,16 @@
 #define TIMER_TICK_MS 1
 
 #if RUN_SPEED_TESTS
-    #include "speedtester.h"
+    #include "Util/speedtester.h"
 #endif
 #include "qdatetime.h"
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QAbstractSocket>
 #include <QQuaternion>
+#include "Util/hprcCircularBuffer.h"
+#include "Util/hprcwebsocket.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -23,12 +26,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-
-    struct graphPoint {
-        float value = 0;
-        float time = 0;
-    };
-
     struct dataPoint {
         float acceleration = 0;
         float velocity = 0;
@@ -39,13 +36,15 @@ public:
         int groundTime = 0;
         float desiredAirbrakes = 0;
         float currentAirbrakes = 0;
-        QList<graphPoint> accData;
-        QList<graphPoint> velData;
-        QList<graphPoint> altData;
+        GraphPointCircularBuffer *accData;
+        GraphPointCircularBuffer *velData;
+        GraphPointCircularBuffer *altData;
         QQuaternion orientation;
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        bool timelineActivated[5] = {false, false, false, false, false};
+        QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
     };
 
 #if RUN_SPEED_TESTS
@@ -64,7 +63,7 @@ public:
     dataPoint m_currentData;
     dataPoint m_dataBuffer;
 
-    QWebSocket m_webSocket;
+    HPRCWebSocket* m_websocket;
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
@@ -84,8 +83,6 @@ signals:
 
 public slots:
     void update();
-    void onConnected();
-    void onDisconnected();
     void onTextMessageReceived(QString message);
 
 private:
