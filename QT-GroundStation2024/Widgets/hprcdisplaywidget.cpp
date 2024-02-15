@@ -1,5 +1,5 @@
 #include "hprcdisplaywidget.h"
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include "qapplication.h"
 #include "qpainter.h"
 #include "qstyle.h"
@@ -10,8 +10,8 @@
 #include <QQuaternion>
 
 #include <QVBoxLayout>
-#include "mousetrackinggraphicsview.h"
-#include "betterqgraphicstextitem.h"
+#include "Util/mousetrackinggraphicsview.h"
+#include "Util/betterqgraphicstextitem.h"
 
 // 3D imports
 #include <Qt3DCore/QEntity>
@@ -44,12 +44,6 @@ void hprcDisplayWidget::paintEvent(QPaintEvent *e)
     QPainter p(this);
     const QStyleOption opt(QStyleOption::Version, QStyleOption::SO_Default);
     QApplication::style()->drawPrimitive(QStyle::PE_CustomBase, &opt, &p, this);
-}
-
-hprcTimeline::hprcTimeline(QWidget *parent)
-    : hprcDisplayWidget{parent}
-{
-    m_widgetType = HPRC_Timeline;
 }
 
 hprcGauge::hprcGauge(QWidget *parent)
@@ -139,47 +133,6 @@ hprcAttitudeWidget::hprcAttitudeWidget(QWidget *parent):
 }
 
 void hprcAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
-{
-    m_mousePos = e->pos();
-}
-
-hprcGraph::hprcGraph(QWidget *parent) :
-    hprcDisplayWidget(parent)
-{
-    graphicsView = new MouseTrackingGraphicsView(this);
-    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    graphicsView->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
-
-    // Set up layout
-    QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->addWidget(graphicsView);
-    this->setLayout(layout);
-
-    graphicsScene = new QGraphicsScene(this);
-    graphicsView->setScene(graphicsScene);
-
-    this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
-    this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
-    this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
-
-    bgRect = new QGraphicsRectItem();
-    outlineRect = new QGraphicsRectItem();
-
-    graphicsScene->addItem(bgRect);
-    graphicsScene->addItem(outlineRect);
-
-    setMouseTracking(true);
-    m_widgetType = HPRC_Graph;
-    foreach (QWidget *w, qApp->topLevelWidgets())
-        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
-        {
-            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
-        }
-}
-
-void hprcGraph::mouseMoveEvent(QMouseEvent *e)
 {
     m_mousePos = e->pos();
 }
@@ -278,6 +231,7 @@ hprcViewer::hprcViewer(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
+            connect(mainWin, SIGNAL(orientationUpdated()), this, SLOT(repaint()));
 //            connect(mainWin, SIGNAL(orientUpdated(QQuaternion)), this, SLOT(repaint()));
         }
 }

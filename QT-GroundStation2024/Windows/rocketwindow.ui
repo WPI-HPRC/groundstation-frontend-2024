@@ -30,7 +30,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="hprcRocketVisualizer" name="widget" native="true"/>
+          <widget class="hprcRocketVisualizer" name="rocketVisualizer" native="true"/>
          </item>
         </layout>
        </widget>
@@ -69,25 +69,25 @@
   <customwidget>
    <class>hprcRocketVisualizer</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAttitudeWidget</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcViewer</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAirbrakes</class>
    <extends>QWidget</extends>
-   <header>hprcdisplaywidget.h</header>
+   <header>Widgets/hprcdisplaywidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

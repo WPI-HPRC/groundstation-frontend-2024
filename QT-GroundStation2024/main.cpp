@@ -1,12 +1,16 @@
-#include "mainwindow.h"
-#include "rocketwindow.h"
+#include "Windows/mainwindow.h"
+#include "Windows/rocketwindow.h"
 #include "styles.h"
 #include <iostream>
 
 #include <QApplication>
+#include "Util/hprcStateMap.h"
 
 int main(int argc, char *argv[])
 {
+    hprcStateMaps::makeMaps();
+
+    qputenv("QT3D_RENDERER", "opengl");
     QApplication a(argc, argv);
     a.setStyle(new HPRCDarkStyle(nullptr));
     MainWindow w;
@@ -17,9 +21,13 @@ int main(int argc, char *argv[])
     w.show();
     r.show();
     w.showMaximized();
-//    r.showMaximized();
+    r.showMaximized();
     w.update();
     r.update();
 
-    return a.exec();
+    int code = a.exec();
+
+    w.m_websocket->close();
+
+    return code;
 }

@@ -8,13 +8,13 @@
 class BetterQGraphicsTextItem: public QGraphicsTextItem {
 public:
     QRectF geometry;
-    QString text;
     QFlags<Qt::Alignment::enum_type> alignment;
 
     explicit BetterQGraphicsTextItem(QRectF geometry, QFlags<Qt::Alignment::enum_type> alignment, QString text, QGraphicsItem *parent=0) :
-        QGraphicsTextItem(parent), geometry(geometry), alignment(alignment), text(text)
+        QGraphicsTextItem(parent), geometry(geometry), alignment(alignment)
     {
         opacity = 1;
+        this->setPlainText(text);
     }
     virtual ~BetterQGraphicsTextItem() {}
     QRectF boundingRect() const { return geometry; }
@@ -30,7 +30,7 @@ public:
         painter->setBrush(QBrush(color));
         painter->setPen(QPen(color));
 
-        painter->drawText(geometry, text, alignment);
+        painter->drawText(geometry, this->toPlainText(), alignment);
     }
 
 
@@ -51,8 +51,6 @@ public:
 
 
 private:
-
-
     float opacity;
     QFont font;
     QColor color;

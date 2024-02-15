@@ -5,14 +5,16 @@
 #define TIMER_TICK_MS 1
 
 #if RUN_SPEED_TESTS
-    #include "speedtester.h"
+    #include "Util/speedtester.h"
 #endif
 #include "qdatetime.h"
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QAbstractSocket>
 #include <QQuaternion>
-#include "hprcCircularBuffer.h"
+#include "Util/hprcCircularBuffer.h"
+#include "Util/hprcwebsocket.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -41,6 +43,8 @@ public:
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        bool timelineActivated[5] = {false, false, false, false, false};
+        QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
     };
 
 #if RUN_SPEED_TESTS
@@ -59,7 +63,7 @@ public:
     dataPoint m_currentData;
     dataPoint m_dataBuffer;
 
-    QWebSocket m_webSocket;
+    HPRCWebSocket* m_websocket;
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
@@ -79,8 +83,6 @@ signals:
 
 public slots:
     void update();
-    void onConnected();
-    void onDisconnected();
     void onTextMessageReceived(QString message);
 
 private:

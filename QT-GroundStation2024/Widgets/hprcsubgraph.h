@@ -1,7 +1,7 @@
 #ifndef HPRCSUBGRAPH_H
 #define HPRCSUBGRAPH_H
 
-#include "betterqgraphicstextitem.h"
+#include "Util/betterqgraphicstextitem.h"
 #include <QGraphicsView>
 
 class HPRCSubGraph
