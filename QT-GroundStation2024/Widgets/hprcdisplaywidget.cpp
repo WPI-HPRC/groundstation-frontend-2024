@@ -14,6 +14,7 @@
 #include <QVBoxLayout>
 #include "Util/mousetrackinggraphicsview.h"
 #include "Util/betterqgraphicstextitem.h"
+#include "Widgets/hprcgraph.h"
 
 // 3D imports
 #include <Qt3DCore/QEntity>
@@ -163,7 +164,7 @@ void hprcAttitudeWidget::mouseMoveEvent(QMouseEvent *e)
 {
     m_mousePos = e->pos();
 }
-
+/*
 hprcGraph::hprcGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
 {
@@ -202,6 +203,7 @@ hprcGraph::hprcGraph(QWidget *parent) :
             connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
         }
 }
+*/
 
 hprcPayloadGraph::hprcPayloadGraph(QWidget *parent) :
     hprcDisplayWidget(parent)
@@ -223,10 +225,12 @@ void hprcPayloadGraph::updateVerticalSpeed() {
     }
 }
 
+/*
 void hprcGraph::mouseMoveEvent(QMouseEvent *e)
 {
     m_mousePos = e->pos();
 }
+*/
 
 void hprcPayloadGraph::mouseMoveEvent(QMouseEvent *e)
 {
@@ -387,7 +391,7 @@ void hprcViewer::orientRocket(QQuaternion orientation) const {
 
 void hprcViewer::updateColors(QColor panel, QColor highlight) const {
     // Adjust the rocket color
-    m_rocketMaterial->setDiffuse(highlight);
+//    m_rocketMaterial->setDiffuse(highlight);
 
     // Adjust the background color
     m_view->defaultFrameGraph()->setClearColor(panel);

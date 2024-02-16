@@ -5,6 +5,7 @@
 
 #include <QApplication>
 #include "Util/hprcStateMap.h"
+#include "payloadwindow.h"
 
 int main(int argc, char *argv[])
 {
