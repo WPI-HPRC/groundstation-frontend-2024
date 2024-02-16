@@ -1,10 +1,25 @@
 #ifndef HPRCSTYLE_H
 #define HPRCSTYLE_H
 
-#include "hprcdisplaywidget.h"
+#include "Widgets/hprcdisplaywidget.h"
+#include "Widgets/hprcgraph.h"
 #include <QStyle>
 #include <QPainter>
-#include "mainwindow.h"
+#include "Windows/mainwindow.h"
+#include "Widgets/hprctimeline.h"
+
+#define TOOLTIP_WIDTH 50
+#define TOOLTIP_WIDTH_HALF 25
+
+#define NUM_NAVBALL_CIRCLES 7
+
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
+
+#define MAX_GRAPH_SCALE 0.85
+#define GRAPH_TICK_DISTANCE 50
+#define MAX_DYNAMIC_GRAPH_SCALE 600
 
 class HPRCStyle
 {
@@ -54,7 +69,7 @@ public:
     void drawFrame(QPainter *p, const QStyleOption *o);
 
     // draw custom widgets
-    void drawHPRCTimeline(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCTimeline(QPainter *p, const hprcTimeline *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
     void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
@@ -84,16 +99,6 @@ public:
     QFont m_widgetMedium;
     QFont m_widgetSmall;
     QFont m_widgetFancy;
-
-
-    // data maps
-    std::map<double, QString> m_stateMap;
-    std::map<int, int> m_dataMap1;
-    std::map<int, int> m_dataMap2;
-    std::map<int, int> m_dataMap3;
-    std::map<HPRCAlarmType, bool> m_alarmMapW;
-    std::map<HPRCAlarmType, bool> m_alarmMapA;
-
 
     float m_AttitudeMaxDegreeRange = 15;
     float m_AttitudeDegreeOffsetYaw = 0;

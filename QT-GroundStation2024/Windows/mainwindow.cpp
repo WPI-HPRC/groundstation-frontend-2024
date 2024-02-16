@@ -290,15 +290,22 @@ void MainWindow::update()
 void MainWindow::onTextMessageReceived(QString message)
 {
     QStringList messageSplit = message.split(",");
+
+//    std::cout << message.toStdString() << std::endl;
+
     for(QString e : messageSplit.toList())
     {
 
-        e.remove("\"");
+//        e.remove("\"");
         e.replace("}", "");
         e.replace("{", "");
 
+        e.replace("\n", "");
+        e.replace("\t", "");
+        e.remove(QRegularExpression("[\"']"));
         QStringList elementSplit = e.split(":");
-        if(elementSplit.at(0) == QString("Altitude"))
+
+        if(elementSplit.at(0).toLower() == QString("altitude").toLower())
         {
             QString altData = elementSplit.at(1);
             altData.remove("}");

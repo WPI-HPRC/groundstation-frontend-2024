@@ -1,5 +1,5 @@
 #include "speedtester.h"
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include <QObject>
 #include <QWidget>
 

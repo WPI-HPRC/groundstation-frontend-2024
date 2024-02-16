@@ -1,7 +1,7 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
-#include "mainwindow.h"
+#include "../Windows/mainwindow.h"
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>
@@ -13,8 +13,6 @@
 #include <QQuaternion>
 #include <QColor>
 #include <QWebEngineView>
-
-#include "hprcsubgraph.h"
 
 class hprcDisplayWidget : public QWidget
 {
@@ -82,15 +80,6 @@ protected:
 
 signals:
 
-};
-
-class hprcTimeline : public hprcDisplayWidget
-{
-    Q_OBJECT
-public:
-    explicit hprcTimeline(QWidget *parent = nullptr);
-
-signals:
 };
 
 class hprcGauge : public hprcDisplayWidget

@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <QFontDatabase>
-#include "mainwindow.h"
+#include "Windows/mainwindow.h"
 #include <QDateTime>
 #include <math.h>
 #include <QQuaternion>
@@ -16,9 +16,9 @@
 #include <QGraphicsPolygonItem>
 #include <QVBoxLayout>
 
-#include "betterqgraphicstextitem.h"
-#include "hprcStateMap.h"
-#include "hprctimeline.h"
+#include "Util/betterqgraphicstextitem.h"
+#include "Util/hprcStateMap.h"
+#include "Widgets/hprctimeline.h"
 
 std::map<double, QString> hprcStateMaps::stateMap;
 std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapW;
