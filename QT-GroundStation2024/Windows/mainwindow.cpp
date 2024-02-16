@@ -333,11 +333,11 @@ void MainWindow::onTextMessageReceived(QString message)
         {
             m_dataBuffer.orientation.setX(elementSplit.at(1).toFloat());
         }
-        else if(elementSplit.at(0).toLower() == QString("j"))
+        else if(elementSplit.at(0).toLower() == QString("k"))
         {
             m_dataBuffer.orientation.setY(elementSplit.at(1).toFloat());
         }
-        else if(elementSplit.at(0).toLower() == QString("k"))
+        else if(elementSplit.at(0).toLower() == QString("j"))
         {
             m_dataBuffer.orientation.setZ(elementSplit.at(1).toFloat());
         }
