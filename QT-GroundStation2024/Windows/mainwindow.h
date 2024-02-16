@@ -26,6 +26,16 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
+    enum RocketState {
+        PRE_LAUNCH, LAUNCH, COAST, DROGUE_DESCENT, MAIN_DESCENT, RECOVERY
+    };
+
+    struct graphPoint {
+        float value = 0;
+        float time = 0;
+    };
+
     struct dataPoint {
         float acceleration = 0;
         float velocity = 0;
@@ -39,10 +49,21 @@ public:
         GraphPointCircularBuffer *accData;
         GraphPointCircularBuffer *velData;
         GraphPointCircularBuffer *altData;
+
+        QList<graphPoint> accData1;
+        QList<graphPoint> velData1;
+        QList<graphPoint> altData1;
+
+
         QQuaternion orientation;
         float gyroX = 0;
         float gyroY = 0;
         float gyroZ = 0;
+        float payloadServo1Position;
+        float payloadServo2Position;
+        float desiredPayloadServo1Position;
+        float desiredPayloadServo2Position;
+        float payloadBatteryVoltage;
         bool timelineActivated[5] = {false, false, false, false, false};
         QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
     };
@@ -67,10 +88,12 @@ public:
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
+    int dataDeletionTime;
+
 signals:
     void accUpdated(int);
     void velUpdated(int);
-    void altUpdated(int);
+    void altUpdated(float, float);
     void stateUpdated(int);
     void rocketTimeUpdated(float);
     void groundTimeUpdated();
@@ -80,6 +103,10 @@ signals:
     void desiredAirbrakesUpdated(float);
     void tick();
     void speedTick(int);
+    void payloadServo1PositionUpdated(float);
+    void payloadServo2PositionUpdated(float);
+    void desiredPayloadServo1PositionUpdated(float);
+    void desiredPayloadServo2PositionUpdated(float);
 
 public slots:
     void update();

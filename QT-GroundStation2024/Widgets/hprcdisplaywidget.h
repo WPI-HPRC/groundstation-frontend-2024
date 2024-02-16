@@ -12,6 +12,8 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <QQuaternion>
 #include <QColor>
+#include <QWebEngineView>
+#include "hprcsubgraph.h"
 
 class hprcDisplayWidget : public QWidget
 {
@@ -27,12 +29,17 @@ public:
         HPRC_Gauge,
         HPRC_Attitude,
         HPRC_Graph,
+        HPRC_PAYLOAD_GRAPH,
         HPRC_Alarm,
         HPRC_Clock,
         HPRC_RocketVisual,
         HPRC_Hidden,
         HPRC_Viewer,
         HPRC_AIRBRAKES,
+        HPRC_SERVO_STATUS,
+        HPRC_PayloadMap,
+        HPRC_PayloadAttitude,
+        HPRC_PayloadBatteryVoltage
     };
 
     enum hprcDataType // TODO
@@ -64,7 +71,7 @@ public:
 
 public slots:
 
-    void updateFilled(int input);
+    void updateFilled(float input);
     void doSpeedTick(int input);
 
 protected:
@@ -126,6 +133,36 @@ public:
     void mouseMoveEvent(QMouseEvent *e);
 };
 
+class hprcPayloadGraph : public hprcDisplayWidget
+{
+Q_OBJECT
+
+public:
+    explicit hprcPayloadGraph(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *e);
+
+    QList<MainWindow::graphPoint> verticalSpeedData;
+    static const int MAX_RENDERED_POINTS = 9999999;
+
+    QTransform transform;
+    QPolygonF graphPolygonAltitude;
+    QPolygonF graphPolygonVerticalSpeed;
+    int startIndexAltitude;
+    int startIndexVerticalSpeed;
+
+    /*DEBUG; REMOVE THIS WHEN NOT IN USE
+    std::chrono::time_point<std::chrono::high_resolution_clock> lastTime = std::chrono::high_resolution_clock::now();
+    int fps = 0;
+    int frames = 0;
+    */
+
+private:
+    MainWindow* mainWindow;
+
+private slots:
+    void updateVerticalSpeed();
+};
+
 class hprcAlarmPanel : public hprcDisplayWidget
 {
 public:
@@ -185,6 +222,63 @@ public:
     QQuaternion m_rocketOrientVertically = QQuaternion::fromEulerAngles(-90.0f, 0.0f, 0.0f);
 };
 
+class hprcServoStatusWidget: public hprcDisplayWidget
+{
+public:
+    explicit hprcServoStatusWidget(QWidget *parent = nullptr);
+};
 
+class JsInterface: public QObject
+{
+    Q_OBJECT
+public slots:
+    void log(const QString& str);
+    void payloadPoint(double lat, double lng);
+    void targetPoint(double lat, double lng);
+
+signals:
+    void updatePayloadPoint(double lat, double lng);
+    void updateTargetPoint(double lat, double lng);
+};
+
+class hprcPayloadMap : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadMap(QWidget *parent = nullptr);
+
+    QWebEngineView *m_view;
+    JsInterface *m_interface;
+    QWebChannel* m_channel;
+};
+
+class hprcPayloadBatteryVoltage : public hprcDisplayWidget
+{
+public:
+    explicit hprcPayloadBatteryVoltage(QWidget *parent = nullptr);
+
+    static constexpr float MIN_VOLTAGE = 5.0;
+    static constexpr float MAX_VOLTAGE = 8.4;
+    static constexpr float LOW_THRESHOLD = 6.5;
+};
+
+class hprcRollGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcRollGauge(QWidget *parent = nullptr);
+
+};
+
+class hprcPitchGauge : public hprcGauge
+{
+
+
+public:
+
+    explicit hprcPitchGauge(QWidget *parent = nullptr);
+
+};
 
 #endif // HPRCDISPLAYWIDGET_H

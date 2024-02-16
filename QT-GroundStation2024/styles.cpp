@@ -59,8 +59,14 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_Attitude:
                 m_drawer->drawHPRCAttitudeWidget(painter, w);
                 return;
+            //case hprcDisplayWidget::HPRC_PayloadAttitude:
+            //    m_drawer->drawHPRCPayloadAttitudeWidget(painter, w);
+            //    return;
             case hprcDisplayWidget::HPRC_Graph:
                 m_drawer->drawHPRCGraph(painter, (hprcGraph *)w);
+                return;
+            case hprcDisplayWidget::HPRC_PAYLOAD_GRAPH:
+                m_drawer->drawHPRCPayloadGraph(painter, w);
                 return;
             case hprcDisplayWidget::HPRC_Alarm:
                 m_drawer->drawHPRCAlarmPanel(painter, w);
@@ -76,6 +82,15 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 return;
             case hprcAirbrakes::HPRC_AIRBRAKES:
                 m_drawer->drawHPRCAirbrakes(painter, w);
+                return;
+            case hprcDisplayWidget::HPRC_PayloadMap:
+                m_drawer->drawHPRCPayloadMap(painter, w);
+                return;
+            case hprcDisplayWidget::HPRC_PayloadBatteryVoltage:
+                m_drawer->drawHPRCPayloadBatteryVoltage(painter, w);
+                return;
+            case hprcServoStatusWidget::HPRC_SERVO_STATUS:
+                m_drawer->drawHprcServoStatus(painter, w);
                 return;
             default:
                 return;

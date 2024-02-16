@@ -72,6 +72,9 @@ public:
     void drawHPRCTimeline(QPainter *p, const hprcTimeline *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
+    void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, hprcGraph *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
@@ -79,6 +82,10 @@ public:
     void drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w);
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w);
+    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width);
+    void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
 
 
     QBrush m_backgroundBrush;
@@ -97,8 +104,27 @@ public:
     float m_AttitudeDegreeOffsetYaw = 0;
     float m_AttitudeDegreeOffsetPitch = 0;
 
+    //WARNING: BANDAID BELOW:
     std::vector<std::vector<float>> m_AttitudeCircleLocationsDegrees {
 
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
         std::vector<float> {
             3.0, 7.0, 12.0, 15.0
         },
@@ -127,12 +153,18 @@ public:
 
 
 private:
+    struct Range {
+        double min;
+        double max;
+    };
 
-private:
     static constexpr float AIRBRAKE_DESIRED_THRESHOLD = 0.075f; //The minimum amount of difference between the desired and current position required to display the desired airbrakes
 
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
+    Range drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double lowerBound, double upperBound, bool enableEndZeroPoints, bool enablePolygonTransformationRendering, int* startIndex, QPolygonF* polygon); //startIndex pointer means that you give a pointer to the start index variable for this piece of data
     void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip);
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
+    Range getDataYRange(QList<MainWindow::graphPoint>* data);
 };
 
 #endif // HPRCSTYLE_H

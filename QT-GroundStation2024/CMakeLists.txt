@@ -37,6 +37,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         Windows/rocketwindow.h Windows/rocketwindow.cpp Windows/rocketwindow.ui
 
+        payloadwindow.ui payloadwindow.cpp payloadwindow.h
+        maps.qrc models.qrc
+        map.qrc
+        
         Util/speedtester.h Util/speedtester.cpp
         Util/hprcCircularBuffer.h
         Util/mousetrackinggraphicsview.h
@@ -103,7 +107,7 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 target_link_libraries(QT-GroundStation2024 PRIVATE Qt6::WebSockets)
 
-find_package(Qt6 REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender Core Gui)
+find_package(Qt6 REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender Core Gui WebEngineWidgets WebChannel)
 target_link_libraries(QT-GroundStation2024 PRIVATE
     Qt::3DCore
     Qt::3DExtras
@@ -111,4 +115,6 @@ target_link_libraries(QT-GroundStation2024 PRIVATE
     Qt::3DRender
     Qt::Core
     Qt::Gui
+    Qt6::WebEngineWidgets
+    Qt6::WebChannel
 )

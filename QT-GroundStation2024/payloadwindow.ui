@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PayloadWindow</class>
+ <widget class="QMainWindow" name="PayloadWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Payload Status</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3,2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,3,2">
+         <item>
+          <widget class="hprcPayloadGraph" name="widget_3" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcPayloadMap" name="widget_2" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcServoStatusWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QFrame" name="frame_2">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,2,3,3">
+         <item>
+          <widget class="hprcRollGauge" name="widget_7" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcPitchGauge" name="widget_6" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
+         </item>
+         <item>
+          <widget class="hprcPayloadBatteryVoltage" name="widget_4" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>hprcAttitudeWidget</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadMap</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcRollGauge</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPitchGauge</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadBatteryVoltage</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcServoStatusWidget</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>hprcPayloadGraph</class>
+   <extends>QWidget</extends>
+   <header>Widgets/hprcdisplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

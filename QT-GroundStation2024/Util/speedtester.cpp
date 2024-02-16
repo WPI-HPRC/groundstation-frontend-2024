@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #define NUM_DURATION_FOR_AVERAGE 200
-#define TIME_INDIVIDUAL_WIDGETS true
+#define TIME_INDIVIDUAL_WIDGETS false
 
 #define RUN_SINGLE_TEST true
 #define SINGULAR_WIDGET_TEST_NAME "Graphs"

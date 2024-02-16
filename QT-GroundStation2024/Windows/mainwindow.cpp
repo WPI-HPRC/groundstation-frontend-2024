@@ -54,7 +54,7 @@ void MainWindow::updateData(dataPoint p)
     if(p.altitude != m_currentData.altitude)
     {
         m_currentData.altitude = p.altitude;
-        emit altUpdated(p.altitude);
+        emit altUpdated(p.altitude, p.rocketTime);
     }
     if(p.state != m_currentData.state)
     {
@@ -196,6 +196,13 @@ void MainWindow::updateData(dataPoint p)
         {
             m_currentData.rocketTimeSinceLaunch = p.rocketTime - m_rocketLaunchTime;
         }
+
+        if(p.state >= RocketState::DROGUE_DESCENT && p.state <= RocketState::MAIN_DESCENT) { //If the rocket is descending then the payload window needs data to stay in memory for longer
+            dataDeletionTime = 60000*15; //15 minutes
+        } else {
+            dataDeletionTime = 5000;
+        }
+
         m_currentData.rocketTime = p.rocketTime;
         graphPointCirularBufferAdd(m_currentData.accData, GraphPoint {
                                                               .value = p.acceleration,
@@ -209,6 +216,18 @@ void MainWindow::updateData(dataPoint p)
                                                               .value = p.altitude,
                                                               .time = p.rocketTime
                                                           });
+
+
+        m_currentData.accData1.append(graphPoint {p.acceleration, p.rocketTime});
+        while(m_currentData.accData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.accData1.removeFirst();
+        m_currentData.velData1.append(graphPoint {p.velocity, p.rocketTime});
+        while(m_currentData.velData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.velData1.removeFirst();
+        m_currentData.altData1.append(graphPoint {p.altitude, p.rocketTime});
+        while(m_currentData.altData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.altData1.removeFirst();
+
         emit rocketTimeUpdated(p.rocketTime);
     }
     if(p.groundTime != m_currentData.groundTime)
@@ -221,13 +240,6 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.orientation = p.orientation;
         emit orientationUpdated();
     }
-    if(p.gyroX != m_currentData.gyroX || p.gyroY != m_currentData.gyroY || p.gyroZ != m_currentData.gyroZ)
-    {
-        m_currentData.gyroX = p.gyroX;
-        m_currentData.gyroY = p.gyroY;
-        m_currentData.gyroZ = p.gyroZ;
-        emit gyroUpdated();
-    }
     if(p.currentAirbrakes != m_currentData.currentAirbrakes) {
         m_currentData.currentAirbrakes = p.currentAirbrakes;
         emit currentAirbrakesUpdated(p.currentAirbrakes);
@@ -235,6 +247,29 @@ void MainWindow::updateData(dataPoint p)
     if(p.desiredAirbrakes != m_currentData.desiredAirbrakes) {
         m_currentData.desiredAirbrakes = p.desiredAirbrakes;
         emit desiredAirbrakesUpdated(p.desiredAirbrakes);
+    }
+    if(p.gyroX != m_currentData.gyroX || p.gyroY != m_currentData.gyroY || p.gyroZ != m_currentData.gyroZ)
+    {
+        m_currentData.gyroX = p.gyroX;
+        m_currentData.gyroY = p.gyroY;
+        m_currentData.gyroZ = p.gyroZ;
+        emit gyroUpdated();
+    }
+    if(p.payloadServo1Position != m_currentData.payloadServo1Position) {
+        m_currentData.payloadServo1Position = p.payloadServo1Position;
+    }
+    if(p.payloadServo2Position != m_currentData.payloadServo2Position) {
+        m_currentData.payloadServo2Position = p.payloadServo2Position;
+    }
+    if(p.desiredPayloadServo1Position != m_currentData.desiredPayloadServo1Position) {
+        m_currentData.desiredPayloadServo1Position = p.desiredPayloadServo1Position;
+    }
+    if(p.desiredPayloadServo2Position != m_currentData.desiredPayloadServo2Position) {
+        m_currentData.desiredPayloadServo2Position = p.desiredPayloadServo2Position;
+    }
+
+    if(p.payloadBatteryVoltage != m_currentData.payloadBatteryVoltage) {
+        m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
     }
 
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
