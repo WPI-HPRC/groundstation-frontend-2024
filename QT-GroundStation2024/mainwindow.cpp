@@ -216,6 +216,18 @@ void MainWindow::updateData(dataPoint p)
                                                               .value = p.altitude,
                                                               .time = p.rocketTime
                                                           });
+
+
+        m_currentData.accData1.append(graphPoint {p.acceleration, p.rocketTime});
+        while(m_currentData.accData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.accData1.removeFirst();
+        m_currentData.velData1.append(graphPoint {p.velocity, p.rocketTime});
+        while(m_currentData.velData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.velData1.removeFirst();
+        m_currentData.altData1.append(graphPoint {p.altitude, p.rocketTime});
+        while(m_currentData.altData1.first().time < p.rocketTime - dataDeletionTime)
+            m_currentData.altData1.removeFirst();
+
         emit rocketTimeUpdated(p.rocketTime);
     }
     if(p.groundTime != m_currentData.groundTime)

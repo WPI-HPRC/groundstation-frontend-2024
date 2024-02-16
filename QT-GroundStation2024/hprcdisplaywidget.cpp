@@ -229,8 +229,8 @@ hprcPayloadGraph::hprcPayloadGraph(QWidget *parent) :
 }
 
 void hprcPayloadGraph::updateVerticalSpeed() {
-    if(mainWindow->m_currentData.altData.length() > 1) {
-        verticalSpeedData.append(MainWindow::graphPoint{(mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].value - mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 2].value) / ((mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].time - mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 2].time) / 1000), mainWindow->m_currentData.altData[mainWindow->m_currentData.altData.length() - 1].time});
+    if(mainWindow->m_currentData.altData1.length() > 1) {
+        verticalSpeedData.append(MainWindow::graphPoint{(mainWindow->m_currentData.altData1[mainWindow->m_currentData.altData1.length() - 1].value - mainWindow->m_currentData.altData1[mainWindow->m_currentData.altData1.length() - 2].value) / ((mainWindow->m_currentData.altData1[mainWindow->m_currentData.altData1.length() - 1].time - mainWindow->m_currentData.altData1[mainWindow->m_currentData.altData1.length() - 2].time) / 1000), mainWindow->m_currentData.altData1[mainWindow->m_currentData.altData1.length() - 1].time});
     }
 }
 

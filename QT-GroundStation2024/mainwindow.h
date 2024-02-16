@@ -49,6 +49,12 @@ public:
         GraphPointCircularBuffer *accData;
         GraphPointCircularBuffer *velData;
         GraphPointCircularBuffer *altData;
+
+        QList<graphPoint> accData1;
+        QList<graphPoint> velData1;
+        QList<graphPoint> altData1;
+
+
         QQuaternion orientation;
         float gyroX = 0;
         float gyroY = 0;
