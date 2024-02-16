@@ -11,7 +11,10 @@
 #include "qwebsocket.h"
 #include <QMainWindow>
 #include <QWebSocketServer>
+#include <QAbstractSocket>
 #include <QQuaternion>
+#include "hprcCircularBuffer.h"
+#include "hprcwebsocket.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -43,9 +46,9 @@ public:
         int groundTime = 0;
         float desiredAirbrakes = 0;
         float currentAirbrakes = 0;
-        QList<graphPoint> accData;
-        QList<graphPoint> velData;
-        QList<graphPoint> altData;
+        GraphPointCircularBuffer *accData;
+        GraphPointCircularBuffer *velData;
+        GraphPointCircularBuffer *altData;
         QQuaternion orientation;
         float gyroX = 0;
         float gyroY = 0;
@@ -55,6 +58,8 @@ public:
         float desiredPayloadServo1Position;
         float desiredPayloadServo2Position;
         float payloadBatteryVoltage;
+        bool timelineActivated[5] = {false, false, false, false, false};
+        QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
     };
 
 #if RUN_SPEED_TESTS
@@ -73,7 +78,7 @@ public:
     dataPoint m_currentData;
     dataPoint m_dataBuffer;
 
-    QWebSocket m_webSocket;
+    HPRCWebSocket* m_websocket;
 
     dataPoint* getCurrentData() { return &m_currentData; }
 
@@ -99,8 +104,6 @@ signals:
 
 public slots:
     void update();
-    void onConnected();
-    void onDisconnected();
     void onTextMessageReceived(QString message);
 
 private:

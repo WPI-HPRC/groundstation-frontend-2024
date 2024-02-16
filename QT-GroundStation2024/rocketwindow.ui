@@ -30,7 +30,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="hprcRocketVisualizer" name="widget" native="true"/>
+          <widget class="hprcRocketVisualizer" name="rocketVisualizer" native="true"/>
          </item>
         </layout>
        </widget>

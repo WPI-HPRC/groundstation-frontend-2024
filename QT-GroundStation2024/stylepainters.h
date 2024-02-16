@@ -42,6 +42,13 @@ public:
         LABEL_Other,
     };
 
+    enum GraphType
+    {
+        GRAPH_Altitude,
+        GRAPH_Velocity,
+        GRAPH_Acceleration
+    };
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
@@ -53,6 +60,7 @@ public:
     void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w);
+    void drawHPRCGraph(QPainter *p, hprcGraph *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY);
     void drawHPRCClock(QPainter *p, const hprcDisplayWidget *w);
@@ -75,6 +83,7 @@ public:
     QFont m_widgetLarge;
     QFont m_widgetMedium;
     QFont m_widgetSmall;
+    QFont m_widgetFancy;
 
 
     // data maps
@@ -92,6 +101,28 @@ public:
 
     //WARNING: BANDAID BELOW:
     std::vector<std::vector<float>> m_AttitudeCircleLocationsDegrees {
+
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+            3.0, 7.0, 12.0, 15.0
+        },
         std::vector<float> {
             3.0, 7.0, 12.0, 15.0
         },
@@ -126,6 +157,7 @@ private:
 
     void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip);
     Range drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>*, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double lowerBound, double upperBound, bool enableEndZeroPoints, bool enablePolygonTransformationRendering, int* startIndex, QPolygonF* polygon); //startIndex pointer means that you give a pointer to the start index variable for this piece of data
+    void drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,  double range, double start, hprcGraph *w, QGraphicsScene* scene, bool drawTooltip);
     void drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label);
     Range getDataYRange(QList<MainWindow::graphPoint>* data);
 };

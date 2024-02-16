@@ -2,11 +2,13 @@
 #include "rocketwindow.h"
 #include "payloadwindow.h"
 #include "styles.h"
+#include <iostream>
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT3D_RENDERER", "opengl");
     QApplication a(argc, argv);
     a.setStyle(new HPRCDarkStyle(nullptr));
     MainWindow w;
@@ -26,5 +28,9 @@ int main(int argc, char *argv[])
     r.update();
     p.update();
 
-    return a.exec();
+    int code = a.exec();
+
+    w.m_websocket->close();
+
+    return code;
 }
