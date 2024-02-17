@@ -51,25 +51,6 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_latest = d;
 }
 
-void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
-{
-
-    qDebug() << "Here we go";
-
-    if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
-        const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
-
-        if (mapWidget) {
-            // Resize the map to match the container widget
-//            mapWidget->m_view->resize(w->size());
-
-            // qDebug() << "Here we go";
-
-            // mapWidget->m_interface->payloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
-        }
-    }
-}
-
 void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w)
 {
     const QRect boundingBox = w->rect();
@@ -1016,51 +997,6 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w)
-{
-    const QRect boundingBox = w->rect();
-
-    p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
-    p->setFont(m_widgetLarge);
-
-    // Draw a title for the widget
-    p->drawText(boundingBox,
-                Qt::AlignHCenter,
-                "Battery Voltage");
-
-    //Draw battery visual
-    const float batteryWidth = boundingBox.width() / 4;
-    const float batteryHeight = boundingBox.height() / 2;
-    QList<QRect> batteryRects;
-    batteryRects.append(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 - batteryHeight / 2, batteryWidth, batteryHeight));
-    QRect* batteryRect = &batteryRects[0];
-    const float leadWidth = batteryRect->width() / 4.0;
-    const float leadHeight = batteryRect->height() / 8.0;
-    batteryRects.append(QRect(batteryRect->x() + batteryWidth / 2 - leadWidth / 2, batteryRect->y() - leadHeight, leadWidth, leadHeight));
-
-    float batteryVoltage = m_latest->payloadBatteryVoltage;
-
-    // Draw the current voltage
-    QString valueString = QString::number(batteryVoltage, 'f', 2);
-    //Make sure there are no trailing zeros
-    while(valueString.length() > 0 && valueString.back() == '0') {
-        valueString.remove(valueString.length() - 1, 1);
-    }
-    if(valueString.back() == '.') {
-        valueString.remove(valueString.length() - 1, 1);
-    }
-
-    hprcPayloadBatteryVoltage* batteryWidget = (hprcPayloadBatteryVoltage*) p;
-    QBrush batteryBrush = batteryVoltage > batteryWidget->LOW_THRESHOLD ? QBrush(QColor(0, 255, 0)) : QBrush(QColor(255, 0, 0));
-    float batteryCharge = std::min(std::max((batteryVoltage - hprcPayloadBatteryVoltage::MIN_VOLTAGE) / (hprcPayloadBatteryVoltage::MAX_VOLTAGE - hprcPayloadBatteryVoltage::MIN_VOLTAGE), 0.0f), 1.0f);
-    p->setPen(QPen(m_textBrush, 0));
-    p->fillRect(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 + batteryHeight / 2 - batteryHeight * batteryCharge, batteryWidth, batteryHeight * batteryCharge), batteryBrush);
-
-    p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
-    p->drawText(boundingBox, Qt::AlignBottom | Qt::AlignHCenter, valueString + " V");
-    p->drawRects(batteryRects);
-}
-
 void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 {
 
@@ -1320,53 +1256,4 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     //End rotation and translation of origin
     p->translate(QPoint(-circlePosition.x(), -circlePosition.y()));
     p->rotate(-45);
-}
-
-void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width) {
-    //Draw a happy servo picture
-    p->setPen(QPen(m_textBrush, w->rect().width() / 200));
-    p->setBrush(m_transparentBrush);
-    float servoRectWidth = w->rect().width() / 5;
-    float servoRectHeight = w->rect().width() / 8;
-    float servoRect2Width = servoRectHeight / 4;
-    float yMargin = servoRectHeight * 1.75;
-    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, w->rect().bottom() - yMargin, servoRectWidth, servoRectHeight);
-    p->drawRect(servoRect);
-    p->drawRect(QRect(servoRect.x() + servoRect.width() / 4, servoRect.top(), servoRect.width() / 12, -servoRect.width() / 4));
-
-    float textMargin = w->rect().width() / 50;
-
-    //Draw title
-    m_widgetLarge.setPointSize(servoRect.height() / 4);
-    p->setFont(m_widgetLarge);
-    p->drawText(servoRect,
-                Qt::AlignCenter, title);
-
-    //Draw encoder value
-    QString valueString = QString::number(position);
-    QString desiredValueString = QString::number(desiredPosition);
-
-    float textSize = w->width() / 42.0;
-    m_widgetLarge.setPointSize(textSize);
-    p->setFont(m_widgetLarge);
-    p->drawText(QRect(x - width / 2, servoRect.y() + servoRect.height() + textMargin,
-                      width, 100),
-                Qt::AlignHCenter, "Measured Position: " + valueString);
-    p->drawText(QRect(x - width / 2, servoRect.y() + servoRect.height() + textMargin + textSize + textMargin,
-                      width, 100),
-                Qt::AlignHCenter, "Desired Position: " + desiredValueString);
-
-
-    //Draw position indicator
-    QRect measuredPositionRect = QRect();
-    QRect desiredPositionRect = QRect();
-}
-
-void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
-    p->setRenderHint(QPainter::Antialiasing);
-
-    drawServoStatusServo(p, w, "Servo", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, w->rect().center().x(), w->rect().center().x() - w->rect().x());
-
-    // drawServoStatusServo(p, w, "Servo 1", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
-    // drawServoStatusServo(p, w, "Servo 2", m_latest->payloadServo2Position, m_latest->desiredPayloadServo2Position, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
 }
