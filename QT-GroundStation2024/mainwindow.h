@@ -55,6 +55,10 @@ public:
         float desiredPayloadServo1Position;
         float desiredPayloadServo2Position;
         float payloadBatteryVoltage;
+        float p_gpsLat;
+        float p_gpsLong;
+        float p_targetGpsLat;
+        float p_targetGpsLong;
     };
 
 #if RUN_SPEED_TESTS
@@ -96,6 +100,8 @@ signals:
     void payloadServo2PositionUpdated(float);
     void desiredPayloadServo1PositionUpdated(float);
     void desiredPayloadServo2PositionUpdated(float);
+    void p_gpsPointUpdated(float, float);
+    void p_targetGpsPointUpdated(float, float);
 
 public slots:
     void update();

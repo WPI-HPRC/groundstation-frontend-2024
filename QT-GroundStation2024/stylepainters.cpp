@@ -1054,19 +1054,17 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
 
 void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
 {
-
-    qDebug() << "Here we go";
-
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 
         if (mapWidget) {
-            // Resize the map to match the container widget
-            mapWidget->m_view->resize(w->size());
-
-            // qDebug() << "Here we go";
-
-            // mapWidget->m_interface->payloadPoint(32.99020169835385 + 0.05, -106.97596734602624 + 0.05);
+            // Send updated positions to the map frontend
+            mapWidget->m_interface->payloadPoint(m_latest->p_gpsLat, m_latest->p_gpsLong);
+            mapWidget->m_interface->targetPoint(m_latest->p_targetGpsLat, m_latest->p_targetGpsLong);
+            // Uncomment to test random points on the map
+            // double rand1 = QRandomGenerator::global()->bounded(0.04);
+            // double rand2 = QRandomGenerator::global()->bounded(0.04);
+            // mapWidget->m_interface->payloadPoint(32.99020169835385 + rand1, -106.97596734602624 + rand2);
         }
     }
 }
@@ -1411,6 +1409,8 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w, "Servo 1", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
-    drawServoStatusServo(p, w, "Servo 2", m_latest->payloadServo2Position, m_latest->desiredPayloadServo2Position, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, w->rect().center().x(), w->rect().center().x() - w->rect().x());
+
+    // drawServoStatusServo(p, w, "Servo 1", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    // drawServoStatusServo(p, w, "Servo 2", m_latest->payloadServo2Position, m_latest->desiredPayloadServo2Position, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
 }

@@ -113,12 +113,14 @@ void MainWindow::updateData(dataPoint p)
     }
     if(p.payloadServo1Position != m_currentData.payloadServo1Position) {
         m_currentData.payloadServo1Position = p.payloadServo1Position;
+        emit payloadServo1PositionUpdated(p.payloadServo1Position);
     }
     if(p.payloadServo2Position != m_currentData.payloadServo2Position) {
         m_currentData.payloadServo2Position = p.payloadServo2Position;
     }
     if(p.desiredPayloadServo1Position != m_currentData.desiredPayloadServo1Position) {
         m_currentData.desiredPayloadServo1Position = p.desiredPayloadServo1Position;
+        emit desiredPayloadServo1PositionUpdated(p.desiredPayloadServo1Position);
     }
     if(p.desiredPayloadServo2Position != m_currentData.desiredPayloadServo2Position) {
         m_currentData.desiredPayloadServo2Position = p.desiredPayloadServo2Position;
@@ -126,6 +128,17 @@ void MainWindow::updateData(dataPoint p)
 
     if(p.payloadBatteryVoltage != m_currentData.payloadBatteryVoltage) {
         m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
+    }
+
+    if(p.p_gpsLat != m_currentData.p_gpsLat || p.p_gpsLong != m_currentData.p_gpsLong)  {
+        m_currentData.p_gpsLat = p.p_gpsLat;
+        m_currentData.p_gpsLong = p.p_gpsLong;
+        emit p_gpsPointUpdated(p.p_gpsLat, p.p_gpsLong);
+    }
+    if(p.p_targetGpsLat != m_currentData.p_targetGpsLat || p.p_targetGpsLong != m_currentData.p_targetGpsLong)  {
+        m_currentData.p_targetGpsLat = p.p_targetGpsLat;
+        m_currentData.p_targetGpsLong = p.p_targetGpsLong;
+        emit p_gpsPointUpdated(p.p_targetGpsLat, p.p_targetGpsLong);
     }
 
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
@@ -178,6 +191,30 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("State").toLower())
         {
             m_dataBuffer.state = elementSplit.at(1).toInt();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_gpsLat").toLower())
+        {
+            m_dataBuffer.p_gpsLat = elementSplit.at(1).toFloat();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_gpsLong").toLower())
+        {
+            m_dataBuffer.p_gpsLong = elementSplit.at(1).toFloat();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_targetGPSLat").toLower())
+        {
+            m_dataBuffer.p_targetGpsLat = elementSplit.at(1).toFloat();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_targetGPSLong").toLower())
+        {
+            m_dataBuffer.p_targetGpsLong = elementSplit.at(1).toFloat();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_desiredServoPos").toLower())
+        {
+            m_dataBuffer.desiredPayloadServo1Position = elementSplit.at(1).toInt();
+        }
+        else if(elementSplit.at(0).toLower() == QString("p_actualServoPos").toLower())
+        {
+            m_dataBuffer.payloadServo1Position = elementSplit.at(1).toInt();
         }
     }
 
