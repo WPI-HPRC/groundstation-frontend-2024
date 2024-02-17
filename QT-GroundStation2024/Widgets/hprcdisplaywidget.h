@@ -71,6 +71,7 @@ public:
 
 public slots:
 
+    void updateFilled(int input);
     void updateFilled(float input);
     void doSpeedTick(int input);
 

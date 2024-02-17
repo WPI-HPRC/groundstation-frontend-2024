@@ -64,6 +64,15 @@ void hprcDisplayWidget::updateFilled(float input)
     animation->start();
 }
 
+void hprcDisplayWidget::updateFilled(int input)
+{
+
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "filledPercent");
+    animation->setDuration(400);
+    animation->setEndValue((int) input);
+    animation->start();
+}
+
 void hprcDisplayWidget::doSpeedTick(int input)
 {
     repaint();
