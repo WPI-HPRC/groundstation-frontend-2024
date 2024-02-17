@@ -37,7 +37,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         Windows/rocketwindow.h Windows/rocketwindow.cpp Windows/rocketwindow.ui
 
-        payloadwindow.ui payloadwindow.cpp payloadwindow.h
+        Windows/payloadwindow.ui Windows/payloadwindow.cpp Windows/payloadwindow.h
         maps.qrc models.qrc
         map.qrc
         
