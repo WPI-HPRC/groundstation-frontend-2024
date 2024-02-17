@@ -2,13 +2,12 @@ import os
 
 root = "/Users/will/Documents/GitHub/HPRC/Ground Station/main/QT-GroundStation2024/Resources/Maps"
 write_file = "/Users/will/Documents/GitHub/HPRC/Ground Station/main/QT-GroundStation2024/map.qrc"
-
-
+prefix="/"
 
 file = open(write_file, "w")
 
 file.write("<RCC>\n")
-file.write("\t<qresource prefix=\"/map\">\n")
+file.write(f"\t<qresource prefix=\"{prefix}\">\n")
 
 for path, subdirs, files in os.walk(root):
     for name in files:
