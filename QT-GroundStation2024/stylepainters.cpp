@@ -35,10 +35,10 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_buttonBrush = widgetPalette.brush(QPalette::Button);
     m_transparentBrush = *new QBrush(QColor(255, 255, 255, 0));
 
-    int id = QFontDatabase::addApplicationFont(":/fonts/Resources/Fonts/OverpassMono-VariableFont_wght.ttf");
+    int id = QFontDatabase::addApplicationFont(":/Fonts/OverpassMono-VariableFont_wght.ttf");
     QString overpassMono = QFontDatabase::applicationFontFamilies(id).at(0);
 
-    id = QFontDatabase::addApplicationFont(":/fonts/Resources/Fonts/JockeyOne-Regular.ttf");
+    id = QFontDatabase::addApplicationFont(":/Fonts/JockeyOne-Regular.ttf");
     QStringList l = QFontDatabase::applicationFontFamilies(id);
     QString jockeyOne = QFontDatabase::applicationFontFamilies(id).at(0);
     m_widgetFancy = QFont(jockeyOne, 30, 5, false);
