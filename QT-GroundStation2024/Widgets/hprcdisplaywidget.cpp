@@ -297,7 +297,7 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
 
     // Create a web engine view, and display an offline leaflet map webpage inside it
     m_view = new QWebEngineView(this);
-    m_view->load(QUrl("qrc:/map/index.html"));
+    m_view->load(QUrl("qrc:/map/Resources/Maps/index.html"));
     m_channel = new QWebChannel(m_view->page());
     m_view->page()->setWebChannel(m_channel);
 
