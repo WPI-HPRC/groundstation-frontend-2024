@@ -37,8 +37,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         Windows/rocketwindow.h Windows/rocketwindow.cpp Windows/rocketwindow.ui
 
-        payloadwindow.ui payloadwindow.cpp payloadwindow.h
-        maps.qrc models.qrc
+        Windows/payloadwindow.ui Windows/payloadwindow.cpp Windows/payloadwindow.h
+        models.qrc
         map.qrc
         
         Util/speedtester.h Util/speedtester.cpp
@@ -56,8 +56,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Util/hprcStateMap.h
         Widgets/hprctimeline.cpp
         Widgets/hprcgraph.cpp
-
-
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT-GroundStation2024 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

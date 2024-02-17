@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/images">
-        <file>images/abort_warning_active.png</file>
-        <file>images/pitch_warning_active.png</file>
-        <file>images/abort_warning_inactive.png</file>
-        <file>images/pitch_warning_inactive.png</file>
+        <file>Resources/Images/pitch_warning_inactive.png</file>
+        <file>Resources/Images/pitch_warning_active.png</file>
+        <file>Resources/Images/hprc_warnings_panel.svg</file>
+        <file>Resources/Images/abort_warning_inactive.png</file>
+        <file>Resources/Images/abort_warning_active.png</file>
     </qresource>
 </RCC>

@@ -1,11 +1,12 @@
 #include "Windows/mainwindow.h"
 #include "Windows/rocketwindow.h"
+#include "Windows/payloadwindow.h"
+
 #include "styles.h"
 #include <iostream>
 
 #include <QApplication>
 #include "Util/hprcStateMap.h"
-#include "payloadwindow.h"
 
 int main(int argc, char *argv[])
 {
