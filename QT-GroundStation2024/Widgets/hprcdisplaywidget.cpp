@@ -335,7 +335,7 @@ hprcViewer::hprcViewer(QWidget *parent) :
     Qt3DRender::QMesh *rocketMesh = new Qt3DRender::QMesh();
 
     // Load the rocket mesh
-    rocketMesh->setSource(QUrl(QStringLiteral("qrc:/models/HPRC_rocket.stl")));
+    rocketMesh->setSource(QUrl(QStringLiteral("qrc:/Resources/Models/HPRC_rocket.stl")));
 
     // Set the material of the rocket
     Qt3DExtras::QDiffuseSpecularMaterial *rocketMaterial = new Qt3DExtras::QDiffuseSpecularMaterial(rootEntity);
