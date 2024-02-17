@@ -314,8 +314,8 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            connect(mainWin, SIGNAL(payloadUpdated(QPoint)), this, SLOT(repaint()));
-            connect(mainWin, SIGNAL(payloadTargetUpdated(QPoint)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(p_gpsPointUpdated(float,float)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(p_targetGpsPointUpdated(float,float)), this, SLOT(repaint()));
         }
 }
 
@@ -426,7 +426,8 @@ hprcServoStatusWidget::hprcServoStatusWidget(QWidget* parent) {
     foreach (QWidget *w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            //connect(mainWin, SIGNAL(desiredAirbrakesUpdated(float)), this, SLOT(repaint())); //PUT SERVO DATA CONNECTION IN HERE!!
+            connect(mainWin, SIGNAL(payloadServo1PositionUpdated(float)), this, SLOT(repaint()));
+            connect(mainWin, SIGNAL(desiredPayloadServo1PositionUpdated(float)), this, SLOT(repaint()));
         }
     m_widgetType = HPRC_SERVO_STATUS;
 }

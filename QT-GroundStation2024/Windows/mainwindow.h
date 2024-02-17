@@ -66,6 +66,10 @@ public:
         float payloadBatteryVoltage;
         bool timelineActivated[5] = {false, false, false, false, false};
         QString timelineTimes[5] = {"00:00:00", "00:00:00", "00:00:00", "00:00:00", "00:00:00"};
+        float p_gpsLat;
+        float p_gpsLong;
+        float p_targetGpsLat;
+        float p_targetGpsLong;
     };
 
 #if RUN_SPEED_TESTS
@@ -107,6 +111,8 @@ signals:
     void payloadServo2PositionUpdated(float);
     void desiredPayloadServo1PositionUpdated(float);
     void desiredPayloadServo2PositionUpdated(float);
+    void p_gpsPointUpdated(float, float);
+    void p_targetGpsPointUpdated(float, float);
 
 public slots:
     void update();
