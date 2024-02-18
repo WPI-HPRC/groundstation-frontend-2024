@@ -218,6 +218,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
     // Clamp the scale
     float gScale = fmax(50, fmin(MAX_DYNAMIC_GRAPH_SCALE, scale));
 
+    /*
     // Only need to go half of the way, because graph ticks will be mirrored along the axis
     for (int i = 0; i < gScale/2; i += GRAPH_TICK_DISTANCE)
     {
@@ -237,6 +238,7 @@ void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPoint
         //        scene->addItem(tick1);
         //        scene->addItem(tick2);
     }
+    */
 
     // Rectangle that is 50 pixels wide centered around the mouse's x position. Make it the height of the entire rectangle
     // Shift it down by 0.5 before rounding to align things
