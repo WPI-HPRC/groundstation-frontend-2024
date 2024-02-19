@@ -237,7 +237,7 @@ void MainWindow::updateData(dataPoint p)
     }
     if(p.orientation != m_currentData.orientation)
     {
-        m_currentData.orientation = p.orientation;
+        m_currentData.orientation = p.orientation* QQuaternion::fromAxisAndAngle(1.0, 0.0, 0.0, 0.0);
         emit orientationUpdated();
     }
     if(p.currentAirbrakes != m_currentData.currentAirbrakes) {

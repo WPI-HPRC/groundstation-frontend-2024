@@ -44,6 +44,8 @@ void HPRCWebSocket::_connectToServer()
     qDebug("Attemtping to connect to server");
 #endif
     emit open(QUrl("wss://hprc-test.entflammen.com:8000"));
+//    emit open(QUrl("ws://localhost:8001"));
+
 }
 
 void HPRCWebSocket::_ping()
