@@ -237,7 +237,8 @@ void MainWindow::updateData(dataPoint p)
     }
     if(p.orientation != m_currentData.orientation)
     {
-        m_currentData.orientation = p.orientation* QQuaternion::fromAxisAndAngle(1.0, 0.0, 0.0, 0.0);
+        m_currentData.orientation = p.orientation;
+
         m_currentData.i = p.i;
         m_currentData.j = p.j;
         m_currentData.k = p.k;
