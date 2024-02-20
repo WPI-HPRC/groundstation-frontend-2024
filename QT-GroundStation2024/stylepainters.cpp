@@ -637,8 +637,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     // -- Get the angles and use them --
 
-    // roll pitch yaw;
-
     float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k), 1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
 
     float yaw = qRadiansToDegrees(-M_PI/2 + 2 * atan2(sqrt(1 + 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k)),
@@ -646,13 +644,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     float roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j), 1 - 2 * (pow(m_latest->j, 2) + pow(m_latest->k, 2))));
 
-//    qDebug() << "roll: " << roll << ", pitch: " << pitch << ", yaw: " << yaw;
-
     pitch += 180;
 
     if(pitch > 180)
         pitch -= 360;
-
 
 //    float roll = m_latest->gyroZ;
 
