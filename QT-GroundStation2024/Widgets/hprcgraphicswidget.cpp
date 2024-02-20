@@ -11,13 +11,16 @@ hprcGraphicsWidget::hprcGraphicsWidget(QWidget *parent, bool mouseTracking): hpr
 
     graphicsView->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
+
     // Set up layout
     QVBoxLayout* layout = new QVBoxLayout(this);
+    graphicsView->setSceneRect(layout->geometry());
     layout->setObjectName("GraphicsWidget Layout");
     layout->addWidget(graphicsView);
     this->setLayout(layout);
 
     graphicsScene = new QGraphicsScene(this);
+
     graphicsView->setScene(graphicsScene);
 }
 

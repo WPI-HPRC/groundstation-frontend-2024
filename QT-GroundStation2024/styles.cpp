@@ -92,6 +92,8 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcServoStatusWidget::HPRC_SERVO_STATUS:
                 m_drawer->drawHprcServoStatus(painter, w);
                 return;
+            case hprcDisplayWidget::HPRC_GpsLock:
+                m_drawer->drawHprcGpsLockIndicator(painter, (hprcGpsLockIndicator *)w);
             default:
                 return;
             }

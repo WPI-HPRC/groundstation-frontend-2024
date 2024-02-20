@@ -117,6 +117,7 @@ signals:
     void desiredPayloadServo2PositionUpdated(float);
     void p_gpsPointUpdated(float, float);
     void p_targetGpsPointUpdated(float, float);
+    void gpsLockUpdated();
 
 public slots:
     void update();
