@@ -238,6 +238,11 @@ void MainWindow::updateData(dataPoint p)
     if(p.orientation != m_currentData.orientation)
     {
         m_currentData.orientation = p.orientation* QQuaternion::fromAxisAndAngle(1.0, 0.0, 0.0, 0.0);
+        m_currentData.i = p.i;
+        m_currentData.j = p.j;
+        m_currentData.k = p.k;
+        m_currentData.w = p.w;
+
         emit orientationUpdated();
     }
     if(p.currentAirbrakes != m_currentData.currentAirbrakes) {
@@ -274,10 +279,13 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
     }
 
-    if(p.p_gpsLat != m_currentData.p_gpsLat || p.p_gpsLong != m_currentData.p_gpsLong)  {
-        m_currentData.p_gpsLat = p.p_gpsLat;
-        m_currentData.p_gpsLong = p.p_gpsLong;
-        emit p_gpsPointUpdated(p.p_gpsLat, p.p_gpsLong);
+    if(p.gpsLock)
+    {
+        if(p.p_gpsLat != m_currentData.p_gpsLat || p.p_gpsLong != m_currentData.p_gpsLong)  {
+            m_currentData.p_gpsLat = p.p_gpsLat;
+            m_currentData.p_gpsLong = p.p_gpsLong;
+            emit p_gpsPointUpdated(p.p_gpsLat, p.p_gpsLong);
+        }
     }
     if(p.p_targetGpsLat != m_currentData.p_targetGpsLat || p.p_targetGpsLong != m_currentData.p_targetGpsLong)  {
         m_currentData.p_targetGpsLat = p.p_targetGpsLat;
@@ -344,26 +352,30 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("i"))
         {
             m_dataBuffer.orientation.setX(elementSplit.at(1).toFloat());
+            m_dataBuffer.i = elementSplit.at(1).toFloat();
         }
         else if(elementSplit.at(0).toLower() == QString("k"))
         {
             m_dataBuffer.orientation.setY(elementSplit.at(1).toFloat());
+            m_dataBuffer.k = elementSplit.at(1).toFloat();
         }
         else if(elementSplit.at(0).toLower() == QString("j"))
         {
             m_dataBuffer.orientation.setZ(elementSplit.at(1).toFloat());
+            m_dataBuffer.j = elementSplit.at(1).toFloat();
         }
         else if(elementSplit.at(0).toLower() == QString("w"))
         {
             m_dataBuffer.orientation.setScalar(elementSplit.at(1).toFloat());
+            m_dataBuffer.w = elementSplit.at(1).toFloat();
         }
         else if(elementSplit.at(0).toLower() == QString("p_gpsLat").toLower())
         {
-            m_dataBuffer.p_gpsLat = elementSplit.at(1).toFloat();
+            m_dataBuffer.p_gpsLat = elementSplit.at(1).toFloat() / pow(10, 7);
         }
         else if(elementSplit.at(0).toLower() == QString("p_gpsLong").toLower())
         {
-            m_dataBuffer.p_gpsLong = elementSplit.at(1).toFloat();
+            m_dataBuffer.p_gpsLong = elementSplit.at(1).toFloat() / pow(10, 7);
         }
         else if(elementSplit.at(0).toLower() == QString("p_targetGPSLat").toLower())
         {
@@ -380,6 +392,10 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("p_actualServoPos").toLower())
         {
             m_dataBuffer.payloadServo1Position = elementSplit.at(1).toInt();
+        }
+        else if(elementSplit.at(0).toLower() == QString("gpsLock").toLower())
+        {
+            m_dataBuffer.gpsLock = elementSplit.at(1) == "true";
         }
     }
 

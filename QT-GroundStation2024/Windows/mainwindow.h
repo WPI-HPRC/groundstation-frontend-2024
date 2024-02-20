@@ -70,6 +70,10 @@ public:
         float p_gpsLong;
         float p_targetGpsLat;
         float p_targetGpsLong;
+
+        float i, j, k, w;
+
+        bool gpsLock;
     };
 
 #if RUN_SPEED_TESTS

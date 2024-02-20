@@ -637,15 +637,24 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     // -- Get the angles and use them --
 
-    float pitch, yaw, roll;
-    m_latest->orientation.getEulerAngles(&pitch, &roll, &yaw);
+    // roll pitch yaw;
 
-    yaw += 180;
+    float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k), 1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
 
-    if(yaw > 180)
-        yaw -= 360;
+    float yaw = qRadiansToDegrees(-M_PI/2 + 2 * atan2(sqrt(1 + 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k)),
+                                                        sqrt(1 - 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k))));
 
-    roll = m_latest->gyroZ;
+    float roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j), 1 - 2 * (pow(m_latest->j, 2) + pow(m_latest->k, 2))));
+
+//    qDebug() << "roll: " << roll << ", pitch: " << pitch << ", yaw: " << yaw;
+
+    pitch += 180;
+
+    if(pitch > 180)
+        pitch -= 360;
+
+
+//    float roll = m_latest->gyroZ;
 
     // Clamp to values
     pitch = fminf(m_AttitudeDegreeOffsetPitch + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetPitch - m_AttitudeMaxDegreeRange, pitch));
@@ -745,7 +754,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
                           crossWidth * 3
                           ),
                     Qt::AlignCenter,
-                    QString::asprintf("ROLL RATE: %.0lf rpm", roll)); // TODO: change this to the actual value
+                    QString::asprintf("Yaw: %.0lf", roll)); // TODO: change this to the actual value
 
         m_widgetLarge.setPointSize(crossWidth*2);
 
@@ -773,7 +782,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
                       crossWidth * 3
                       ),
                 Qt::AlignCenter,
-                "YAW");
+                "ROLL");
 
     if(rocketIsWithinGraph)
         p->setPen(QPen(m_textBrush, 2));
