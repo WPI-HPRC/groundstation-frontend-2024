@@ -308,6 +308,11 @@ void MainWindow::updateData(dataPoint p)
         emit p_gpsPointUpdated(p.p_targetGpsLat, p.p_targetGpsLong);
     }
 
+    if(p.epochTime != m_currentData.epochTime)
+    {
+        m_currentData.epochTime = p.epochTime;
+    }
+
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
     emit gpsLockUpdated();
 }
@@ -417,6 +422,10 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("satellites").toLower())
         {
             m_dataBuffer.numSatellites = elementSplit.at(1).toInt();
+        }
+        else if(elementSplit.at(0).toLower() == QString("epochTime").toLower())
+        {
+            m_dataBuffer.epochTime = elementSplit.at(1).toInt();
         }
     }
 

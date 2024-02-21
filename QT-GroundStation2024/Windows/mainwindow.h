@@ -75,6 +75,8 @@ public:
 
         bool gpsLock;
         int numSatellites;
+
+        int epochTime;
     };
 
 #if RUN_SPEED_TESTS
