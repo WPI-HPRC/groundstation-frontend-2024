@@ -3,6 +3,7 @@
 
 #include "Widgets/hprcdisplaywidget.h"
 #include "Widgets/hprcgraph.h"
+#include "Widgets/hprcgpslockindicator.h"
 #include <QStyle>
 #include <QPainter>
 #include "Windows/mainwindow.h"
@@ -86,6 +87,7 @@ public:
     void drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w);
     void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width);
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
+    void drawHprcGpsLockIndicator(QPainter *p, const hprcGpsLockIndicator *w);
 
 
     QBrush m_backgroundBrush;

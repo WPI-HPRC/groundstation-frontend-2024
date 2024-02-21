@@ -74,6 +74,7 @@ public:
         float i, j, k, w;
 
         bool gpsLock;
+        int numSatellites;
     };
 
 #if RUN_SPEED_TESTS
@@ -117,6 +118,8 @@ signals:
     void desiredPayloadServo2PositionUpdated(float);
     void p_gpsPointUpdated(float, float);
     void p_targetGpsPointUpdated(float, float);
+    void gpsLockUpdated();
+    void numSatellitesUpdated();
 
 public slots:
     void update();

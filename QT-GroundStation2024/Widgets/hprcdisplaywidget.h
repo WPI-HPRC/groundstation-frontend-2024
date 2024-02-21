@@ -39,7 +39,8 @@ public:
         HPRC_SERVO_STATUS,
         HPRC_PayloadMap,
         HPRC_PayloadAttitude,
-        HPRC_PayloadBatteryVoltage
+        HPRC_PayloadBatteryVoltage,
+        HPRC_GpsLock
     };
 
     enum hprcDataType // TODO

@@ -280,6 +280,13 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
     }
 
+    if(p.gpsLock != m_currentData.gpsLock)
+    {
+
+        m_currentData.gpsLock = p.gpsLock;
+        emit gpsLockUpdated();
+    }
+
     if(p.gpsLock)
     {
         if(p.p_gpsLat != m_currentData.p_gpsLat || p.p_gpsLong != m_currentData.p_gpsLong)  {
@@ -288,6 +295,13 @@ void MainWindow::updateData(dataPoint p)
             emit p_gpsPointUpdated(p.p_gpsLat, p.p_gpsLong);
         }
     }
+
+    if(p.numSatellites != m_currentData.numSatellites)
+    {
+        m_currentData.numSatellites = p.numSatellites;
+        emit numSatellitesUpdated();
+    }
+
     if(p.p_targetGpsLat != m_currentData.p_targetGpsLat || p.p_targetGpsLong != m_currentData.p_targetGpsLong)  {
         m_currentData.p_targetGpsLat = p.p_targetGpsLat;
         m_currentData.p_targetGpsLong = p.p_targetGpsLong;
@@ -295,6 +309,7 @@ void MainWindow::updateData(dataPoint p)
     }
 
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
+    emit gpsLockUpdated();
 }
 
 void MainWindow::update()
@@ -323,6 +338,7 @@ void MainWindow::onTextMessageReceived(QString message)
         e.replace("\t", "");
         e.replace("\r", "");
         e.remove(QRegularExpression("[\"']"));
+        e.remove("\"");
         QStringList elementSplit = e.split(":");
 
         // TODO: Make this switch-case
@@ -396,7 +412,11 @@ void MainWindow::onTextMessageReceived(QString message)
         }
         else if(elementSplit.at(0).toLower() == QString("gpsLock").toLower())
         {
-            m_dataBuffer.gpsLock = elementSplit.at(1) == "true";
+            m_dataBuffer.gpsLock = elementSplit.at(1).toLower() == QString("true");
+        }
+        else if(elementSplit.at(0).toLower() == QString("satellites").toLower())
+        {
+            m_dataBuffer.numSatellites = elementSplit.at(1).toInt();
         }
     }
 

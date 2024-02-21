@@ -634,7 +634,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
     crossWidth /= 2;
 
     bgPen.setWidth(crossWidth);
-
     // -- Get the angles and use them --
 
     float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k), 1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
