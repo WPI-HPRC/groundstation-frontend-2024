@@ -296,6 +296,12 @@ void MainWindow::updateData(dataPoint p)
         }
     }
 
+    if(p.numSatellites != m_currentData.numSatellites)
+    {
+        m_currentData.numSatellites = p.numSatellites;
+        emit numSatellitesUpdated();
+    }
+
     if(p.p_targetGpsLat != m_currentData.p_targetGpsLat || p.p_targetGpsLong != m_currentData.p_targetGpsLong)  {
         m_currentData.p_targetGpsLat = p.p_targetGpsLat;
         m_currentData.p_targetGpsLong = p.p_targetGpsLong;
@@ -407,6 +413,10 @@ void MainWindow::onTextMessageReceived(QString message)
         else if(elementSplit.at(0).toLower() == QString("gpsLock").toLower())
         {
             m_dataBuffer.gpsLock = elementSplit.at(1).toLower() == QString("true");
+        }
+        else if(elementSplit.at(0).toLower() == QString("satellites").toLower())
+        {
+            m_dataBuffer.numSatellites = elementSplit.at(1).toInt();
         }
     }
 

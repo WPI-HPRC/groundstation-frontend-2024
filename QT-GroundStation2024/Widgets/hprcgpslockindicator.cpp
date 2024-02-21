@@ -13,16 +13,19 @@ hprcGpsLockIndicator::hprcGpsLockIndicator(QWidget *parent): hprcGraphicsWidget(
     lockLabel = new BetterQGraphicsTextItem(this->geometry(), Qt::AlignVCenter, "GPS Lock");
     lockLabel->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
+    satellitesLabel = new BetterQGraphicsTextItem(this->geometry(), Qt::AlignVCenter, "No Satellites");
+    satellitesLabel->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
     graphicsScene->addItem(lockIndicator);
     graphicsScene->addItem(lockLabel);
+    graphicsScene->addItem(satellitesLabel);
 
     foreach (QWidget *w, qApp->topLevelWidgets())
     {
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
         {
-            qDebug("Connecting!");
             connect(mainWin, SIGNAL(gpsLockUpdated()), this, SLOT(repaint()));
-            qDebug("Connected!");
+            connect(mainWin, SIGNAL(numSatellitesUpdated()), this, SLOT(repaint()));
         }
     }
 }
@@ -52,6 +55,12 @@ void HPRCStyle::drawHprcGpsLockIndicator(QPainter *p, const hprcGpsLockIndicator
     w->lockLabel->setDefaultTextColor(m_textBrush.color());
     w->lockLabel->geometry = QRect(drawBox.x() + indicatorSize * 2, drawBox.y(), drawBox.width(), drawBox.height() * 1/4);
     w->lockLabel->setFont(m_widgetMedium);
+
+    w->satellitesLabel->setDefaultTextColor(m_textBrush.color());
+    w->satellitesLabel->geometry = QRect(drawBox.x() + indicatorSize * 2, drawBox.y() + drawBox.height() * 1/3, drawBox.width(), drawBox.height() * 1/4);
+    w->satellitesLabel->setFont(m_widgetMedium);
+    w->satellitesLabel->setPlainText(QString::asprintf("%d satellite%s", m_latest->numSatellites, m_latest->numSatellites == 1 ? "" : "s"));
+
 
     w->graphicsView->viewport()->update();
 }
