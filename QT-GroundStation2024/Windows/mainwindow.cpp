@@ -328,106 +328,26 @@ void MainWindow::update()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
-    QStringList messageSplit = message.split(",");
+    // Attempt to parse the string as JSON
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8());
 
-    for(QString e : messageSplit.toList())
-    {
+    if (jsonDocument.isObject()) {
+        // Extract the JSON object
+        QJsonObject jsonObject = jsonDocument.object();
 
-        e.replace("}", "");
-        e.replace("{", "");
+        // Iterate over the keys in the JSON object
+        for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it) {
+            QString elementName = it.key();
+            QJsonValue elementValue = it.value();
 
-        e.replace("\n", "");
-        e.replace("\t", "");
-        e.replace("\r", "");
-        e.remove(QRegularExpression("[\"']"));
-        e.remove("\"");
-        QStringList elementSplit = e.split(":");
-
-        // TODO: Make this switch-case
-        if(elementSplit.at(0).toLower() == QString("altitude").toLower())
-        {
-            QString altData = elementSplit.at(1);
-            altData.remove("}");
-            m_dataBuffer.altitude = altData.toFloat();
-        } else if(elementSplit.at(0).toLower() == QString("Velocity").toLower())
-        {
-            m_dataBuffer.velocity = elementSplit.at(1).toFloat();
-        } else if(elementSplit.at(0).toLower() == QString("AccelZ").toLower())
-        {
-            m_dataBuffer.acceleration = elementSplit.at(1).toDouble();
-        } else if(elementSplit.at(0).toLower() == QString("Timestamp").toLower())
-        {
-            m_dataBuffer.rocketTime = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("State").toLower())
-        {
-            m_dataBuffer.state = elementSplit.at(1).toInt();
-        }
-        else if(elementSplit.at(0).toLower() == QString("AirbrakesDeploy").toLower())
-        {
-            m_dataBuffer.currentAirbrakes = elementSplit.at(1).toFloat()/200;
-            m_dataBuffer.desiredAirbrakes = m_dataBuffer.currentAirbrakes * 2;
-        }
-        else if(elementSplit.at(0).toLower() == QString("i"))
-        {
-            m_dataBuffer.orientation.setX(elementSplit.at(1).toFloat());
-            m_dataBuffer.i = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("k"))
-        {
-            m_dataBuffer.orientation.setY(elementSplit.at(1).toFloat());
-            m_dataBuffer.k = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("j"))
-        {
-            m_dataBuffer.orientation.setZ(elementSplit.at(1).toFloat());
-            m_dataBuffer.j = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("w"))
-        {
-            m_dataBuffer.orientation.setScalar(elementSplit.at(1).toFloat());
-            m_dataBuffer.w = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_gpsLat").toLower())
-        {
-            m_dataBuffer.p_gpsLat = elementSplit.at(1).toFloat() / pow(10, 7);
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_gpsLong").toLower())
-        {
-            m_dataBuffer.p_gpsLong = elementSplit.at(1).toFloat() / pow(10, 7);
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_targetGPSLat").toLower())
-        {
-            m_dataBuffer.p_targetGpsLat = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_targetGPSLong").toLower())
-        {
-            m_dataBuffer.p_targetGpsLong = elementSplit.at(1).toFloat();
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_desiredServoPos").toLower())
-        {
-            m_dataBuffer.desiredPayloadServo1Position = elementSplit.at(1).toInt();
-        }
-        else if(elementSplit.at(0).toLower() == QString("p_actualServoPos").toLower())
-        {
-            m_dataBuffer.payloadServo1Position = elementSplit.at(1).toInt();
-        }
-        else if(elementSplit.at(0).toLower() == QString("gpsLock").toLower())
-        {
-            m_dataBuffer.gpsLock = elementSplit.at(1).toLower() == QString("true");
-        }
-        else if(elementSplit.at(0).toLower() == QString("satellites").toLower())
-        {
-            m_dataBuffer.numSatellites = elementSplit.at(1).toInt();
-        }
-        else if(elementSplit.at(0).toLower() == QString("epochTime").toLower())
-        {
-            m_dataBuffer.epochTime = elementSplit.at(1).toInt();
-        }
-        else if(elementSplit.at(0).toLower() == QString("pressure").toLower())
-        {
-            m_dataBuffer.pressure = elementSplit.at(1).toFloat();
+            // Check if the element name is in the map
+            if (elementMap.contains(elementName)) {
+                // Use the conversion function to update the struct member
+                elementMap[elementName](m_dataBuffer, elementValue.toString());
+            }
+            // Handle other cases if needed
         }
     }
+    // Handle other cases if needed
 
 }

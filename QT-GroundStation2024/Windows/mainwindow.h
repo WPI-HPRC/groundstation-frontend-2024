@@ -81,6 +81,29 @@ public:
         float pressure;
     };
 
+    QMap<QString, std::function<void(dataPoint&, const QString&)>> elementMap = {
+                                                                                   {"accelZ", [](dataPoint& dp, const QString& value) { dp.acceleration = value.toFloat(); }},
+                                                                                   {"velocity", [](dataPoint& dp, const QString& value) { dp.velocity = value.toFloat(); }},
+                                                                                   {"altitude", [](dataPoint& dp, const QString& value) { dp.altitude = value.toFloat(); }},
+                                                                                   {"state", [](dataPoint& dp, const QString& value) { dp.state = value.toInt(); }},
+                                                                                   {"timestamp", [](dataPoint& dp, const QString& value) { dp.rocketTime = value.toFloat(); }},
+                                                                                   {"airbrakesDeploy", [](dataPoint& dp, const QString& value) { dp.currentAirbrakes = value.toFloat(); dp.desiredAirbrakes = dp.currentAirbrakes; }},
+                                                                                   {"i", [](dataPoint& dp, const QString& value) { dp.i = value.toFloat(); dp.orientation.setX(value.toFloat()); }},
+                                                                                   {"k", [](dataPoint& dp, const QString& value) { dp.k = value.toFloat(); dp.orientation.setY(value.toFloat()); }},
+                                                                                   {"j", [](dataPoint& dp, const QString& value) { dp.j = value.toFloat(); dp.orientation.setZ(value.toFloat()); }},
+                                                                                   {"w", [](dataPoint& dp, const QString& value) { dp.w = value.toFloat(); dp.orientation.setScalar(value.toFloat()); }},
+                                                                                   {"p_gpsLat", [](dataPoint& dp, const QString& value) { dp.p_gpsLat = value.toFloat() / pow(10, 7); }},
+                                                                                   {"p_gpsLong", [](dataPoint& dp, const QString& value) { dp.p_gpsLong = value.toFloat() / pow(10, 7); }},
+                                                                                   {"p_targetGpsLat", [](dataPoint& dp, const QString& value) { dp.p_targetGpsLat = value.toFloat(); }},
+                                                                                   {"p_targetGpsLong", [](dataPoint& dp, const QString& value) { dp.p_targetGpsLong = value.toFloat(); }},
+                                                                                   {"p_desiredServoPos", [](dataPoint& dp, const QString& value) { dp.desiredPayloadServo1Position = value.toInt(); }},
+                                                                                   {"p_actualServoPos", [](dataPoint& dp, const QString& value) { dp.payloadServo1Position = value.toInt(); }},
+                                                                                   {"gpsLock", [](dataPoint& dp, const QString& value) { dp.gpsLock = value.toLower() == "true"; }},
+                                                                                   {"satellites", [](dataPoint& dp, const QString& value) { dp.numSatellites = value.toInt(); }},
+                                                                                   {"epochTime", [](dataPoint& dp, const QString& value) { dp.epochTime = value.toInt(); }},
+                                                                                   {"pressure", [](dataPoint& dp, const QString& value) { dp.pressure = value.toFloat(); }},
+                                                                                   };
+
 #if RUN_SPEED_TESTS
     SpeedTester speedTester = SpeedTester();
 #endif
