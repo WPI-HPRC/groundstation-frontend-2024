@@ -43,21 +43,21 @@ public:
         float rocketTimeSinceLaunch = 0;
         int state = 0;
 
-        bool gpsLock;
-        int numSatellites;
-        float gpsLat, gpsLong;
-        float gpsAltMSL, gpsAltAGL;
+        bool gpsLock = false;
+        int numSatellites = 0;
+        float gpsLat = 0, gpsLong = 0;
+        float gpsAltMSL = 0, gpsAltAGL = 0;
 
-        float pressure;
-        float altitude;
+        float pressure = 0;
+        float altitude = 0;
 
-        float accelX, accelY, accelZ;
-        float gyroX, gyroY, gyroZ;
-        float magX, magY, magZ;
-        float i, j, k, w;
+        float accelX = 0, accelY = 0, accelZ = 0;
+        float gyroX = 0, gyroY = 0, gyroZ = 0;
+        float magX = 0, magY = 0, magZ = 0;
+        float i = 0, j = 0, k = 0, w = 0;
         QQuaternion orientation;
-        float posX, posY, posZ;
-        float velX, velY, velZ;
+        float posX = 0, posY = 0, posZ = 0;
+        float velX = 0, velY = 0, velZ = 0;
 
         float desiredAirbrakes = 0;
         float currentAirbrakes = 0;

@@ -113,10 +113,10 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
 
     w->drawData("GPS Lock", m_latest -> gpsLock ? "YES" : "NO", xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Satellites", QString::asprintf("%d", m_latest->numSatellites), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("GPS Lat", QString::asprintf("%0.4f", m_latest->p_gpsLat), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("GPS Long", QString::asprintf("%0.4f", m_latest->p_gpsLong), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("GPS Alt MSL", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("GPS Alt AGL", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Lat", QString::asprintf("%0.4f", m_latest->gpsLat), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Long", QString::asprintf("%0.4f", m_latest->gpsLong), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Alt MSL", QString::asprintf("%0.4f", m_latest->gpsAltMSL), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Alt AGL", QString::asprintf("%0.4f", m_latest->gpsAltAGL), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex++;
 
@@ -126,21 +126,21 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
     yIndex = 0;
     xIndex = 2;
 
-    w->drawData("Accel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Accel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Accel X", QString::asprintf("%0.4f", m_latest->accelX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Accel Y", QString::asprintf("%0.4f", m_latest->accelY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Accel Z", QString::asprintf("%0.4f", m_latest->accelZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex++;
 
-    w->drawData("Gyro X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Gyro Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Gyro Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Gyro X", QString::asprintf("%0.4f", m_latest->gyroX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Gyro Y", QString::asprintf("%0.4f", m_latest->gyroY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Gyro Z", QString::asprintf("%0.4f", m_latest->gyroZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex++;
 
-    w->drawData("Mag X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Mag Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Mag Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Mag X", QString::asprintf("%0.4f", m_latest->magX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Mag Y", QString::asprintf("%0.4f", m_latest->magY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Mag Z", QString::asprintf("%0.4f", m_latest->magZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex = 0;
     xIndex = 4;
@@ -151,14 +151,14 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
 
     yIndex++;
 
-    w->drawData("Pos X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Pos Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Pos Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Pos X", QString::asprintf("%0.4f", m_latest->posX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Pos Y", QString::asprintf("%0.4f", m_latest->posY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Pos Z", QString::asprintf("%0.4f", m_latest->posZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex++;
 
-    w->drawData("Vel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Vel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Vel X", QString::asprintf("%0.4f", m_latest->velX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Vel Y", QString::asprintf("%0.4f", m_latest->velY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Vel Z", QString::asprintf("%0.4f", m_latest->velZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
 
