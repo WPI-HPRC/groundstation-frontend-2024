@@ -75,6 +75,10 @@ public:
 
         bool gpsLock;
         int numSatellites;
+
+        int epochTime;
+
+        float pressure;
     };
 
 #if RUN_SPEED_TESTS
