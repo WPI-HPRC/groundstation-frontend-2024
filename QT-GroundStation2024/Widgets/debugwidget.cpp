@@ -3,7 +3,6 @@
 
 debugWidget::debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
 {
-    qDebug("AYYYYOOOOO");
     textItems = new QMap<QString, BetterQGraphicsTextItem *>();
 
     this->setGeometry(parent->geometry());

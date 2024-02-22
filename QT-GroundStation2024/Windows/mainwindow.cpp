@@ -77,11 +77,9 @@ void MainWindow::updateData(dataPoint p)
             int rseconds = seconds * 100;
             seconds = rseconds/100;
 
-            using namespace std;
-
-            string hourString(to_string(hours));
-            string minuteString(to_string(minutes));
-            string secondString(to_string(seconds));
+            std::string hourString(std::to_string(hours));
+            std::string minuteString(std::to_string(minutes));
+            std::string secondString(std::to_string(seconds));
 
             if(hourString.length() == 1)
                 hourString.insert(0, "0");
@@ -104,11 +102,9 @@ void MainWindow::updateData(dataPoint p)
             int rseconds = seconds * 100;
             seconds = rseconds/100;
 
-            using namespace std;
-
-            string hourString(to_string(hours));
-            string minuteString(to_string(minutes));
-            string secondString(to_string(seconds));
+            std::string hourString(std::to_string(hours));
+            std::string minuteString(std::to_string(minutes));
+            std::string secondString(std::to_string(seconds));
 
             if(hourString.length() == 1)
                 hourString.insert(0, "0");
@@ -131,11 +127,9 @@ void MainWindow::updateData(dataPoint p)
             int rseconds = seconds * 100;
             seconds = rseconds/100;
 
-            using namespace std;
-
-            string hourString(to_string(hours));
-            string minuteString(to_string(minutes));
-            string secondString(to_string(seconds));
+            std::string hourString(std::to_string(hours));
+            std::string minuteString(std::to_string(minutes));
+            std::string secondString(std::to_string(seconds));
 
             if(hourString.length() == 1)
                 hourString.insert(0, "0");
@@ -158,11 +152,9 @@ void MainWindow::updateData(dataPoint p)
             int rseconds = seconds * 100;
             seconds = rseconds/100;
 
-            using namespace std;
-
-            string hourString(to_string(hours));
-            string minuteString(to_string(minutes));
-            string secondString(to_string(seconds));
+            std::string hourString(std::to_string(hours));
+            std::string minuteString(std::to_string(minutes));
+            std::string secondString(std::to_string(seconds));
 
             if(hourString.length() == 1)
                 hourString.insert(0, "0");

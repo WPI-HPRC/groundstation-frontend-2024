@@ -927,11 +927,9 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         int rseconds = seconds * 100;
         seconds = rseconds/100.0;
 
-        using namespace std;
-
-        string hourString(to_string(hours));
-        string minuteString(to_string(minutes));
-        string secondString(to_string(seconds));
+        std::string hourString(std::to_string(hours));
+        std::string minuteString(std::to_string(minutes));
+        std::string secondString(std::to_string(seconds));
 
         if(hourString.length() == 1)
             hourString.insert(0, "0");
@@ -940,7 +938,7 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         if(secondString.at(1) == *".")
             secondString.insert(0, "0");
         secondString = secondString.substr(0, 5);
-        string timeString = "Ground Time: T + " + hourString + ":" + minuteString + ":" + secondString;
+        std::string timeString = "Ground Time: T + " + hourString + ":" + minuteString + ":" + secondString;
         p->drawText(w->rect().adjusted(0,0,0,w->rect().height()/-2.0), QString::fromStdString(timeString));
 
         // rocket internal time //
@@ -955,11 +953,9 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         rseconds = seconds * 100;
         seconds = rseconds/100.0;
 
-        using namespace std;
-
-        string hourString2(to_string(hours));
-        string minuteString2(to_string(minutes));
-        string secondString2(to_string(seconds));
+        std::string hourString2(std::to_string(hours));
+        std::string minuteString2(std::to_string(minutes));
+        std::string secondString2(std::to_string(seconds));
 
         if(hourString2.length() == 1)
             hourString2.insert(0, "0");
@@ -968,7 +964,7 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         if(secondString2.at(1) == *".")
             secondString2.insert(0, "0");
         secondString2 = secondString2.substr(0, 5);
-        string timeString2 = "Rocket Time: T + " + hourString2 + ":" + minuteString2 + ":" + secondString2;
+        std::string timeString2 = "Rocket Time: T + " + hourString2 + ":" + minuteString2 + ":" + secondString2;
         p->drawText(w->rect().adjusted(0,w->rect().height()/2.0, 0, 0), QString::fromStdString(timeString2));
     } else if(w->getDataType() == hprcDisplayWidget::HPRC_UTC){
 
