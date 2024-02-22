@@ -140,8 +140,8 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w, "Servo 1", m_latest->payloadServo1Position, m_latest->desiredPayloadServo1Position, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
-    drawServoStatusServo(p, w, "Servo 2", m_latest->payloadServo2Position, m_latest->desiredPayloadServo2Position, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", m_latest->p_actualServoPos2, m_latest->p_desiredServoPos2, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
 }
 
 HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin, double scaleMax, bool enableEndZeroPoints, bool enablePolygonTransformationRendering, int* startIndex, QPolygonF* polygon)
@@ -401,8 +401,8 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     std::string altitudeText;
     std::string descentRateText;
     if(m_latest->state == MainWindow::RocketState::DROGUE_DESCENT && m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
-        altitudeText = "Altitude: " + std::to_string((int) round(m_latest->altitude)) + " [m]";
-        descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->velocity)) + " [m/s]";
+        altitudeText = "Altitude: " + std::to_string((int) round(m_latest->p_altitude)) + " [m]";
+        descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->p_velZ)) + " [m/s]";
     } else {
         altitudeText = "Altitude: X [m]";
         descentRateText = "Vertical Speed: X [m/s]";

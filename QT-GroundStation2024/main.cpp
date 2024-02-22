@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     debugWindow.showMaximized();
     mainWindow.showMaximized();
     rocketWindow.showMaximized();
-    payloadWindow.showMaximized();
+//    payloadWindow.showMaximized();
 
     mainWindow.update();
     rocketWindow.update();

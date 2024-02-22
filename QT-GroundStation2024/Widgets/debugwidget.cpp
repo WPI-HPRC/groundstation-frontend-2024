@@ -128,7 +128,7 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
 
     w->drawData("Accel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Accel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Accel Z", QString::asprintf("%0.4f", m_latest->acceleration), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Accel Z", QString::asprintf("%0.4f", m_latest->accelZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex++;
 
@@ -159,7 +159,7 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
 
     w->drawData("Vel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Vel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-    w->drawData("Vel Z", QString::asprintf("%0.4f", m_latest->velocity), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Vel Z", QString::asprintf("%0.4f", m_latest->velZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
 
 

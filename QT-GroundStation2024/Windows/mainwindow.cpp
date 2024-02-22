@@ -39,17 +39,17 @@ void MainWindow::updateData(dataPoint p)
 //    return;
 #endif
 
-    if(p.acceleration != m_currentData.acceleration)
+    if(p.accelZ != m_currentData.accelZ)
     {
-        m_currentData.acceleration = p.acceleration;
+        m_currentData.accelZ = p.accelZ;
 
-        emit accUpdated(p.acceleration);
+        emit accUpdated(p.accelZ);
 
     }
-    if(p.velocity != m_currentData.velocity)
+    if(p.velZ != m_currentData.velZ)
     {
-        m_currentData.velocity = p.velocity;
-        emit velUpdated(p.velocity);
+        m_currentData.velZ = p.velZ;
+        emit velUpdated(p.velZ);
     }
     if(p.altitude != m_currentData.altitude)
     {
@@ -197,11 +197,11 @@ void MainWindow::updateData(dataPoint p)
 
         m_currentData.rocketTime = p.rocketTime;
         graphPointCirularBufferAdd(m_currentData.accData, GraphPoint {
-                                                              .value = p.acceleration,
+                                                              .value = p.accelZ,
                                                               .time = p.rocketTime
                                                           });
         graphPointCirularBufferAdd(m_currentData.velData, GraphPoint {
-                                                              .value = p.velocity,
+                                                              .value = p.velZ,
                                                               .time = p.rocketTime
                                                           });
         graphPointCirularBufferAdd(m_currentData.altData, GraphPoint {
@@ -210,10 +210,10 @@ void MainWindow::updateData(dataPoint p)
                                                           });
 
 
-        m_currentData.accData1.append(graphPoint {p.acceleration, p.rocketTime});
+        m_currentData.accData1.append(graphPoint {p.accelZ, p.rocketTime});
         while(m_currentData.accData1.first().time < p.rocketTime - dataDeletionTime)
             m_currentData.accData1.removeFirst();
-        m_currentData.velData1.append(graphPoint {p.velocity, p.rocketTime});
+        m_currentData.velData1.append(graphPoint {p.velZ, p.rocketTime});
         while(m_currentData.velData1.first().time < p.rocketTime - dataDeletionTime)
             m_currentData.velData1.removeFirst();
         m_currentData.altData1.append(graphPoint {p.altitude, p.rocketTime});
@@ -253,19 +253,19 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.gyroZ = p.gyroZ;
         emit gyroUpdated();
     }
-    if(p.payloadServo1Position != m_currentData.payloadServo1Position) {
-        m_currentData.payloadServo1Position = p.payloadServo1Position;
-        emit payloadServo1PositionUpdated(p.payloadServo1Position);
+    if(p.p_actualServoPos1 != m_currentData.p_actualServoPos1) {
+        m_currentData.p_actualServoPos1 = p.p_actualServoPos1;
+        emit payloadServo1PositionUpdated(p.p_actualServoPos1);
     }
-    if(p.payloadServo2Position != m_currentData.payloadServo2Position) {
-        m_currentData.payloadServo2Position = p.payloadServo2Position;
+    if(p.p_actualServoPos2 != m_currentData.p_actualServoPos2) {
+        m_currentData.p_actualServoPos2 = p.p_actualServoPos2;
     }
-    if(p.desiredPayloadServo1Position != m_currentData.desiredPayloadServo1Position) {
-        m_currentData.desiredPayloadServo1Position = p.desiredPayloadServo1Position;
-        emit desiredPayloadServo1PositionUpdated(p.desiredPayloadServo1Position);
+    if(p.p_desiredServoPos1 != m_currentData.p_desiredServoPos1) {
+        m_currentData.p_desiredServoPos1 = p.p_desiredServoPos1;
+        emit desiredPayloadServo1PositionUpdated(p.p_desiredServoPos1);
     }
-    if(p.desiredPayloadServo2Position != m_currentData.desiredPayloadServo2Position) {
-        m_currentData.desiredPayloadServo2Position = p.desiredPayloadServo2Position;
+    if(p.p_desiredServoPos2 != m_currentData.p_desiredServoPos2) {
+        m_currentData.p_desiredServoPos2 = p.p_desiredServoPos2;
     }
 
     if(p.payloadBatteryVoltage != m_currentData.payloadBatteryVoltage) {
@@ -311,7 +311,6 @@ void MainWindow::updateData(dataPoint p)
     }
 
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
-    emit gpsLockUpdated();
 }
 
 void MainWindow::update()
