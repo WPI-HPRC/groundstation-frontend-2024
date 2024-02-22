@@ -25,17 +25,17 @@ debugWidget::debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
         "Pressure",
         "Altitude",
 
-        "Accel X"
-        "Accel Y"
-        "Accel Z"
+        "Accel X",
+        "Accel Y",
+        "Accel Z",
 
-        "Gyro X"
-        "Gyro Y"
-        "Gyro Z"
+        "Gyro X",
+        "Gyro Y",
+        "Gyro Z",
 
-        "Mag X"
-        "Mag Y"
-        "Mag Z"
+        "Mag X",
+        "Mag Y",
+        "Mag Z",
 
         "i",
         "j",
@@ -54,7 +54,7 @@ debugWidget::debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
     for (QString& name: dataNames)
     {
         textItems->insert(name, new BetterQGraphicsTextItem(this->geometry(), Qt::AlignLeft | Qt::AlignVCenter, "0"));
-        textItems->insert(name + " Label", new BetterQGraphicsTextItem(this->geometry(), Qt::AlignLeft | Qt::AlignVCenter, name + ": "));
+        textItems->insert(name + " Label", new BetterQGraphicsTextItem(this->geometry(), Qt::AlignRight | Qt::AlignVCenter, name + ": "));
 
         textItems->value(name + " Label")->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
@@ -71,10 +71,13 @@ debugWidget::debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
         }
 }
 
-void debugWidget::updateSize()
+void debugWidget::drawData(QString dataName, QString dataString, int xIndex, int yIndex, QRectF drawBox, float itemSpacing, float textItemWidth, float textItemHeight)
 {
-//    setGeometry(parent->geometry());
-//    this->setGeometry(parent->geometry());
+    textItems->value(dataName)->setPlainText(dataString);
+    textItems->value(dataName)->geometry = QRect(drawBox.left() + (xIndex + 1) * (textItemWidth + itemSpacing), drawBox.top() + yIndex * (textItemHeight + itemSpacing), textItemWidth, textItemHeight);
+    textItems->value(dataName + " Label")->geometry = QRect(drawBox.left() + xIndex * (textItemWidth + itemSpacing), drawBox.top() + yIndex * (textItemHeight + itemSpacing), textItemWidth, textItemHeight);
+    textItems->value(dataName + " Label")->show();
+    textItems->value(dataName)->show();
 }
 
 void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
@@ -82,41 +85,83 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
     w->graphicsView->setSceneRect(w->layout()->geometry());
     w->graphicsView->viewport()->update();
 
-    m_widgetMedium.setPointSize(w->width() / 40);
+    m_widgetMedium.setPointSize(w->width() / 70);
 
     float padding = fminf(w->geometry().width(), w->geometry().height()) * 0.05;
 
     QRectF drawBox = w->geometry().adjusted(padding, padding, -padding, -padding);
 
-    float textItemWidth = drawBox.width() / 5;
-    float textItemHeight = drawBox.height() / 10;
+    float textItemWidth = drawBox.width() / 7;
+    float textItemHeight = drawBox.height() / 20;
     float itemSpacing = fminf(w->geometry().width(), w->geometry().height()) * 0.02;
 
-    for(BetterQGraphicsTextItem *textItem : w->textItems->values())
+    BetterQGraphicsTextItem *textItem;
+    for (auto [key, value] : w->textItems->asKeyValueRange())
     {
-        textItem->setDefaultTextColor(m_textBrush.color());
-        textItem->setFont(m_widgetMedium);
-        textItem->hide();
+        value->setDefaultTextColor(m_textBrush.color());
+        value->setFont(m_widgetMedium);
+        value->hide();
     }
 
+    int yIndex = 0;
+    int xIndex = 0;
 
-    w->textItems->value("Epoch Time")->setPlainText(QString::asprintf("%d", m_latest->epochTime));
-    w->textItems->value("Epoch Time")->geometry = QRect(drawBox.left() + textItemWidth + itemSpacing, drawBox.top(), textItemWidth, textItemHeight);
-    w->textItems->value("Epoch Time Label")->geometry = QRect(drawBox.left(), drawBox.top(), textItemWidth, textItemHeight);
-    w->textItems->value("Epoch Time Label")->show();
-    w->textItems->value("Epoch Time")->show();
+    w->drawData("Epoch Time", QString::asprintf("%d", m_latest->epochTime), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Timestamp", QString::asprintf("%0.0f", m_latest->rocketTime), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("State", QString::asprintf("%d", m_latest->state), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
-    w->textItems->value("Timestamp")->setPlainText(QString::asprintf("%0.0f", m_latest->rocketTime));
-    w->textItems->value("Timestamp")->geometry = QRect(drawBox.left() + textItemWidth + itemSpacing, drawBox.top() + textItemHeight + itemSpacing, textItemWidth, textItemHeight);
-    w->textItems->value("Timestamp Label")->geometry = QRect(drawBox.left(), drawBox.top() + textItemHeight + itemSpacing, textItemWidth, textItemHeight);
-    w->textItems->value("Timestamp")->show();
-    w->textItems->value("Timestamp Label")->show();
+    yIndex++;
 
-    w->textItems->value("GPS Lock")->setPlainText(m_latest -> gpsLock ? "YES" : "NO");
-    w->textItems->value("GPS Lock")->geometry = QRect(drawBox.left() + 3 * (textItemWidth + itemSpacing), drawBox.top() + 0 * (textItemHeight + itemSpacing), textItemWidth, textItemHeight);
-    w->textItems->value("GPS Lock Label")->geometry = QRect(drawBox.left() + 2 * (textItemWidth + itemSpacing), drawBox.top() + 0 * (textItemHeight + itemSpacing), textItemWidth, textItemHeight);
-    w->textItems->value("GPS Lock")->show();
-    w->textItems->value("GPS Lock Label")->show();
+    w->drawData("GPS Lock", m_latest -> gpsLock ? "YES" : "NO", xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Satellites", QString::asprintf("%d", m_latest->numSatellites), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Lat", QString::asprintf("%0.4f", m_latest->p_gpsLat), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Long", QString::asprintf("%0.4f", m_latest->p_gpsLong), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Alt MSL", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("GPS Alt AGL", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex++;
+
+    w->drawData("Pressure", QString::asprintf("%0.4f", m_latest->pressure), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Altitude", QString::asprintf("%0.4f", m_latest->altitude), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex = 0;
+    xIndex = 2;
+
+    w->drawData("Accel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Accel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Accel Z", QString::asprintf("%0.4f", m_latest->acceleration), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex++;
+
+    w->drawData("Gyro X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Gyro Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Gyro Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex++;
+
+    w->drawData("Mag X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Mag Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Mag Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex = 0;
+    xIndex = 4;
+    w->drawData("i", QString::asprintf("%0.4f", m_latest->i), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("j", QString::asprintf("%0.4f", m_latest->j), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("k", QString::asprintf("%0.4f", m_latest->k), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("w", QString::asprintf("%0.4f", m_latest->w), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex++;
+
+    w->drawData("Pos X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Pos Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Pos Z", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
+    yIndex++;
+
+    w->drawData("Vel X", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Vel Y", QString::asprintf("NOT IMPLEMENTED"), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Vel Z", QString::asprintf("%0.4f", m_latest->velocity), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+
 
 
 }

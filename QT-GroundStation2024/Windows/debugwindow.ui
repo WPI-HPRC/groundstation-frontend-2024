@@ -7,33 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>24</width>
-    <height>24</height>
+    <height>34</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Rocket Debug Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-        <widget class="debugWidget" name="widget" native="true">
-            <property name="geometry">
-            <rect>
-            <x>10</x>
-            <y>10</y>
-            <width>120</width>
-            <height>80</height>
-            </rect>
-            </property>
-            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-            </sizepolicy>
-            </property>
-        </widget>
+     <widget class="debugWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
-    </layout>
+   </layout>
   </widget>
  </widget>
  <customwidgets>

@@ -40,7 +40,7 @@ public:
         HPRC_PayloadMap,
         HPRC_PayloadAttitude,
         HPRC_PayloadBatteryVoltage,
-        HPRC_GpsLock
+        HPRC_GpsLock,
         HPRC_DebugWidget
     };
 

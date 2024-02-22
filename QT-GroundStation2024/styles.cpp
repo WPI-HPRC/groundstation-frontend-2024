@@ -94,8 +94,10 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                 return;
             case hprcDisplayWidget::HPRC_GpsLock:
                 m_drawer->drawHprcGpsLockIndicator(painter, (hprcGpsLockIndicator *)w);
+                return;
             case hprcDisplayWidget::HPRC_DebugWidget:
                 m_drawer->drawDebugWidget(painter, (debugWidget *)w);
+                return;
             default:
                 return;
             }
