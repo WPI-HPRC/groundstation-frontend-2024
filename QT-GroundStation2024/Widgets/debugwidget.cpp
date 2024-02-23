@@ -160,7 +160,4 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
     w->drawData("Vel X", QString::asprintf("%0.4f", m_latest->velX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Vel Y", QString::asprintf("%0.4f", m_latest->velY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Vel Z", QString::asprintf("%0.4f", m_latest->velZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
-
-
-
 }

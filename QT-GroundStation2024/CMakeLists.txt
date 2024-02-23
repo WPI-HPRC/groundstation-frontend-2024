@@ -55,6 +55,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Windows/debugwindow.h Windows/debugwindow.cpp
         Windows/debugwindow.ui
         Widgets/debugwidget.h Widgets/debugwidget.cpp
+        Windows/p_debugwindow.ui
+        Widgets/p_debugwidget.h Widgets/p_debugwidget.cpp
+        Windows/p_debugwindow.h Windows/p_debugwindow.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT-GroundStation2024 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

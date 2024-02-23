@@ -9,6 +9,7 @@
 #include "Windows/mainwindow.h"
 #include "Widgets/hprctimeline.h"
 #include "Widgets/debugwidget.h"
+#include "Widgets/p_debugwidget.h"
 
 #define TOOLTIP_WIDTH 50
 #define TOOLTIP_WIDTH_HALF 25
@@ -90,6 +91,8 @@ public:
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
     void drawHprcGpsLockIndicator(QPainter *p, const hprcGpsLockIndicator *w);
     void drawDebugWidget(QPainter *p, debugWidget *w);
+    void drawp_DebugWidget(QPainter *p, p_debugWidget *w);
+
 
 
     QBrush m_backgroundBrush;

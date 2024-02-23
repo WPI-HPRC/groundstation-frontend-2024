@@ -39,6 +39,8 @@ void MainWindow::updateData(dataPoint p)
 //    return;
 #endif
 
+//    m_currentData = p;
+
     if(p.accelZ != m_currentData.accelZ)
     {
         m_currentData.accelZ = p.accelZ;
@@ -310,6 +312,105 @@ void MainWindow::updateData(dataPoint p)
         m_currentData.pressure = p.pressure;
     }
 
+    /*
+    m_currentData.groundTime = p.groundTime;
+    m_currentData.epochTime = p.epochTime;
+    m_currentData.rocketTime = p.rocketTime;
+    m_currentData.rocketTimeSinceLaunch = p.rocketTimeSinceLaunch;
+    m_currentData.state = p.state;
+
+    m_currentData.gpsLock = p.gpsLock;
+    m_currentData.numSatellites = p.numSatellites;
+    m_currentData.gpsLat = p.gpsLat;
+    m_currentData.gpsLong = p.gpsLong;
+    m_currentData.gpsAltMSL = p.gpsAltMSL;
+    m_currentData.gpsAltAGL = p.gpsAltAGL;
+
+    m_currentData.pressure = p.pressure;
+    m_currentData.altitude = p.altitude;
+
+    m_currentData.accelX = p.accelX;
+    m_currentData.accelY = p.accelY;
+    m_currentData.accelZ = p.accelZ;
+    m_currentData.gyroX = p.gyroX;
+    m_currentData.gyroY = p.gyroY;
+    m_currentData.gyroZ = p.gyroZ;
+    m_currentData.magX = p.magX;
+    m_currentData.magY = p.magY;
+    m_currentData.magZ = p.magZ;
+    m_currentData.i = p.i;
+    m_currentData.j = p.j;
+    m_currentData.k = p.k;
+    m_currentData.w = p.w;
+    m_currentData.orientation = p.orientation;
+    m_currentData.posX = p.posX;
+    m_currentData.posY = p.posY;
+    m_currentData.posZ = p.posZ;
+    m_currentData.velX = p.velX;
+    m_currentData.velY = p.velY;
+    m_currentData.velZ = p.velZ;
+
+    m_currentData.desiredAirbrakes = p.desiredAirbrakes;
+    m_currentData.currentAirbrakes = p.currentAirbrakes;
+
+    m_currentData.p_groundTime = p.p_groundTime;
+    m_currentData.p_epochTime = p.p_epochTime;
+    m_currentData.p_rocketTime = p.p_rocketTime;
+    m_currentData.p_rocketTimeSinceLaunch = p.p_rocketTimeSinceLaunch;
+    m_currentData.p_state = p.p_state;
+
+    m_currentData.p_gpsLock = p.p_gpsLock;
+    m_currentData.p_numSatellites = p.p_numSatellites;
+    m_currentData.p_gpsLat = p.p_gpsLat;
+    m_currentData.p_gpsLong = p.p_gpsLong;
+    m_currentData.p_gpsAltMSL = p.p_gpsAltMSL;
+    m_currentData.p_gpsAltAGL = p.p_gpsAltAGL;
+
+    m_currentData.p_pressure = p.p_pressure;
+    m_currentData.p_altitude = p.p_altitude;
+
+    m_currentData.p_accelX = p.p_accelX;
+    m_currentData.p_accelY = p.p_accelY;
+    m_currentData.p_accelZ = p.p_accelZ;
+    m_currentData.p_gyroX = p.p_gyroX;
+    m_currentData.p_gyroY = p.p_gyroY;
+    m_currentData.p_gyroZ = p.p_gyroZ;
+    m_currentData.p_magX = p.p_magX;
+    m_currentData.p_magY = p.p_magY;
+    m_currentData.p_magZ = p.p_magZ;
+    m_currentData.p_i = p.p_i;
+    m_currentData.p_j = p.p_j;
+    m_currentData.p_k = p.p_k;
+    m_currentData.p_w = p.p_w;
+    m_currentData.p_orientation = p.p_orientation;
+    m_currentData.p_posX = p.p_posX;
+    m_currentData.p_posY = p.p_posY;
+    m_currentData.p_posZ = p.p_posZ;
+    m_currentData.p_velX = p.p_velX;
+    m_currentData.p_velY = p.p_velY;
+    m_currentData.p_velZ = p.p_velZ;
+
+    m_currentData.p_cx = p.p_cx;
+    m_currentData.p_cy = p.p_cy;
+    m_currentData.p_targetGpsLat = p.p_targetGpsLat;
+    m_currentData.p_targetGpsLong = p.p_targetGpsLong;
+
+    m_currentData.p_actualServoPos1 = p.p_actualServoPos1;
+    m_currentData.p_desiredServoPos1 = p.p_desiredServoPos1;
+    m_currentData.p_actualServoPos2 = p.p_actualServoPos2;
+    m_currentData.p_desiredServoPos2 = p.p_desiredServoPos2;
+    m_currentData.p_actualServoPos3 = p.p_actualServoPos3;
+    m_currentData.p_desiredServoPos3 = p.p_desiredServoPos3;
+    m_currentData.p_actualServoPos4 = p.p_actualServoPos4;
+    m_currentData.p_desiredServoPos4 = p.p_desiredServoPos4;
+    m_currentData.payloadBatteryVoltage = p.payloadBatteryVoltage;
+
+    m_currentData.p_trajA = p.p_trajA;
+    m_currentData.p_trajB = p.p_trajB;
+    m_currentData.p_trajC = p.p_trajC;
+    m_currentData.p_trajD = p.p_trajD;
+*/
+
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
 
@@ -327,6 +428,7 @@ void MainWindow::update()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
+
     // Attempt to parse the string as JSON
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8());
 
@@ -342,7 +444,11 @@ void MainWindow::onTextMessageReceived(QString message)
             // Check if the element name is in the map
             if (elementMap.contains(elementName)) {
                 // Use the conversion function to update the struct member
-                elementMap[elementName](m_dataBuffer, elementValue.toString());
+                elementMap[elementName](m_dataBuffer, elementValue);
+            }
+            else
+            {
+                qDebug() << "Key not recognized: " << elementName;
             }
             // Handle other cases if needed
         }

@@ -98,6 +98,9 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
             case hprcDisplayWidget::HPRC_DebugWidget:
                 m_drawer->drawDebugWidget(painter, (debugWidget *)w);
                 return;
+            case hprcDisplayWidget::HPRC_p_DebugWidget:
+                m_drawer->drawp_DebugWidget(painter, (p_debugWidget *)w);
+                return;
             default:
                 return;
             }

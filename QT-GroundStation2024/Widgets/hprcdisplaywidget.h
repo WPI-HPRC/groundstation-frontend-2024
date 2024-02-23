@@ -41,7 +41,8 @@ public:
         HPRC_PayloadAttitude,
         HPRC_PayloadBatteryVoltage,
         HPRC_GpsLock,
-        HPRC_DebugWidget
+        HPRC_DebugWidget,
+        HPRC_p_DebugWidget
     };
 
     enum hprcDataType // TODO

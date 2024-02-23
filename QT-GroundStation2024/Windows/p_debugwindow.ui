@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DebugWindow</class>
- <widget class="QMainWindow" name="DebugWindow">
+ <class>p_DebugWindow</class>
+ <widget class="QMainWindow" name="p_DebugWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>128</width>
-    <height>65</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Rocket Debug Window</string>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_-2">
     <item>
-     <widget class="debugWidget" name="widget" native="true"/>
+     <widget class="p_debugWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>debugWidget</class>
+   <class>p_debugWidget</class>
    <extends>QWidget</extends>
-   <header>Widgets/debugwidget.h</header>
+   <header>Widgets/p_debugwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
