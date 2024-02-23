@@ -78,41 +78,41 @@ public:
         float p_rocketTimeSinceLaunch = 0;
         int p_state = 0;
 
-        bool p_gpsLock;
-        int p_numSatellites;
-        float p_gpsLat, p_gpsLong;
-        float p_gpsAltMSL, p_gpsAltAGL;
+        bool p_gpsLock = 0;
+        int p_numSatellites = 0;
+        float p_gpsLat = 0, p_gpsLong = 0;
+        float p_gpsAltMSL = 0, p_gpsAltAGL = 0;
 
-        float p_pressure;
-        float p_altitude;
+        float p_pressure = 0;
+        float p_altitude = 0;
 
-        float p_accelX, p_accelY, p_accelZ;
-        float p_gyroX, p_gyroY, p_gyroZ;
-        float p_magX, p_magY,p_magZ;
-        float p_i, p_j, p_k, p_w;
+        float p_accelX = 0, p_accelY = 0, p_accelZ = 0;
+        float p_gyroX = 0, p_gyroY = 0, p_gyroZ = 0;
+        float p_magX = 0, p_magY = 0,p_magZ = 0;
+        float p_i = 0, p_j = 0, p_k = 0, p_w = 0;
         QQuaternion p_orientation;
-        float p_posX, p_posY, p_posZ;
-        float p_velX, p_velY, p_velZ;
+        float p_posX = 0, p_posY = 0, p_posZ = 0;
+        float p_velX = 0, p_velY = 0, p_velZ = 0;
 
-        uint32_t p_cx;
-        uint32_t p_cy;
-        float p_targetGpsLat; //Target Point GPS Estimations
-        float p_targetGpsLong;
+        uint32_t p_cx = 0;
+        uint32_t p_cy = 0;
+        float p_targetGpsLat = 0; //Target Point GPS Estimations
+        float p_targetGpsLong = 0;
 
-        float p_actualServoPos1;
-        float p_desiredServoPos1;
-        float p_actualServoPos2;
-        float p_desiredServoPos2;
-        float p_actualServoPos3;
-        float p_desiredServoPos3;
-        float p_actualServoPos4;
-        float p_desiredServoPos4;
-        float payloadBatteryVoltage;
+        float p_actualServoPos1 = 0;
+        float p_desiredServoPos1 = 0;
+        float p_actualServoPos2 = 0;
+        float p_desiredServoPos2 = 0;
+        float p_actualServoPos3 = 0;
+        float p_desiredServoPos3 = 0;
+        float p_actualServoPos4 = 0;
+        float p_desiredServoPos4 = 0;
+        float payloadBatteryVoltage = 0;
 
-        float p_trajA;
-        float p_trajB;
-        float p_trajC;
-        float p_trajD;
+        float p_trajA = 0;
+        float p_trajB = 0;
+        float p_trajC = 0;
+        float p_trajD = 0;
 
     };
 
