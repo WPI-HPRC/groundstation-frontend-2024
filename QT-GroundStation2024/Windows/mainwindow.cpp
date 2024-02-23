@@ -297,12 +297,12 @@ void MainWindow::updateData(dataPoint p) {
     if (p.epochTime != m_currentData.epochTime) {
         m_currentData.epochTime = p.epochTime;
     }
-    \
+
     if (p.pressure != m_currentData.pressure) {
         m_currentData.pressure = p.pressure;
     }
 
-    /*
+
     m_currentData.groundTime = p.groundTime;
     m_currentData.epochTime = p.epochTime;
     m_currentData.rocketTime = p.rocketTime;
@@ -399,7 +399,6 @@ void MainWindow::updateData(dataPoint p) {
     m_currentData.p_trajB = p.p_trajB;
     m_currentData.p_trajC = p.p_trajC;
     m_currentData.p_trajD = p.p_trajD;
-*/
 
     emit tick(); // for anything that should update at max speed; example would be a flashing light that can track its own alternating pattern or internal clock
 }
@@ -426,6 +425,8 @@ void MainWindow::onTextMessageReceived(QString message) {
         for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it) {
             QString elementName = it.key();
             QJsonValue elementValue = it.value();
+
+
 
             // Check if the element name is in the map
             if (elementMap.contains(elementName)) {
