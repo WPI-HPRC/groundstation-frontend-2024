@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>266</width>
-    <height>144</height>
+    <width>696</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,21 +38,40 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QFrame" name="frame_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QVBoxLayout" name="verticalLayout">
              <item>
-              <widget class="hprcUTCClock" name="clockUTC" native="true"/>
+              <widget class="hprcUTCClock" name="clockUTC" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
           </item>
           <item>
            <widget class="QFrame" name="mTime">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -62,6 +81,27 @@
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
               <widget class="hprcMETClock" name="clockMET" native="true"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="serverConnectionIndicator" name="widget_2" native="true"/>
              </item>
             </layout>
            </widget>
@@ -190,6 +230,12 @@
    <class>hprcGpsLockIndicator</class>
    <extends>QWidget</extends>
    <header>Widgets/hprcgpslockindicator.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>serverConnectionIndicator</class>
+   <extends>QWidget</extends>
+   <header>Widgets/serverConnectionIndicator.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -42,6 +42,7 @@ signals:
     void open(QUrl);
     void closeTheSocket(QWebSocketProtocol::CloseCode,QString);
     void ping(QByteArray);
+    void socketStateChanged(QAbstractSocket::SocketState state);
 };
 
 #endif // HPRCWEBSOCKET_H
