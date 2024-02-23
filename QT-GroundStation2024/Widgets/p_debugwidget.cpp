@@ -63,11 +63,9 @@ p_debugWidget::p_debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
 
     m_widgetType = HPRC_p_DebugWidget;
 
-    foreach (QWidget *w, qApp->topLevelWidgets())
-        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
-        {
-            connect(mainWin, SIGNAL(tick()), this, SLOT(repaint()));
-        }
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(repaint()));
+    timer->start(500);
 }
 
 void p_debugWidget::drawData(QString dataName, QString dataString, int xIndex, int yIndex, QRectF drawBox, float itemSpacing, float textItemWidth, float textItemHeight)

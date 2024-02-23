@@ -428,7 +428,6 @@ void MainWindow::update()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
-
     // Attempt to parse the string as JSON
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8());
 

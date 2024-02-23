@@ -311,12 +311,9 @@ hprcPayloadMap::hprcPayloadMap(QWidget *parent) :
     setLayout(layout);
 
     // Connect each instance of the widget to the payload update signal
-    foreach (QWidget *w, qApp->topLevelWidgets())
-        if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))
-        {
-            connect(mainWin, SIGNAL(p_gpsPointUpdated(float,float)), this, SLOT(repaint()));
-            connect(mainWin, SIGNAL(p_targetGpsPointUpdated(float,float)), this, SLOT(repaint()));
-        }
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(repaint()));
+    timer->start(2000);
 }
 
 Qt3DCore::QEntity *createRocketScene();

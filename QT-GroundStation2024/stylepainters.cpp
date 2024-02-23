@@ -672,6 +672,10 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     std::vector<float> vec = m_AttitudeCircleLocationsDegrees[m_latest->state];
 
+    if(vec.empty())
+        qDebug() << "Couldn't draw attitude widget for state" << m_latest->state;
+        return;
+
     bool rocketIsWithinGraph = pitch * pitch + yaw * yaw < vec.back() * vec.back();
 
     std::reverse(vec.begin(), vec.end());

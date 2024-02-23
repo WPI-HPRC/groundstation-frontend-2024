@@ -20,30 +20,30 @@ int main(int argc, char *argv[])
 
     MainWindow mainWindow;
     RocketWindow rocketWindow;
-//    PayloadWindow payloadWindow;
-//    DebugWindow debugWindow;
-//    p_DebugWindow p_debugWindow;
+    PayloadWindow payloadWindow;
+    DebugWindow debugWindow;
+    p_DebugWindow p_debugWindow;
 
 
     application.setStyle(new HPRCDarkStyle(mainWindow.getCurrentData()));
 
     mainWindow.centralWidget()->setBackgroundRole(QPalette::Window);
     rocketWindow.centralWidget()->setBackgroundRole(QPalette::Window);
-//    payloadWindow.centralWidget()->setBackgroundRole(QPalette::Window);
-//    debugWindow.centralWidget()->setBackgroundRole(QPalette::Window);
-//    p_debugWindow.centralWidget()->setBackgroundRole(QPalette::Window);
+    payloadWindow.centralWidget()->setBackgroundRole(QPalette::Window);
+    debugWindow.centralWidget()->setBackgroundRole(QPalette::Window);
+    p_debugWindow.centralWidget()->setBackgroundRole(QPalette::Window);
 
     mainWindow.showMaximized();
     rocketWindow.showMaximized();
-    //    payloadWindow.showMaximized();
-//    p_debugWindow.showMaximized();
-//    debugWindow.showMaximized();
+    payloadWindow.showMaximized();
+    p_debugWindow.showMaximized();
+    debugWindow.showMaximized();
 
     mainWindow.update();
     rocketWindow.update();
-//    payloadWindow.update();
-//    debugWindow.update();
-//    p_debugWindow.update();
+    payloadWindow.update();
+    debugWindow.update();
+    p_debugWindow.update();
 
     int code = application.exec();
 
