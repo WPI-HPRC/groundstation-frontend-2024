@@ -426,8 +426,6 @@ void MainWindow::onTextMessageReceived(QString message) {
             QString elementName = it.key();
             QJsonValue elementValue = it.value();
 
-
-
             // Check if the element name is in the map
             if (elementMap.contains(elementName)) {
                 // Use the conversion function to update the struct member

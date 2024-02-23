@@ -25,8 +25,7 @@ std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapW;
 std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapA;
 
 
-HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
-{
+HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d) {
     QPalette widgetPalette = style->standardPalette();
     m_backgroundBrush = widgetPalette.brush(QPalette::Window);
     m_panelBrush = widgetPalette.brush(QPalette::Base);
@@ -51,8 +50,7 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d)
     m_latest = d;
 }
 
-void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w) {
     const QRect boundingBox = w->rect();
 
     p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
@@ -67,29 +65,37 @@ void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidg
     const float batteryWidth = boundingBox.width() / 4;
     const float batteryHeight = boundingBox.height() / 2;
     QList<QRect> batteryRects;
-    batteryRects.append(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 - batteryHeight / 2, batteryWidth, batteryHeight));
-    QRect* batteryRect = &batteryRects[0];
+    batteryRects.append(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 - batteryHeight / 2,
+                              batteryWidth, batteryHeight));
+    QRect *batteryRect = &batteryRects[0];
     const float leadWidth = batteryRect->width() / 4.0;
     const float leadHeight = batteryRect->height() / 8.0;
-    batteryRects.append(QRect(batteryRect->x() + batteryWidth / 2 - leadWidth / 2, batteryRect->y() - leadHeight, leadWidth, leadHeight));
+    batteryRects.append(
+            QRect(batteryRect->x() + batteryWidth / 2 - leadWidth / 2, batteryRect->y() - leadHeight, leadWidth,
+                  leadHeight));
 
     float batteryVoltage = m_latest->payloadBatteryVoltage;
 
     // Draw the current voltage
     QString valueString = QString::number(batteryVoltage, 'f', 2);
     //Make sure there are no trailing zeros
-    while(valueString.length() > 0 && valueString.back() == '0') {
+    while (valueString.length() > 0 && valueString.back() == '0') {
         valueString.remove(valueString.length() - 1, 1);
     }
-    if(valueString.back() == '.') {
+    if (valueString.back() == '.') {
         valueString.remove(valueString.length() - 1, 1);
     }
 
-    hprcPayloadBatteryVoltage* batteryWidget = (hprcPayloadBatteryVoltage*) p;
-    QBrush batteryBrush = batteryVoltage > batteryWidget->LOW_THRESHOLD ? QBrush(QColor(0, 255, 0)) : QBrush(QColor(255, 0, 0));
-    float batteryCharge = std::min(std::max((batteryVoltage - hprcPayloadBatteryVoltage::MIN_VOLTAGE) / (hprcPayloadBatteryVoltage::MAX_VOLTAGE - hprcPayloadBatteryVoltage::MIN_VOLTAGE), 0.0f), 1.0f);
+    hprcPayloadBatteryVoltage *batteryWidget = (hprcPayloadBatteryVoltage *) p;
+    QBrush batteryBrush =
+            batteryVoltage > batteryWidget->LOW_THRESHOLD ? QBrush(QColor(0, 255, 0)) : QBrush(QColor(255, 0, 0));
+    float batteryCharge = std::min(std::max((batteryVoltage - hprcPayloadBatteryVoltage::MIN_VOLTAGE) /
+                                            (hprcPayloadBatteryVoltage::MAX_VOLTAGE -
+                                             hprcPayloadBatteryVoltage::MIN_VOLTAGE), 0.0f), 1.0f);
     p->setPen(QPen(m_textBrush, 0));
-    p->fillRect(QRect(w->rect().width() / 2.0 - batteryWidth / 2, w->rect().height() / 2.0 + batteryHeight / 2 - batteryHeight * batteryCharge, batteryWidth, batteryHeight * batteryCharge), batteryBrush);
+    p->fillRect(QRect(w->rect().width() / 2.0 - batteryWidth / 2,
+                      w->rect().height() / 2.0 + batteryHeight / 2 - batteryHeight * batteryCharge, batteryWidth,
+                      batteryHeight * batteryCharge), batteryBrush);
 
     p->setPen(QPen(m_textBrush, boundingBox.width() / 100));
     p->drawText(boundingBox, Qt::AlignBottom | Qt::AlignHCenter, valueString + " V");
@@ -97,7 +103,8 @@ void HPRCStyle::drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidg
 }
 
 
-void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width) {
+void HPRCStyle::drawServoStatusServo(QPainter *p, const hprcDisplayWidget *w, QString title, int position,
+                                     int desiredPosition, float x, float width) {
     //Draw a happy servo picture
     p->setPen(QPen(m_textBrush, w->rect().width() / 200));
     p->setBrush(m_transparentBrush);
@@ -105,9 +112,11 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
     float servoRectHeight = w->rect().width() / 8;
     float servoRect2Width = servoRectHeight / 4;
     float yMargin = servoRectHeight * 1.75;
-    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, w->rect().bottom() - yMargin, servoRectWidth, servoRectHeight);
+    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, w->rect().bottom() - yMargin, servoRectWidth,
+                            servoRectHeight);
     p->drawRect(servoRect);
-    p->drawRect(QRect(servoRect.x() + servoRect.width() / 4, servoRect.top(), servoRect.width() / 12, -servoRect.width() / 4));
+    p->drawRect(QRect(servoRect.x() + servoRect.width() / 4, servoRect.top(), servoRect.width() / 12,
+                      -servoRect.width() / 4));
 
     float textMargin = w->rect().width() / 50;
 
@@ -140,12 +149,18 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 void HPRCStyle::drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
 
-    drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1, (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
-    drawServoStatusServo(p, w, "Servo 2", m_latest->p_actualServoPos2, m_latest->p_desiredServoPos2, w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1,
+                         (w->rect().center().x() - w->rect().x()) / 2, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", m_latest->p_actualServoPos2, m_latest->p_desiredServoPos2,
+                         w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2,
+                         w->rect().center().x() - w->rect().x());
 }
 
-HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint>* data, double range, double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin, double scaleMax, bool enableEndZeroPoints, bool enablePolygonTransformationRendering, int* startIndex, QPolygonF* polygon)
-{
+HPRCStyle::Range
+HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, QList<MainWindow::graphPoint> *data, double range,
+                            double start, const hprcDisplayWidget *w, bool drawTooltip, double scaleMin,
+                            double scaleMax, bool enableEndZeroPoints, bool enablePolygonTransformationRendering,
+                            int *startIndex, QPolygonF *polygon) {
     QBrush lightHighlighterBrush(QColor(255, 255, 255, 64));
 
     QPointF bottomPt = rect.bottomLeft();
@@ -161,8 +176,8 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
 
     double scale = fmax(1.0, scaleMax - scaleMin);
 
-    QRectF ptHighlight(-100,0,0,0);
-    QPointF highlighted(-100,0);
+    QRectF ptHighlight(-100, 0, 0, 0);
+    QPointF highlighted(-100, 0);
     QString ptLabel("");
 
     //Draw zero line
@@ -177,18 +192,18 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
     p->setFont(m_widgetLarge);
     QString minString = QString::number(scaleMin, 'f', 2);
     //Make sure there are no trailing zeros
-    while(minString.length() > 0 && minString.back() == '0') {
+    while (minString.length() > 0 && minString.back() == '0') {
         minString.remove(minString.length() - 1, 1);
     }
-    if(minString.back() == '.') {
+    if (minString.back() == '.') {
         minString.remove(minString.length() - 1, 1);
     }
     QString maxString = QString::number(scaleMax, 'f', 2);
     //Make sure there are no trailing zeros
-    while(maxString.length() > 0 && maxString.back() == '0') {
+    while (maxString.length() > 0 && maxString.back() == '0') {
         maxString.remove(maxString.length() - 1, 1);
     }
-    if(maxString.back() == '.') {
+    if (maxString.back() == '.') {
         maxString.remove(maxString.length() - 1, 1);
         p->drawText(QRect(rect.right() - 105, rect.bottom() - fontSize, 100, 100), Qt::AlignRight, minString);
         p->drawText(QRect(rect.right() - 105, rect.top() - fontSize, 100, 100), Qt::AlignRight, maxString);
@@ -198,21 +213,21 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
     p->setPen(QPen(bg, 3));
 
     //New things start here (polygon scaling idea)
-    if(enablePolygonTransformationRendering) {
+    if (enablePolygonTransformationRendering) {
         //Remove points that are off of the graph
-        while(0 < polygon->size() && (*polygon)[0].x() < start) {
+        while (0 < polygon->size() && (*polygon)[0].x() < start) {
             polygon->removeFirst();
         }
-        while(0 < data->size() && (*data)[0].time < start) {
+        while (0 < data->size() && (*data)[0].time < start) {
             data->removeFirst(); //This is removing data from the data array. This has a possiblity to affect something else if it is also using this data (but for now nothing else should be using the data)
         }
 
-        for(int i = *startIndex; i < data->size(); i ++) {
-            MainWindow::graphPoint* g = &(*data)[i];
+        for (int i = *startIndex; i < data->size(); i++) {
+            MainWindow::graphPoint *g = &(*data)[i];
 
             double valX = 0;
             double valY = 0;
-            if(valY < max)
+            if (valY < max)
                 max = valY;
             valX = g->time;
             valY = g->value;
@@ -225,23 +240,26 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
 
         //Set transformations for the polygon. Transformations need to be done seperately so they can build upon one another.
         QPolygonF transformedPolygon;
-        ((hprcPayloadGraph*) w)->transform.reset();
-        ((hprcPayloadGraph*) w)->transform.translate(-start, -scaleMin);
-        transformedPolygon = ((hprcPayloadGraph*) w)->transform.map(*polygon);
-        ((hprcPayloadGraph*) w)->transform.reset();
-        ((hprcPayloadGraph*) w)->transform.scale(-rect.width() / range, -(rect.height() * 0.97) / scale);
-        transformedPolygon = ((hprcPayloadGraph*) w)->transform.map(transformedPolygon);
-        ((hprcPayloadGraph*) w)->transform.reset();
-        ((hprcPayloadGraph*) w)->transform.translate(rect.right(), rect.bottom());
-        transformedPolygon = ((hprcPayloadGraph*) w)->transform.map(transformedPolygon);
+        ((hprcPayloadGraph *) w)->transform.reset();
+        ((hprcPayloadGraph *) w)->transform.translate(-start, -scaleMin);
+        transformedPolygon = ((hprcPayloadGraph *) w)->transform.map(*polygon);
+        ((hprcPayloadGraph *) w)->transform.reset();
+        ((hprcPayloadGraph *) w)->transform.scale(-rect.width() / range, -(rect.height() * 0.97) / scale);
+        transformedPolygon = ((hprcPayloadGraph *) w)->transform.map(transformedPolygon);
+        ((hprcPayloadGraph *) w)->transform.reset();
+        ((hprcPayloadGraph *) w)->transform.translate(rect.right(), rect.bottom());
+        transformedPolygon = ((hprcPayloadGraph *) w)->transform.map(transformedPolygon);
 
         gradient.setFinalStop(rect.topLeft());
-        if(enableEndZeroPoints) {
+        if (enableEndZeroPoints) {
             transformedPolygon << rect.bottomLeft();
             transformedPolygon << rect.bottomRight();
-        } else if(data->length() > 0) {
-            transformedPolygon << QPointF(-((*data)[data->length() - 1].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomRight().y());
-            transformedPolygon << QPointF(-((*data)[0].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomLeft().y());
+        } else if (data->length() > 0) {
+            transformedPolygon
+                    << QPointF(-((*data)[data->length() - 1].time - start) / (range) * (rect.width()) + rect.right(),
+                               rect.bottomRight().y());
+            transformedPolygon << QPointF(-((*data)[0].time - start) / (range) * (rect.width()) + rect.right(),
+                                          rect.bottomLeft().y());
         }
 
         p->setBrush(QBrush(gradient));
@@ -252,24 +270,25 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
     } else {
         //Will render all data points in the array normally if length of data is less than max points, otherwise will render max number of points evenly districuted throughout array
         float dataInterval = std::max((float) data->length() / hprcPayloadGraph::MAX_RENDERED_POINTS, (float) 1);
-        for(int i = 0; i < (data->length() > hprcPayloadGraph::MAX_RENDERED_POINTS ? hprcPayloadGraph::MAX_RENDERED_POINTS : data->length()); i ++)
-        {
-            MainWindow::graphPoint* g = &(*data)[floor(i * dataInterval)];
+        for (int i = 0; i <
+                        (data->length() > hprcPayloadGraph::MAX_RENDERED_POINTS ? hprcPayloadGraph::MAX_RENDERED_POINTS
+                                                                                : data->length()); i++) {
+            MainWindow::graphPoint *g = &(*data)[floor(i * dataInterval)];
 
             //Skip drawing data points until they are within the range of the graph
-            if(g->time < start) {
+            if (g->time < start) {
                 continue;
             }
 
             double valX = 0;
             double valY = 0;
-            if(valY < max)
+            if (valY < max)
                 max = valY;
             valX = -(g->time - start) / (range) * (rect.width()) + rect.right();
             valY = -((g->value - scaleMin) / scale) * (rect.height() * 0.97) + rect.bottom();
 
-            if(valX - w->m_mousePos.x() > (rect.width() / 2.0 / data->size()) && valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data->size()))
-            {
+            if (valX - w->m_mousePos.x() > (rect.width() / 2.0 / data->size()) &&
+                valX - w->m_mousePos.x() < -(rect.width() / 2.0 / data->size())) {
                 ptHighlight = QRectF(valX - 25, rect.top(), 50, rect.height());
                 ptLabel = QString::number(g->value);
                 highlighted = QPointF(valX, valY);
@@ -281,12 +300,15 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
         }
 
         gradient.setFinalStop(rect.topLeft());
-        if(enableEndZeroPoints) {
+        if (enableEndZeroPoints) {
             pointsToDraw.append(rect.bottomLeft());
             pointsToDraw.append(rect.bottomRight());
-        } else if(data->length() > 0) {
-            pointsToDraw.append(QPointF(-((*data)[data->length() - 1].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomRight().y()));
-            pointsToDraw.append(QPointF(-((*data)[0].time - start) / (range) * (rect.width()) + rect.right(), rect.bottomLeft().y()));
+        } else if (data->length() > 0) {
+            pointsToDraw.append(
+                    QPointF(-((*data)[data->length() - 1].time - start) / (range) * (rect.width()) + rect.right(),
+                            rect.bottomRight().y()));
+            pointsToDraw.append(QPointF(-((*data)[0].time - start) / (range) * (rect.width()) + rect.right(),
+                                        rect.bottomLeft().y()));
         }
 
         p->setBrush(QBrush(gradient));
@@ -295,8 +317,7 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
         p->setPen(QPen(m_highlightBrush, 3));
         p->setBrush(lightHighlighterBrush);
 
-        if(drawTooltip)
-        {
+        if (drawTooltip) {
             p->drawRect(ptHighlight);
             p->drawLine(highlighted.x(), rect.top(), highlighted.x(), rect.bottom());
 
@@ -313,9 +334,8 @@ HPRCStyle::Range HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg
     return Range{scaleMin, scaleMax};
 }
 
-void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
-{
-    hprcPayloadGraph* widget = (hprcPayloadGraph*) w;
+void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w) {
+    hprcPayloadGraph *widget = (hprcPayloadGraph *) w;
 
     p->setRenderHint(QPainter::Antialiasing);
     QPen textPen(m_textBrush, 3);
@@ -334,11 +354,11 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
                     Qt::AlignHCenter, QString::fromStdString("FPS: " + std::to_string(((hprcPayloadGraph*) w)->fps)));
     */
 
-    int width= w->rect().width();
+    int width = w->rect().width();
     int height = w->rect().height();
 
     double scaleF = 0.75;
-    double paddingRatio = (1-scaleF) / 2.0;
+    double paddingRatio = (1 - scaleF) / 2.0;
 
     int margin = fmin(paddingRatio * width, paddingRatio * height);
 
@@ -367,28 +387,31 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
 
     double range = 1000 * 200;
     double start = m_latest->altData1.length() > 0 ? m_latest->altData1[0].time : 0;
-    if(m_latest->altData1.length() > 1) {
+    if (m_latest->altData1.length() > 1) {
         double averageTimePerAltitude = 0;
         //Get average descent rate for past 10 seconds
         int initialDataPoint = m_latest->altData1.length() - 1;
         //Find index of data point from about 10 seconds ago
-        while(initialDataPoint > 0 && m_latest->rocketTime - m_latest->altData1[initialDataPoint].time < 10 * 1000) {
-            initialDataPoint --;
+        while (initialDataPoint > 0 && m_latest->rocketTime - m_latest->altData1[initialDataPoint].time < 10 * 1000) {
+            initialDataPoint--;
         }
         //Negative to counteract the fact that altitude decreases over time
-        averageTimePerAltitude = -(m_latest->altData1[m_latest->altData1.length() - 1].time - m_latest->altData1[initialDataPoint].time) / (m_latest->altData1[m_latest->altData1.length() - 1].value - m_latest->altData1[initialDataPoint].value);
+        averageTimePerAltitude = -(m_latest->altData1[m_latest->altData1.length() - 1].time -
+                                   m_latest->altData1[initialDataPoint].time) /
+                                 (m_latest->altData1[m_latest->altData1.length() - 1].value -
+                                  m_latest->altData1[initialDataPoint].value);
 
         //The range of the graph is calculated based on how long it would take to reach 0 altitude at the current descent rate
         //current time + (time / altitude) * (current altitude (amount of altitude required to reach 0 altitude))
-        range = m_latest->altData1[m_latest->altData1.length() - 1].time - m_latest->altData1[0].time + averageTimePerAltitude * m_latest->altData1[m_latest->altData1.length() - 1].value;
+        range = m_latest->altData1[m_latest->altData1.length() - 1].time - m_latest->altData1[0].time +
+                averageTimePerAltitude * m_latest->altData1[m_latest->altData1.length() - 1].value;
         //std::cout << "Range: " << range << std::endl;
     }
     //range = 1000 * 100;
     //std::cout << "length: " << widget->altitudeData.length() << std::endl;
 
     bool drawT = false;
-    if(drawBox.contains(w->m_mousePos))
-    {
+    if (drawBox.contains(w->m_mousePos)) {
         drawT = true;
     }
 
@@ -400,7 +423,8 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     //Draw label text
     std::string altitudeText;
     std::string descentRateText;
-    if(m_latest->state == MainWindow::RocketState::DROGUE_DESCENT && m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
+    if (m_latest->state == MainWindow::RocketState::DROGUE_DESCENT &&
+        m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
         altitudeText = "Altitude: " + std::to_string((int) round(m_latest->p_altitude)) + " [m]";
         descentRateText = "Vertical Speed: " + std::to_string((int) round(m_latest->p_velZ)) + " [m/s]";
     } else {
@@ -423,17 +447,30 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     //    m_latest->altData.append(MainWindow::graphPoint{(float) m_latest->altData.length() + 100, (float) start + 1000}); //(float) (m_latest->rocketTime - range)
     //}
 
-    if(m_latest->state == MainWindow::RocketState::DROGUE_DESCENT && m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
-        Range altitudeSubGraphRange = drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData1, range, start, w, drawT, 0, m_latest->altData1.length() > 0 ? m_latest->altData1[0].value : 1300, false, false, &((hprcPayloadGraph*) w)->startIndexAltitude, &((hprcPayloadGraph*) w)->graphPolygonAltitude);
-        Range yRange = getDataYRange(&((hprcPayloadGraph*) w)->verticalSpeedData);
-        drawHPRCSubGraph(p, bottom, m_highlightBrush.color(), &((hprcPayloadGraph*) w)->verticalSpeedData, range, start, w, drawT, yRange.min, yRange.max, false, false, &((hprcPayloadGraph*) w)->startIndexVerticalSpeed, &((hprcPayloadGraph*) w)->graphPolygonVerticalSpeed);
+    if (m_latest->state == MainWindow::RocketState::DROGUE_DESCENT &&
+        m_latest->state == MainWindow::RocketState::MAIN_DESCENT) {
+        Range altitudeSubGraphRange = drawHPRCSubGraph(p, top, QColor("#00FF00"), &m_latest->altData1, range, start, w,
+                                                       drawT, 0,
+                                                       m_latest->altData1.length() > 0 ? m_latest->altData1[0].value
+                                                                                       : 1300, false, false,
+                                                       &((hprcPayloadGraph *) w)->startIndexAltitude,
+                                                       &((hprcPayloadGraph *) w)->graphPolygonAltitude);
+        Range yRange = getDataYRange(&((hprcPayloadGraph *) w)->verticalSpeedData);
+        drawHPRCSubGraph(p, bottom, m_highlightBrush.color(), &((hprcPayloadGraph *) w)->verticalSpeedData, range,
+                         start, w, drawT, yRange.min, yRange.max, false, false,
+                         &((hprcPayloadGraph *) w)->startIndexVerticalSpeed,
+                         &((hprcPayloadGraph *) w)->graphPolygonVerticalSpeed);
         //drawHPRCSubGraph(p, bottom, QColor("#FFFF00"), widget->altitudeData, range, start, w, drawT);
 
         //Draw a fun parachute graphic for the altitude graph
-        if(m_latest->altData1.length() > 0) {
-            float lastGraphX = -(m_latest->altData1[m_latest->altData1.length() - 1].time - start) / (range) * (top.width()) + top.right();
+        if (m_latest->altData1.length() > 0) {
+            float lastGraphX =
+                    -(m_latest->altData1[m_latest->altData1.length() - 1].time - start) / (range) * (top.width()) +
+                    top.right();
             double subGraphScale = fmax(1.0, altitudeSubGraphRange.max - altitudeSubGraphRange.min);
-            float lastGraphY = -((m_latest->altData1[m_latest->altData1.length() - 1].value - altitudeSubGraphRange.min) / subGraphScale) * (top.height() * 0.97) + top.bottom();
+            float lastGraphY =
+                    -((m_latest->altData1[m_latest->altData1.length() - 1].value - altitudeSubGraphRange.min) /
+                      subGraphScale) * (top.height() * 0.97) + top.bottom();
             float boxWidth = drawBox.height() / 24.0;
             float boxHeight = drawBox.height() / 24.0;
             QRect parachuteRect(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, boxWidth, boxHeight);
@@ -454,8 +491,10 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
             p->drawPath(semiCirclePath);
 
             p->setPen(linePen);
-            p->drawLine(QLine(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX - boxWidth, lastGraphY - boxHeight * 1.5));
-            p->drawLine(QLine(lastGraphX + boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX + boxWidth, lastGraphY - boxHeight * 1.5));
+            p->drawLine(QLine(lastGraphX - boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX - boxWidth,
+                              lastGraphY - boxHeight * 1.5));
+            p->drawLine(QLine(lastGraphX + boxWidth / 2.0, lastGraphY - boxHeight / 2.0, lastGraphX + boxWidth,
+                              lastGraphY - boxHeight * 1.5));
         }
 
         p->setBrush(m_transparentBrush);
@@ -465,19 +504,16 @@ void HPRCStyle::drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint>* data) {
+HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint> *data) {
     double scaleMax = 1;
     double scaleMin = 999999;
-    for(int i = 0; i < data->size(); i++)
-    {
+    for (int i = 0; i < data->size(); i++) {
         ////        if(!(data.at(i).time < (start - range)))
         ////        {
-        if(data->at(i).value > scaleMax)
-        {
+        if (data->at(i).value > scaleMax) {
             scaleMax = data->at(i).value;
         }
-        if(data->at(i).value < scaleMin)
-        {
+        if (data->at(i).value < scaleMin) {
             scaleMin = data->at(i).value;
         }
 
@@ -487,8 +523,7 @@ HPRCStyle::Range HPRCStyle::getDataYRange(QList<MainWindow::graphPoint>* data) {
     return Range{scaleMin, scaleMax};
 }
 
-void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o)
-{
+void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o) {
 
     double borderWidth = 4;
 
@@ -496,11 +531,12 @@ void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o)
     p->setRenderHint(QPainter::Antialiasing);
     p->setPen(borderPen);
     p->setBrush(m_buttonBrush);
-    p->drawRoundedRect(QRectF(o->rect).adjusted(borderWidth - 0.5, borderWidth - 0.5, 0.5 - borderWidth, 0.5 - borderWidth), o->rect.height()/2, o->rect.height()/2);
+    p->drawRoundedRect(
+            QRectF(o->rect).adjusted(borderWidth - 0.5, borderWidth - 0.5, 0.5 - borderWidth, 0.5 - borderWidth),
+            o->rect.height() / 2, o->rect.height() / 2);
 }
 
-void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
-{
+void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o) {
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_panelBrush);
     p->setPen(QPen(m_transparentBrush, 1));
@@ -509,10 +545,9 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o)
 }
 
 
-void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w) {
     if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
-        const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
+        const hprcViewer *viewer = dynamic_cast<const hprcViewer *>(w);
         if (viewer) {
             // Update the orientation of the rocket based on the latest data
             viewer->orientRocket(m_latest->orientation);
@@ -526,8 +561,7 @@ void HPRCStyle::drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w) {
     if (w->rect().height() < 100)
         return;
 
@@ -546,7 +580,7 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     int sizeMin = fmin(boundingBox.height(), boundingBox.width() * scaleF);
 
-    boundingBox.adjust(oWidth/2 - sizeMin/2, 0, oWidth/2 - sizeMin/2, 0);
+    boundingBox.adjust(oWidth / 2 - sizeMin / 2, 0, oWidth / 2 - sizeMin / 2, 0);
 
     boundingBox.setHeight(sizeMin);
     boundingBox.setWidth(sizeMin);
@@ -554,7 +588,8 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
     int extraArc = 35;
 
 
-    QConicalGradient progressGradient(boundingBox.center(), (180 + extraArc - 5) - (w->m_filledPercent/w->m_max) * (180 + 2*extraArc));
+    QConicalGradient progressGradient(boundingBox.center(),
+                                      (180 + extraArc - 5) - (w->m_filledPercent / w->m_max) * (180 + 2 * extraArc));
     progressGradient.setColorAt(1, m_panelBrush.color());
     progressGradient.setColorAt(0, m_highlightBrush.color());
 
@@ -562,45 +597,43 @@ void HPRCStyle::drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w)
 
     fgPen.setCapStyle(Qt::RoundCap);
 
-    bgPen.setWidth(sizeMin/10);
-    fgPen.setWidth(sizeMin/10 -5);
+    bgPen.setWidth(sizeMin / 10);
+    fgPen.setWidth(sizeMin / 10 - 5);
 
     QString dataString = QString::number(w->m_filledPercent);
     bool negative = false;
-    if(dataString.contains("-"))
-    {
+    if (dataString.contains("-")) {
         dataString.remove("-");
         negative = true;
     }
-    while(dataString.size() < 4)
-    {
+    while (dataString.size() < 4) {
         dataString.prepend("0");
     }
-    if(negative)
+    if (negative)
         dataString.prepend("-");
 
-    m_widgetLarge.setPointSize(sizeMin/13);
+    m_widgetLarge.setPointSize(sizeMin / 13);
     p->setFont(m_widgetLarge);
 
     // <---- draw ----> //
 
     p->setPen(bgPen);
-    p->drawArc(boundingBox, -extraArc*16, (180 + 2 * extraArc)*16);
+    p->drawArc(boundingBox, -extraArc * 16, (180 + 2 * extraArc) * 16);
     p->setPen(fgPen);
-    p->drawArc(boundingBox, (180 * 16 + extraArc*16), (180 + 2 * extraArc)*-16 * (fmax(0, fmin(w->m_filledPercent/w->m_max, 1))));
+    p->drawArc(boundingBox, (180 * 16 + extraArc * 16),
+               (180 + 2 * extraArc) * -16 * (fmax(0, fmin(w->m_filledPercent / w->m_max, 1))));
     p->setPen(textPen);
     p->drawText(boundingBox.adjusted(0, 30, 0, 30), Qt::AlignCenter, w->m_label);
 
-    m_widgetLarge.setPointSize(sizeMin/7);
+    m_widgetLarge.setPointSize(sizeMin / 7);
     p->setFont(m_widgetLarge);
 
     p->drawText(boundingBox.adjusted(0, -30, 0, -30), Qt::AlignCenter, dataString);
 }
 
-void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w) {
 
-    if(w->width() < 100)
+    if (w->width() < 100)
         return;
 
     // -- Pen Setup --
@@ -620,47 +653,52 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     int sizeMin = fmin(boundingBox.height() * scaleF, boundingBox.width() * scaleF);
 
-    boundingBox.adjust(boundingBox.width()/2 - sizeMin/2,
-                       boundingBox.height()/2 - sizeMin/2,
-                       boundingBox.width()/2 - sizeMin/2,
-                       boundingBox.height()/2 - sizeMin/2
-                       );
+    boundingBox.adjust(boundingBox.width() / 2 - sizeMin / 2,
+                       boundingBox.height() / 2 - sizeMin / 2,
+                       boundingBox.width() / 2 - sizeMin / 2,
+                       boundingBox.height() / 2 - sizeMin / 2
+    );
 
     boundingBox.setHeight(sizeMin);
     boundingBox.setWidth(sizeMin);
 
     // For testing purposes
 
-    float crossWidth = sizeMin/10;
+    float crossWidth = sizeMin / 10;
     crossWidth /= 2;
 
     bgPen.setWidth(crossWidth);
     // -- Get the angles and use them --
 
-    float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k), 1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
+    float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k),
+                                          1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
 
-    float yaw = qRadiansToDegrees(-M_PI/2 + 2 * atan2(sqrt(1 + 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k)),
-                                                        sqrt(1 - 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k))));
+    float yaw = qRadiansToDegrees(
+            -M_PI / 2 + 2 * atan2(sqrt(1 + 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k)),
+                                  sqrt(1 - 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k))));
 
-    float roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j), 1 - 2 * (pow(m_latest->j, 2) + pow(m_latest->k, 2))));
+    float roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j),
+                                         1 - 2 * (pow(m_latest->j, 2) + pow(m_latest->k, 2))));
 
     pitch += 180;
 
-    if(pitch > 180)
+    if (pitch > 180)
         pitch -= 360;
 
 //    float roll = m_latest->gyroZ;
 
     // Clamp to values
-    pitch = fminf(m_AttitudeDegreeOffsetPitch + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetPitch - m_AttitudeMaxDegreeRange, pitch));
-    yaw = fminf(m_AttitudeDegreeOffsetYaw + m_AttitudeMaxDegreeRange, fmaxf(m_AttitudeDegreeOffsetYaw - m_AttitudeMaxDegreeRange, yaw));
+    pitch = fminf(m_AttitudeDegreeOffsetPitch + m_AttitudeMaxDegreeRange,
+                  fmaxf(m_AttitudeDegreeOffsetPitch - m_AttitudeMaxDegreeRange, pitch));
+    yaw = fminf(m_AttitudeDegreeOffsetYaw + m_AttitudeMaxDegreeRange,
+                fmaxf(m_AttitudeDegreeOffsetYaw - m_AttitudeMaxDegreeRange, yaw));
 
     // Normalize between -1 -> +1
-    float pitchNormalized = (pitch - m_AttitudeDegreeOffsetPitch)/m_AttitudeMaxDegreeRange;
-    float yawNormalized = (yaw - m_AttitudeDegreeOffsetYaw)/m_AttitudeMaxDegreeRange;
+    float pitchNormalized = (pitch - m_AttitudeDegreeOffsetPitch) / m_AttitudeMaxDegreeRange;
+    float yawNormalized = (yaw - m_AttitudeDegreeOffsetYaw) / m_AttitudeMaxDegreeRange;
 
-    float yawY = boundingBox.center().y() + (boundingBox.height()/2 - crossWidth*2) * -1 * pitchNormalized;
-    float pitchX = boundingBox.center().x() + (boundingBox.width()/2 - crossWidth*2) * yawNormalized;
+    float yawY = boundingBox.center().y() + (boundingBox.height() / 2 - crossWidth * 2) * -1 * pitchNormalized;
+    float pitchX = boundingBox.center().x() + (boundingBox.width() / 2 - crossWidth * 2) * yawNormalized;
 
 
     // -- Draw the info --
@@ -673,7 +711,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     std::vector<float> vec = m_AttitudeCircleLocationsDegrees[m_latest->state];
 
-    if(vec.empty()) {
+    if (vec.empty()) {
         qDebug() << "Couldn't draw attitude widget for state" << m_latest->state;
         return;
     }
@@ -689,7 +727,7 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
     QColor fgCol = m_highlightBrush.color();
 
-    for(float circleLocationDegrees: vec) {
+    for (float circleLocationDegrees: vec) {
 
         circleLocation = circleLocationDegrees / (m_AttitudeMaxDegreeRange);
 
@@ -697,109 +735,107 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w)
 
         p->setPen(outline);
 
-        if(rocketIsWithinGraph){
+        if (rocketIsWithinGraph) {
             fgCol.setAlphaF(fminf(
-                powf(1 - fabsf(dist)/m_AttitudeMaxDegreeRange, 4),
-                powf((dist + circleLocationDegrees)/m_AttitudeMaxDegreeRange, 3)));
-        }
-        else {
+                    powf(1 - fabsf(dist) / m_AttitudeMaxDegreeRange, 4),
+                    powf((dist + circleLocationDegrees) / m_AttitudeMaxDegreeRange, 3)));
+        } else {
             fgCol.setAlphaF(1);
         }
 
         p->setBrush(QBrush(fgCol));
 
 
-        p->drawEllipse(roundf(boundingBox.center().x()-boundingBox.width()/2*circleLocation),
-                       roundf(boundingBox.center().y()-boundingBox.width()/2*circleLocation),
-                       roundf(boundingBox.width()*circleLocation), roundf(boundingBox.width()*circleLocation));
+        p->drawEllipse(roundf(boundingBox.center().x() - boundingBox.width() / 2 * circleLocation),
+                       roundf(boundingBox.center().y() - boundingBox.width() / 2 * circleLocation),
+                       roundf(boundingBox.width() * circleLocation), roundf(boundingBox.width() * circleLocation));
     }
 
     // Crosshair
     p->setOpacity(1);
     p->setPen(QPen(m_textBrush, 2));
-    QPoint center((int)pitchX, (int)yawY);
+    QPoint center((int) pitchX, (int) yawY);
 
     p->drawLine(center.x() - 4, center.y(), center.x() + 4, center.y());
     p->drawLine(center.x(), center.y() - 4, center.x(), center.y() + 4);
 
-    if(rocketIsWithinGraph)
+    if (rocketIsWithinGraph)
         p->setPen(QPen(m_textBrush, 2));
     else
         p->setPen(QPen(m_highlightBrush, 2));
 
-    m_widgetLarge.setPointSize(crossWidth*3);
+    m_widgetLarge.setPointSize(crossWidth * 3);
 
     p->setFont(m_widgetLarge);
 
-    m_widgetLarge.setPointSize(crossWidth*2);
+    m_widgetLarge.setPointSize(crossWidth * 2);
 
 
     p->setPen(QPen(m_textBrush, 2));
     p->setFont(m_widgetLarge);
 
-        p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
-                          boundingBox.y()-30,
-                          crossWidth * 10,
-                          crossWidth * 3
-                          ),
-                    Qt::AlignVCenter,
-                    "PITCH");
+    p->drawText(QRect(boundingBox.x() - 20 - crossWidth * 3,
+                      boundingBox.y() - 30,
+                      crossWidth * 10,
+                      crossWidth * 3
+                ),
+                Qt::AlignVCenter,
+                "PITCH");
 
-        m_widgetLarge.setPointSize(crossWidth * 2);
-        p->setFont(m_widgetLarge);
+    m_widgetLarge.setPointSize(crossWidth * 2);
+    p->setFont(m_widgetLarge);
 
-        p->drawText(QRect(boundingBox.x() - 20,
-                          boundingBox.y() + boundingBox.height() + 17,
-                          boundingBox.width() + 40,
-                          crossWidth * 3
-                          ),
-                    Qt::AlignCenter,
-                    QString::asprintf("Yaw: %.0lf", roll)); // TODO: change this to the actual value
+    p->drawText(QRect(boundingBox.x() - 20,
+                      boundingBox.y() + boundingBox.height() + 17,
+                      boundingBox.width() + 40,
+                      crossWidth * 3
+                ),
+                Qt::AlignCenter,
+                QString::asprintf("Yaw: %.0lf", roll)); // TODO: change this to the actual value
 
-        m_widgetLarge.setPointSize(crossWidth*2);
+    m_widgetLarge.setPointSize(crossWidth * 2);
 
-        p->setFont(m_widgetLarge);
+    p->setFont(m_widgetLarge);
 
-    if(rocketIsWithinGraph)
+    if (rocketIsWithinGraph)
         p->setPen(QPen(m_textBrush, 2));
     else
         p->setPen(QPen(m_highlightBrush, 2));
 
-    p->drawText(QRect(boundingBox.x()-20 - crossWidth*3,
-                      boundingBox.y()-30 + crossWidth*3,
+    p->drawText(QRect(boundingBox.x() - 20 - crossWidth * 3,
+                      boundingBox.y() - 30 + crossWidth * 3,
                       crossWidth * 6,
                       crossWidth * 3
-                      ),
+                ),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", pitch));
 
 
     p->setPen(QPen(m_textBrush, 2));
 
-    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*5,
-                      boundingBox.y()-30,
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth * 5,
+                      boundingBox.y() - 30,
                       crossWidth * 10,
                       crossWidth * 3
-                      ),
+                ),
                 Qt::AlignCenter,
                 "ROLL");
 
-    if(rocketIsWithinGraph)
+    if (rocketIsWithinGraph)
         p->setPen(QPen(m_textBrush, 2));
     else
         p->setPen(QPen(m_highlightBrush, 2));
-    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth*3,
-                      boundingBox.y()-30 + crossWidth*3,
+    p->drawText(QRect(boundingBox.x() + boundingBox.width() + 20 - crossWidth * 3,
+                      boundingBox.y() - 30 + crossWidth * 3,
                       crossWidth * 6,
                       crossWidth * 3
-                      ),
+                ),
                 Qt::AlignCenter,
                 QString::asprintf("%.0lfº", yaw));
 
 }
 
-void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w) {
     p->setRenderHint(QPainter::Antialiasing);
     p->setBrush(m_transparentBrush);
     QPen linePen(m_backgroundBrush, 4);
@@ -814,9 +850,8 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     double width = w->rect().width() * 0.9;
     double height = w->rect().height() * 0.9;
 
-    double aspectRatio = (1.0/total);
-    if(width / height > aspectRatio)
-    {
+    double aspectRatio = (1.0 / total);
+    if (width / height > aspectRatio) {
         width = height * aspectRatio;
     } else {
         height = width / aspectRatio;
@@ -832,10 +867,10 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     int startX = x + size * 0.05;
     int startYA = w->rect().y() + hPadding + size * 0.5;
 
-    p->drawLine(startX, startYA, startX, w->rect().y() + hPadding + (height * (abortConditions - 1) / total + size * 0.5));
+    p->drawLine(startX, startYA, startX,
+                w->rect().y() + hPadding + (height * (abortConditions - 1) / total + size * 0.5));
 
-    for(const auto& [type, active] : hprcStateMaps::alarmMapA)
-    {
+    for (const auto &[type, active]: hprcStateMaps::alarmMapA) {
         int y = w->rect().y() + hPadding + (height * i / total);
         drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYA);
 
@@ -847,8 +882,7 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     p->drawLine(startX, startYW, startX, startYW + (size * (warnConditions - 1)));
 
 
-    for(const auto& [type, active] : hprcStateMaps::alarmMapW)
-    {
+    for (const auto &[type, active]: hprcStateMaps::alarmMapW) {
         int y = w->rect().y() + hPadding + (height * i / total);
         drawHPRCAlarmFromEnum(p, x, y, size, type, active, startX, startYW);
 
@@ -857,11 +891,10 @@ void HPRCStyle::drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w)
     p->setPen(linePen);
 }
 
-void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX, int startY)
-{
+void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCAlarmType t, bool active, int startX,
+                                      int startY) {
     p->setBrush(m_panelBrush);
-    if(active)
-    {
+    if (active) {
         QPen hPen(m_highlightBrush, 4);
         hPen.setCapStyle(Qt::RoundCap);
         p->setPen(hPen);
@@ -877,7 +910,7 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     double radius = 0.05;
 
     p->drawLine(x + size * 0.05, y + size * 0.5, x + size * 0.25, y + size * 0.5);
-    QRectF circleRect(x + size * 0.25, y + size * (0.5-radius), radius * 2 * size, radius * 2 * size);
+    QRectF circleRect(x + size * 0.25, y + size * (0.5 - radius), radius * 2 * size, radius * 2 * size);
     p->drawEllipse(circleRect);
 
     // <---- draw the icon ----> //
@@ -892,37 +925,33 @@ void HPRCStyle::drawHPRCAlarmFromEnum(QPainter *p, int x, int y, int size, HPRCA
     p->drawRect(iRect);
 
 
-    switch(t)
-    {
-    case ALARM_MasterAbort:
-    {
+    switch (t) {
+        case ALARM_MasterAbort: {
 
-        return;
-    }
-    case ALARM_Pitch:
-    case ALARM_MasterWarn:
-    case ALARM_LowPower:
-    case ALARM_SignalLoss:
-    case ALARM_PowerLoss:
-    case ALARM_MainDeployFail:
-    case ALARM_DrogueDeployFail:
-    case ALARM_PayloadDeployFail:
-    case ALARM_Ballistic:
-    case ALARM_LowTrack:
-    case ALARM_HighTrack:
-    case ALARM_EarlyChute:
-    case ALARM_Unknown:
-        break;
+            return;
+        }
+        case ALARM_Pitch:
+        case ALARM_MasterWarn:
+        case ALARM_LowPower:
+        case ALARM_SignalLoss:
+        case ALARM_PowerLoss:
+        case ALARM_MainDeployFail:
+        case ALARM_DrogueDeployFail:
+        case ALARM_PayloadDeployFail:
+        case ALARM_Ballistic:
+        case ALARM_LowTrack:
+        case ALARM_HighTrack:
+        case ALARM_EarlyChute:
+        case ALARM_Unknown:
+            break;
     }
 }
 
-void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
-{
-    m_widgetLarge.setPointSize(w->height()/5);
+void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w) {
+    m_widgetLarge.setPointSize(w->height() / 5);
     p->setFont(m_widgetLarge);
     p->setPen(QPen(m_textBrush, 3));
-    if(w->getDataType() == hprcDisplayWidget::HPRC_MET)
-    {
+    if (w->getDataType() == hprcDisplayWidget::HPRC_MET) {
         double t = m_latest->groundTime / 1000.0;
 
         int wholeNumSecs = t;
@@ -931,21 +960,21 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         double seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
 
         int rseconds = seconds * 100;
-        seconds = rseconds/100.0;
+        seconds = rseconds / 100.0;
 
         std::string hourString(std::to_string(hours));
         std::string minuteString(std::to_string(minutes));
         std::string secondString(std::to_string(seconds));
 
-        if(hourString.length() == 1)
+        if (hourString.length() == 1)
             hourString.insert(0, "0");
-        if(minuteString.length() == 1)
+        if (minuteString.length() == 1)
             minuteString.insert(0, "0");
-        if(secondString.at(1) == *".")
+        if (secondString.at(1) == *".")
             secondString.insert(0, "0");
         secondString = secondString.substr(0, 5);
         std::string timeString = "Ground Time: T + " + hourString + ":" + minuteString + ":" + secondString;
-        p->drawText(w->rect().adjusted(0,0,0,w->rect().height()/-2.0), QString::fromStdString(timeString));
+        p->drawText(w->rect().adjusted(0, 0, 0, w->rect().height() / -2.0), QString::fromStdString(timeString));
 
         // rocket internal time //
 
@@ -957,22 +986,22 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
         seconds = (t - hours * 60.0 * 60.0 - minutes * 60.0);
 
         rseconds = seconds * 100;
-        seconds = rseconds/100.0;
+        seconds = rseconds / 100.0;
 
         std::string hourString2(std::to_string(hours));
         std::string minuteString2(std::to_string(minutes));
         std::string secondString2(std::to_string(seconds));
 
-        if(hourString2.length() == 1)
+        if (hourString2.length() == 1)
             hourString2.insert(0, "0");
-        if(minuteString2.length() == 1)
+        if (minuteString2.length() == 1)
             minuteString2.insert(0, "0");
-        if(secondString2.at(1) == *".")
+        if (secondString2.at(1) == *".")
             secondString2.insert(0, "0");
         secondString2 = secondString2.substr(0, 5);
         std::string timeString2 = "Rocket Time: T + " + hourString2 + ":" + minuteString2 + ":" + secondString2;
-        p->drawText(w->rect().adjusted(0,w->rect().height()/2.0, 0, 0), QString::fromStdString(timeString2));
-    } else if(w->getDataType() == hprcDisplayWidget::HPRC_UTC){
+        p->drawText(w->rect().adjusted(0, w->rect().height() / 2.0, 0, 0), QString::fromStdString(timeString2));
+    } else if (w->getDataType() == hprcDisplayWidget::HPRC_UTC) {
 
 
         QDateTime currentUTC = QDateTime::currentDateTimeUtc();
@@ -982,15 +1011,13 @@ void HPRCStyle::drawHPRCClock(QPainter *p, const hprcDisplayWidget *w)
     }
 
 
-
 }
 
-void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w) {
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
-        const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
+        const hprcPayloadMap *mapWidget = dynamic_cast<const hprcPayloadMap *>(w);
 
-        if (mapWidget) {
+        if (mapWidget && m_latest->p_gpsLock) {
             // Send updated positions to the map frontend
             mapWidget->m_interface->payloadPoint(m_latest->p_gpsLat, m_latest->p_gpsLong);
             mapWidget->m_interface->targetPoint(m_latest->p_targetGpsLat, m_latest->p_targetGpsLong);
@@ -1002,10 +1029,9 @@ void HPRCStyle::drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w)
     }
 }
 
-void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w) {
 
-    if(w->width() < 100)
+    if (w->width() < 100)
         return;
 
     // setup
@@ -1024,8 +1050,7 @@ void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
 
     // desired aspect ratio: 3:1
 
-    if(boundW / boundH > 3.0)
-    {
+    if (boundW / boundH > 3.0) {
         newW = boundH * 3.0;
         newH = boundH;
     } else {
@@ -1034,7 +1059,8 @@ void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
     }
 
     // the outer bounding box of the drawable area - known aspect ratio
-    QRectF drawBox = widgetBoundingBox.adjusted((boundW - newW) / 2.0, (boundH - newH) / 2.0, -(boundW - newW) / 2.0, -(boundH - newH) / 2.0);
+    QRectF drawBox = widgetBoundingBox.adjusted((boundW - newW) / 2.0, (boundH - newH) / 2.0, -(boundW - newW) / 2.0,
+                                                -(boundH - newH) / 2.0);
 
     // the box containing the rocket display itself
     QRectF rocketBox = drawBox.adjusted(newW * 0.1, newH * 0.3, newW * -0.1, newH * -0.3);
@@ -1047,16 +1073,17 @@ void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
     QPen tPen(m_textBrush, 3);
     tPen.setCapStyle(Qt::RoundCap);
     p->setPen(tPen);
-    QRectF rocketBody = rocketBox.adjusted(rocketBox.width() * 0.05, rocketBox.height() * 0.325, rocketBox.width() * -0.2, rocketBox.height() * -0.325);
+    QRectF rocketBody = rocketBox.adjusted(rocketBox.width() * 0.05, rocketBox.height() * 0.325,
+                                           rocketBox.width() * -0.2, rocketBox.height() * -0.325);
     QPointF upperFin[4];
     upperFin[0] = QPointF(rocketBody.left(), rocketBox.top());
     upperFin[1] = QPointF(rocketBody.left() + rocketBody.width() * 0.075, rocketBox.top());
-    upperFin[2] = QPointF(upperFin[1].x() + (rocketBox.height() - rocketBody.height())/2.0, rocketBody.top());
+    upperFin[2] = QPointF(upperFin[1].x() + (rocketBox.height() - rocketBody.height()) / 2.0, rocketBody.top());
     upperFin[3] = QPointF(rocketBody.topLeft());
     QPointF lowerFin[4];
     lowerFin[0] = QPointF(rocketBody.left(), rocketBox.bottom());
     lowerFin[1] = QPointF(rocketBody.left() + rocketBody.width() * 0.075, rocketBox.bottom());
-    lowerFin[2] = QPointF(lowerFin[1].x() + (rocketBox.height() - rocketBody.height())/2.0, rocketBody.bottom());
+    lowerFin[2] = QPointF(lowerFin[1].x() + (rocketBox.height() - rocketBody.height()) / 2.0, rocketBody.bottom());
     lowerFin[3] = QPointF(rocketBody.bottomLeft());
     QPointF tailCone[4];
     tailCone[0] = QPointF(rocketBody.topLeft());
@@ -1069,8 +1096,10 @@ void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
     double h = 2.294742 * rocketBox.width();
     double v = 262.791238149 * rocketBody.height();
 
-    QRectF noseConeRectU(QPointF(rocketBody.right() - h, rocketBody.top()), QPointF(rocketBody.right() + h, rocketBody.top() + v));
-    QRectF noseConeRectL(QPointF(rocketBody.right() - h, rocketBody.bottom()), QPointF(rocketBody.right() + h, rocketBody.bottom() - v));
+    QRectF noseConeRectU(QPointF(rocketBody.right() - h, rocketBody.top()),
+                         QPointF(rocketBody.right() + h, rocketBody.top() + v));
+    QRectF noseConeRectL(QPointF(rocketBody.right() - h, rocketBody.bottom()),
+                         QPointF(rocketBody.right() + h, rocketBody.bottom() - v));
 
     p->drawPolygon(upperFin, 4);
     p->drawPolygon(lowerFin, 4);
@@ -1088,16 +1117,30 @@ void HPRCStyle::drawHPRCRocketVis(QPainter *p, const hprcDisplayWidget *w)
     p->drawRect(avionicsBay);
 
     m_widgetLarge.setPointSize(rocketBody.height() / 3);
-    drawHPRCRocketLabel(p, LABEL_Motor, QPointF(upperFin[2].x() + rocketBody.width() * 0.05, rocketBody.top() - rocketBody.height() * 0.25), QPointF(upperFin[2].x() + rocketBody.width() * 0.1, rocketBody.top() - rocketBody.height() * 1));
-    drawHPRCRocketLabel(p, LABEL_Airbrakes, QPointF(rocketBody.x() + rocketBody.width() * 0.325, rocketBody.bottom() + rocketBody.height() * 0.25), QPointF(rocketBody.x() + rocketBody.width() * 0.325 - rocketBody.width() * 0.1, rocketBody.bottom() + rocketBody.height() * 1.75));
-    drawHPRCRocketLabel(p, LABEL_AvionicsBay, QPointF(rocketBody.x() + rocketBody.width() * 0.45, rocketBody.top() - rocketBody.height() * 0.25), QPointF(rocketBody.x() + rocketBody.width() * 0.45 + rocketBody.width() * 0.075, rocketBody.top() - rocketBody.height() * 2));
-    drawHPRCRocketLabel(p, LABEL_RecoveryBay, QPointF(rocketBody.x() + rocketBody.width() * 0.75, rocketBody.top() - rocketBody.height() * 0.25), QPointF(rocketBody.x() + rocketBody.width() * 0.75 + rocketBody.width() * 0.075, rocketBody.top() - rocketBody.height() * 1));
-    drawHPRCRocketLabel(p, LABEL_PayloadBay, QPointF(rocketBody.x() + rocketBody.width() * 1.15, rocketBody.bottom() + rocketBody.height() * 0.25), QPointF(rocketBody.x() + rocketBody.width() * 1.15 - rocketBody.width() * 0.075, rocketBody.bottom() + rocketBody.height() * 1.25));
+    drawHPRCRocketLabel(p, LABEL_Motor, QPointF(upperFin[2].x() + rocketBody.width() * 0.05,
+                                                rocketBody.top() - rocketBody.height() * 0.25),
+                        QPointF(upperFin[2].x() + rocketBody.width() * 0.1,
+                                rocketBody.top() - rocketBody.height() * 1));
+    drawHPRCRocketLabel(p, LABEL_Airbrakes, QPointF(rocketBody.x() + rocketBody.width() * 0.325,
+                                                    rocketBody.bottom() + rocketBody.height() * 0.25),
+                        QPointF(rocketBody.x() + rocketBody.width() * 0.325 - rocketBody.width() * 0.1,
+                                rocketBody.bottom() + rocketBody.height() * 1.75));
+    drawHPRCRocketLabel(p, LABEL_AvionicsBay, QPointF(rocketBody.x() + rocketBody.width() * 0.45,
+                                                      rocketBody.top() - rocketBody.height() * 0.25),
+                        QPointF(rocketBody.x() + rocketBody.width() * 0.45 + rocketBody.width() * 0.075,
+                                rocketBody.top() - rocketBody.height() * 2));
+    drawHPRCRocketLabel(p, LABEL_RecoveryBay, QPointF(rocketBody.x() + rocketBody.width() * 0.75,
+                                                      rocketBody.top() - rocketBody.height() * 0.25),
+                        QPointF(rocketBody.x() + rocketBody.width() * 0.75 + rocketBody.width() * 0.075,
+                                rocketBody.top() - rocketBody.height() * 1));
+    drawHPRCRocketLabel(p, LABEL_PayloadBay, QPointF(rocketBody.x() + rocketBody.width() * 1.15,
+                                                     rocketBody.bottom() + rocketBody.height() * 0.25),
+                        QPointF(rocketBody.x() + rocketBody.width() * 1.15 - rocketBody.width() * 0.075,
+                                rocketBody.bottom() + rocketBody.height() * 1.25));
 
 }
 
-void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label)
-{
+void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, QPointF label) {
     // setup
     QPen tPen(m_textBrush, 3);
     tPen.setCapStyle(Qt::RoundCap);
@@ -1114,35 +1157,35 @@ void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, 
     QRectF labelMainText;
     QRectF labelSubText;
     QString mainText;
-    switch(l)
-    {
+    switch (l) {
 
-    case LABEL_Motor:
-        mainText = QString("MOTOR");
-        break;
-    case LABEL_Airbrakes:
-        mainText = QString("AIRBRAKES");
-        break;
-    case LABEL_PayloadBay:
-        mainText = QString("PAYLOAD_BAY");
-        break;
-    case LABEL_AvionicsBay:
-        mainText = QString("AV_BAY");
-        break;
-    case LABEL_RecoveryBay:
-        mainText = QString("RECOVERY_BAY");
-        break;
-    case LABEL_Other:
-        break;
+        case LABEL_Motor:
+            mainText = QString("MOTOR");
+            break;
+        case LABEL_Airbrakes:
+            mainText = QString("AIRBRAKES");
+            break;
+        case LABEL_PayloadBay:
+            mainText = QString("PAYLOAD_BAY");
+            break;
+        case LABEL_AvionicsBay:
+            mainText = QString("AV_BAY");
+            break;
+        case LABEL_RecoveryBay:
+            mainText = QString("RECOVERY_BAY");
+            break;
+        case LABEL_Other:
+            break;
     }
 
-    if(drawLeft)
-    {
+    if (drawLeft) {
         labelEnd = QPointF(label.x() - m_widgetLarge.pointSizeF() * mainText.length() * 0.85, label.y());
-        labelMainText = QRectF(QPointF(labelEnd.x(), labelEnd.y() - m_widgetLarge.pointSizeF() * 1.45), QPointF(label.x(), label.y() - m_widgetLarge.pointSizeF() * 0.15));
+        labelMainText = QRectF(QPointF(labelEnd.x(), labelEnd.y() - m_widgetLarge.pointSizeF() * 1.45),
+                               QPointF(label.x(), label.y() - m_widgetLarge.pointSizeF() * 0.15));
     } else {
         labelEnd = QPointF(label.x() + m_widgetLarge.pointSizeF() * mainText.length() * 0.85, label.y());
-        labelMainText = QRectF(QPointF(label.x(), label.y() - m_widgetLarge.pointSizeF() * 1.45), QPointF(labelEnd.x(), labelEnd.y() - m_widgetLarge.pointSizeF() * 0.15));
+        labelMainText = QRectF(QPointF(label.x(), label.y() - m_widgetLarge.pointSizeF() * 1.45),
+                               QPointF(labelEnd.x(), labelEnd.y() - m_widgetLarge.pointSizeF() * 0.15));
 
     }
 
@@ -1154,8 +1197,7 @@ void HPRCStyle::drawHPRCRocketLabel(QPainter *p, rocketLabel l, QPointF target, 
 
 }
 
-void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
-{
+void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w) {
     /*
     if(w->width() < 100)
         return;
@@ -1175,52 +1217,54 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
 
 //    std::cout << currentText << std::endl;
 
-    m_widgetLarge.setPointSize(w->width()/20);
+    m_widgetLarge.setPointSize(w->width() / 20);
     p->setFont(m_widgetLarge);
     float currentTextHeight = QFontMetrics(p->font()).lineSpacing(); //Get height of current text
     float desiredTextHeight = QFontMetrics(p->font()).lineSpacing();
 
     float circleRadius = w->height() / 4;
-    float airbrakeSquareLength = circleRadius / 1.6; //The square length is the length such that the corners of all the squares are touching at the zero position (the 1.6 is just a guess)
+    float airbrakeSquareLength = circleRadius /
+                                 1.6; //The square length is the length such that the corners of all the squares are touching at the zero position (the 1.6 is just a guess)
     QPointF circlePosition = QPointF(w->height() / 2, w->height() / 2);
 
     //Draw text
     p->setPen(textPenWhite);
     p->drawText(QRect(circlePosition.x() * 2, w->height() / 2 - currentTextHeight,
-                    w->width() - circlePosition.x() * 2, w->height()),
-                    Qt::AlignHCenter, QString::fromStdString(currentText));
+                      w->width() - circlePosition.x() * 2, w->height()),
+                Qt::AlignHCenter, QString::fromStdString(currentText));
     p->setPen(textPenRed);
     p->drawText(QRect(circlePosition.x() * 2, w->height() / 2,
-                    w->width() - circlePosition.x() * 2, w->height()),
-                    Qt::AlignHCenter, QString::fromStdString(desiredText));
+                      w->width() - circlePosition.x() * 2, w->height()),
+                Qt::AlignHCenter, QString::fromStdString(desiredText));
 
     //p->drawRect(QRect(circlePosition.x() * 2, w->rect().height() / 2 - currentTextHeight, w->rect().width() - circlePosition.x() * 2, w->rect().height()));
 
-    float brakeZeroPosition = sin(acos((airbrakeSquareLength / 2) / circleRadius)) * circleRadius; //Distance from center of circle where the squares should be when airbrakes are zero
+    float brakeZeroPosition = sin(acos((airbrakeSquareLength / 2) / circleRadius)) *
+                              circleRadius; //Distance from center of circle where the squares should be when airbrakes are zero
     float currentPosition = m_latest->currentAirbrakes * airbrakeSquareLength;
     float desiredPosition = m_latest->desiredAirbrakes * airbrakeSquareLength;
     //All the rectangle positions are relative to the center of the circle because of translations when they are drawn
     QList<QRect> airbrakeRectanglesCurrent = {
-        QRect(-airbrakeSquareLength / 2.0, -brakeZeroPosition - currentPosition,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-brakeZeroPosition - currentPosition, -airbrakeSquareLength / 2.0,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-airbrakeSquareLength / 2.0, -airbrakeSquareLength + brakeZeroPosition + currentPosition,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-airbrakeSquareLength + brakeZeroPosition + currentPosition, -airbrakeSquareLength / 2.0,
-              airbrakeSquareLength, airbrakeSquareLength)
+            QRect(-airbrakeSquareLength / 2.0, -brakeZeroPosition - currentPosition,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-brakeZeroPosition - currentPosition, -airbrakeSquareLength / 2.0,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-airbrakeSquareLength / 2.0, -airbrakeSquareLength + brakeZeroPosition + currentPosition,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-airbrakeSquareLength + brakeZeroPosition + currentPosition, -airbrakeSquareLength / 2.0,
+                  airbrakeSquareLength, airbrakeSquareLength)
     };
 
     //All the rectangle positions are relative to the center of the circle because of translations when they are drawn
     QList<QRect> airbrakeRectanglesDesired = {
-        QRect(-airbrakeSquareLength / 2.0, -brakeZeroPosition - desiredPosition,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-brakeZeroPosition - desiredPosition, -airbrakeSquareLength / 2.0,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-airbrakeSquareLength / 2.0, -airbrakeSquareLength + brakeZeroPosition + desiredPosition,
-              airbrakeSquareLength, airbrakeSquareLength),
-        QRect(-airbrakeSquareLength + brakeZeroPosition + desiredPosition, -airbrakeSquareLength / 2.0,
-              airbrakeSquareLength, airbrakeSquareLength)
+            QRect(-airbrakeSquareLength / 2.0, -brakeZeroPosition - desiredPosition,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-brakeZeroPosition - desiredPosition, -airbrakeSquareLength / 2.0,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-airbrakeSquareLength / 2.0, -airbrakeSquareLength + brakeZeroPosition + desiredPosition,
+                  airbrakeSquareLength, airbrakeSquareLength),
+            QRect(-airbrakeSquareLength + brakeZeroPosition + desiredPosition, -airbrakeSquareLength / 2.0,
+                  airbrakeSquareLength, airbrakeSquareLength)
     };
 
     //Current airbrakes will be drawn on top of desired airbrakes, everything below here is drawn rotated and relative to circle position
@@ -1228,27 +1272,27 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w)
     p->rotate(45);
 
     //The rendering order of the desired and current airbrakes should change depending on which one is higher or lower
-    if(m_latest->desiredAirbrakes - m_latest->currentAirbrakes >= AIRBRAKE_DESIRED_THRESHOLD) {
+    if (m_latest->desiredAirbrakes - m_latest->currentAirbrakes >= AIRBRAKE_DESIRED_THRESHOLD) {
         p->setPen(rectLightPen);
-        for(QRect rectangle : airbrakeRectanglesDesired) {
+        for (QRect rectangle: airbrakeRectanglesDesired) {
             p->fillRect(rectangle, m_highlightBrush);
         }
         p->setPen(rectPen);
-        for(QRect rectangle : airbrakeRectanglesCurrent) {
+        for (QRect rectangle: airbrakeRectanglesCurrent) {
             p->fillRect(rectangle, m_textBrush);
         }
-    } else if(m_latest->desiredAirbrakes - m_latest->currentAirbrakes < -AIRBRAKE_DESIRED_THRESHOLD) {
+    } else if (m_latest->desiredAirbrakes - m_latest->currentAirbrakes < -AIRBRAKE_DESIRED_THRESHOLD) {
         p->setPen(rectPen);
-        for(QRect rectangle : airbrakeRectanglesCurrent) {
+        for (QRect rectangle: airbrakeRectanglesCurrent) {
             p->fillRect(rectangle, m_textBrush);
         }
         p->setPen(rectLightPen);
-        for(QRect rectangle : airbrakeRectanglesDesired) {
+        for (QRect rectangle: airbrakeRectanglesDesired) {
             p->fillRect(rectangle, m_highlightBrush);
         }
     } else { //Only current airbrakes should be rendered if the desired is within the threshold
         p->setPen(rectPen);
-        for(QRect rectangle : airbrakeRectanglesCurrent) {
+        for (QRect rectangle: airbrakeRectanglesCurrent) {
             p->fillRect(rectangle, m_textBrush);
         }
     }
