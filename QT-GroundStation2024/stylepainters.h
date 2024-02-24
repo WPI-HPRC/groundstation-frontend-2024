@@ -88,7 +88,7 @@ public:
     void drawHPRCViewer(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadMap(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadBatteryVoltage(QPainter *p, const hprcDisplayWidget *w);
-    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float width);
+    void drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position, int desiredPosition, float x, float yOffset, float width);
     void drawHprcServoStatus(QPainter *p, const hprcDisplayWidget *w);
     void drawHprcGpsLockIndicator(QPainter *p, const hprcGpsLockIndicator *w);
     void drawDebugWidget(QPainter *p, debugWidget *w);
@@ -157,6 +157,48 @@ public:
         },
         std::vector<float> {
             3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
+        },
+        std::vector<float> {
+                3.0, 7.0, 12.0, 15.0
         }
     };
 
