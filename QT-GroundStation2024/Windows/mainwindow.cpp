@@ -305,8 +305,6 @@ void MainWindow::updateData(dataPoint p) {
 
     m_currentData.groundTime = p.groundTime;
     m_currentData.epochTime = p.epochTime;
-    m_currentData.rocketTime = p.rocketTime;
-    m_currentData.rocketTimeSinceLaunch = p.rocketTimeSinceLaunch;
     m_currentData.state = p.state;
 
     m_currentData.gpsLock = p.gpsLock;
