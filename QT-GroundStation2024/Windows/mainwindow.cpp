@@ -226,7 +226,7 @@ void MainWindow::updateData(dataPoint p) {
         m_currentData.groundTime = p.groundTime;
         emit groundTimeUpdated();
     }
-    if (p.orientation != m_currentData.orientation) {
+    if (p.orientation != m_currentData.orientation || p.p_orientation != m_currentData.p_orientation) {
         m_currentData.orientation = p.orientation;
 
         m_currentData.i = p.i;

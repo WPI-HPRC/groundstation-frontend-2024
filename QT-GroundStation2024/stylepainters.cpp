@@ -675,15 +675,37 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w) 
     bgPen.setWidth(crossWidth);
     // -- Get the angles and use them --
 
-    float pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k),
+    float pitch, yaw, roll;
+
+    pitch = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->i + m_latest->j * m_latest->k),
                                           1 - 2 * (pow(m_latest->i, 2) + pow(m_latest->j, 2))));
 
-    float yaw = qRadiansToDegrees(
+    yaw = qRadiansToDegrees(
             -M_PI / 2 + 2 * atan2(sqrt(1 + 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k)),
                                   sqrt(1 - 2 * (m_latest->w * m_latest->j - m_latest->i * m_latest->k))));
 
-    float roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j),
+    roll = qRadiansToDegrees(atan2(2 * (m_latest->w * m_latest->k + m_latest->i * m_latest->j),
                                          1 - 2 * (pow(m_latest->j, 2) + pow(m_latest->k, 2))));
+
+    if (w->objectName() == QString("p_attitude"))
+    {
+        qDebug("Attitude");
+        pitch = qRadiansToDegrees(atan2(2 * (m_latest->p_w * m_latest->p_i + m_latest->p_j * m_latest->p_k),
+                                        1 - 2 * (pow(m_latest->p_i, 2) + pow(m_latest->p_j, 2))));
+
+        yaw = qRadiansToDegrees(
+                -M_PI / 2 + 2 * atan2(sqrt(1 + 2 * (m_latest->p_w * m_latest->p_j - m_latest->p_i * m_latest->p_k)),
+                                      sqrt(1 - 2 * (m_latest->p_w * m_latest->p_j - m_latest->p_i * m_latest->p_k))));
+
+        roll = qRadiansToDegrees(atan2(2 * (m_latest->p_w * m_latest->p_k + m_latest->p_i * m_latest->p_j),
+                                             1 - 2 * (pow(m_latest->p_j, 2) + pow(m_latest->p_k, 2))));
+    }
+    else
+    {
+        qDebug("Not attitude");
+    }
+
+
 
     pitch += 180;
 

@@ -65,7 +65,7 @@
           <widget class="hprcPitchGauge" name="widget_6" native="true"/>
          </item>
          <item>
-          <widget class="hprcAttitudeWidget" name="attitude" native="true"/>
+          <widget class="hprcAttitudeWidget" name="p_attitude" native="true"/>
          </item>
          <item>
           <widget class="hprcPayloadBatteryVoltage" name="widget_4" native="true"/>
