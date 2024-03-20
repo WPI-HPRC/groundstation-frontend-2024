@@ -84,6 +84,10 @@ protected:
     hprcWidgetType m_widgetType;
     hprcDataType m_dataType;
 
+    static void makeDetailedWidget(hprcDisplayWidget *baseWidget);
+
+    void mousePressEvent(QMouseEvent *event) override;
+
 signals:
 
 };

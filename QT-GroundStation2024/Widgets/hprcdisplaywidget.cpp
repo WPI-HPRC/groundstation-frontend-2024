@@ -42,6 +42,48 @@ hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
 #endif
 }
 
+void hprcDisplayWidget::makeDetailedWidget(hprcDisplayWidget *baseWidget)
+{
+    QWidget* widget = nullptr;
+
+    // Store default dimensions for the detailed window
+    int windowWidth = 500;
+    int windowHeight = 500;
+
+    switch (baseWidget->getType()) {
+    case hprcDisplayWidget::HPRC_Gauge:
+        windowHeight = 400;
+        widget = new hprcGauge();
+        break;
+    case hprcDisplayWidget::HPRC_PayloadMap:
+        widget = new hprcPayloadMap();
+        break;
+    case hprcDisplayWidget::HPRC_SERVO_STATUS:
+        windowHeight = 450;
+        widget = new hprcServoStatusWidget();
+        break;
+    default:
+        break;
+    }
+
+    if (widget == nullptr) return;
+
+    // Create a new window
+    QMainWindow *window = new QMainWindow();
+
+    // Set the widget to use the entire new window
+    window->setCentralWidget(widget);
+    window->resize(windowWidth, windowHeight);
+    window->show();
+}
+
+void hprcDisplayWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        hprcDisplayWidget::makeDetailedWidget(this);
+    }
+}
+
 void hprcDisplayWidget::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
