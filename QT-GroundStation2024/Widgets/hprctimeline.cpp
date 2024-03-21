@@ -1,7 +1,7 @@
 #include "hprctimeline.h"
 #include "../Util/hprcStateMap.h"
 
-hprcTimeline::hprcTimeline(QWidget *parent): hprcGraphicsWidget(parent, false)
+hprcTimeline::hprcTimeline(QWidget *parent) : hprcGraphicsWidget(parent, false)
 {
     graphicsView->setObjectName("Timeline");
 

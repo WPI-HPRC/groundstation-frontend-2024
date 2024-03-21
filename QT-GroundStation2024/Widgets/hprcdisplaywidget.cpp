@@ -15,6 +15,7 @@
 #include "Util/mousetrackinggraphicsview.h"
 #include "Util/betterqgraphicstextitem.h"
 #include "Widgets/hprcgraph.h"
+#include "Widgets/hprcDetailedViewWidget.h"
 
 // 3D imports
 #include <Qt3DCore/QEntity>
@@ -44,37 +45,22 @@ hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
 
 void hprcDisplayWidget::makeDetailedWidget(hprcDisplayWidget *baseWidget)
 {
-    QWidget* widget = nullptr;
+    if (baseWidget->m_widgetType != HPRC_DETAILED_VIEW_WIDGET) {
+        // Store default dimensions for the detailed window
+        int windowWidth = 500;
+        int windowHeight = 500;
 
-    // Store default dimensions for the detailed window
-    int windowWidth = 500;
-    int windowHeight = 500;
+        // Create a new window
+        QMainWindow* window = new QMainWindow();
+        window->setPalette(QApplication::style()->standardPalette());
+        window->setBackgroundRole(QPalette::Window);
 
-    switch (baseWidget->getType()) {
-    case hprcDisplayWidget::HPRC_Gauge:
-        windowHeight = 400;
-        widget = new hprcGauge();
-        break;
-    case hprcDisplayWidget::HPRC_PayloadMap:
-        widget = new hprcPayloadMap();
-        break;
-    case hprcDisplayWidget::HPRC_SERVO_STATUS:
-        windowHeight = 450;
-        widget = new hprcServoStatusWidget();
-        break;
-    default:
-        break;
+        // Set the widget to use the entire new window
+        hprcDetailedViewWidget* detailedViewWidget = new hprcDetailedViewWidget(baseWidget);
+        window->setCentralWidget((QWidget*)detailedViewWidget);
+        window->resize(windowWidth, windowHeight);
+        window->show();
     }
-
-    if (widget == nullptr) return;
-
-    // Create a new window
-    QMainWindow *window = new QMainWindow();
-
-    // Set the widget to use the entire new window
-    window->setCentralWidget(widget);
-    window->resize(windowWidth, windowHeight);
-    window->show();
 }
 
 void hprcDisplayWidget::mousePressEvent(QMouseEvent *event)
@@ -91,10 +77,10 @@ void hprcDisplayWidget::paintEvent(QPaintEvent *e)
     QApplication::style()->drawPrimitive(QStyle::PE_CustomBase, &opt, &p, this);
 }
 
-hprcGauge::hprcGauge(QWidget *parent)
-    : hprcDisplayWidget{parent}
-{
-    m_widgetType = HPRC_Gauge;
+void hprcGauge::drawDetailedView(QPainter* p) {
+    p->setPen(QPen(QColor(255, 255, 255)));
+    p->setBrush(QBrush(QColor(255, 0, 0)));
+    p->drawRect(10, 10, 100, 100);
 }
 
 void hprcDisplayWidget::updateFilled(float input)

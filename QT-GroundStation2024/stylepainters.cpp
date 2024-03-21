@@ -1333,3 +1333,7 @@ void HPRCStyle::drawHPRCAirbrakes(QPainter *p, const hprcDisplayWidget *w) {
     p->translate(QPoint(-circlePosition.x(), -circlePosition.y()));
     p->rotate(-45);
 }
+
+void HPRCStyle::drawDetailedView(QPainter* p, hprcDetailedViewWidget* w) {
+    w->widget->drawDetailedView(p);
+}

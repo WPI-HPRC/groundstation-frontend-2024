@@ -101,6 +101,9 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                     case hprcDisplayWidget::HPRC_serverConnection:
                         m_drawer->drawServerConnectionIndicator(painter, (serverConnectionIndicator *) w);
                         return;
+                    case hprcDisplayWidget::HPRC_DETAILED_VIEW_WIDGET:
+                        m_drawer->drawDetailedView(painter, (hprcDetailedViewWidget*)w);
+                        return;
                     default:
                         return;
                 }

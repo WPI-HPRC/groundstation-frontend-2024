@@ -2,6 +2,7 @@
 #define HPRCDISPLAYWIDGET_H
 
 #include "../Windows/mainwindow.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>
@@ -43,7 +44,8 @@ public:
         HPRC_GpsLock,
         HPRC_DebugWidget,
         HPRC_p_DebugWidget,
-        HPRC_serverConnection
+        HPRC_serverConnection,
+        HPRC_DETAILED_VIEW_WIDGET
     };
 
     enum hprcDataType // TODO
@@ -73,6 +75,9 @@ public:
 
     void paintEvent(QPaintEvent *e);
 
+    //Can be overwritten to draw custom detailed view
+    virtual void drawDetailedView(QPainter* p) {}
+
 public slots:
 
     void updateFilled(int input);
@@ -84,7 +89,8 @@ protected:
     hprcWidgetType m_widgetType;
     hprcDataType m_dataType;
 
-    static void makeDetailedWidget(hprcDisplayWidget *baseWidget);
+private:
+    void makeDetailedWidget(hprcDisplayWidget *baseWidget);
 
     void mousePressEvent(QMouseEvent *event) override;
 
@@ -98,7 +104,11 @@ class hprcGauge : public hprcDisplayWidget
 public:
 
 
-    explicit hprcGauge(QWidget *parent = nullptr);
+    explicit hprcGauge(QWidget* parent = nullptr) : hprcDisplayWidget(parent) {
+        m_widgetType = HPRC_Gauge;
+    }
+
+    void drawDetailedView(QPainter* p) override;
 
 signals:
 };
