@@ -81,7 +81,7 @@
   <customwidget>
    <class>hprcViewer</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcRocketViewer.h</header>
+   <header>Widgets/hprcViewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
