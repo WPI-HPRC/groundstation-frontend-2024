@@ -69,25 +69,25 @@
   <customwidget>
    <class>hprcRocketVisualizer</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcRocketVisualizer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAttitudeWidget</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcAttitudeWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcViewer</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcRocketViewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcAirbrakes</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcAirbrakes.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
