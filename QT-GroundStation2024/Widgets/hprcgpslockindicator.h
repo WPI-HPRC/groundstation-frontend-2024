@@ -2,6 +2,7 @@
 #define HPRCGPSLOCKINDICATOR_H
 
 #include "hprcgraphicswidget.h"
+#include <Util/betterqgraphicstextitem.h>
 
 class hprcGpsLockIndicator : public hprcGraphicsWidget
 {

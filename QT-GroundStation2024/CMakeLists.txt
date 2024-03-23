@@ -48,6 +48,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Widgets/hprctimeline.h
         Widgets/hprcgraph.h
         Widgets/hprcgraphicswidget.h Widgets/hprcgraphicswidget.cpp
+        Widgets/hprcViewer.h Widgets/hprcViewer.cpp
         Util/roundedQGraphicsRectItem.h
         Util/hprcStateMap.h
         Widgets/hprctimeline.cpp

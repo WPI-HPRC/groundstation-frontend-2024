@@ -19,6 +19,10 @@
 #include "Util/betterqgraphicstextitem.h"
 #include "Util/hprcStateMap.h"
 #include "Widgets/hprctimeline.h"
+#include <Widgets/hprcPayloadBatteryVoltage.h>
+#include <Widgets/hprcPayloadGraph.h>
+#include <Widgets/hprcViewer.h>
+#include <Widgets/hprcPayloadMap.h>
 
 std::map<double, QString> hprcStateMaps::stateMap;
 std::map<HPRCStyle::HPRCAlarmType, bool> hprcStateMaps::alarmMapW;

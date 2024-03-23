@@ -7,6 +7,7 @@
 
 
 #include "hprcgraphicswidget.h"
+#include <Util/betterqgraphicstextitem.h>
 
 class serverConnectionIndicator : public hprcGraphicsWidget
 {

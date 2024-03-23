@@ -4,6 +4,9 @@
 #include "stylepainters.h"
 #include <iostream>
 
+#include "Widgets/hprcAirbrakes.h"
+#include "Widgets/hprcServoStatusWidget.h"
+
 //<--------------------Style Color Definitions--------------------->//
 
 QColor darkBackground(20, 20, 20); //#141414

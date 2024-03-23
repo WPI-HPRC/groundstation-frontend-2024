@@ -2,6 +2,7 @@
 #define P_DEBUGWIDGET_H
 
 #include "hprcgraphicswidget.h"
+#include <Util/betterqgraphicstextitem.h>
 
 class p_debugWidget : public hprcGraphicsWidget
 {

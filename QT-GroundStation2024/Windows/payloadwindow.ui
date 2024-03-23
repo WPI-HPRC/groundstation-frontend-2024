@@ -83,43 +83,43 @@
   <customwidget>
    <class>hprcAttitudeWidget</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcAttitudeWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcPayloadMap</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcPayloadMap.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcRollGauge</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcGauge.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcPitchGauge</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcGauge.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcPayloadBatteryVoltage</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcPayloadBatteryVoltage.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcServoStatusWidget</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcServoStatusWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>hprcPayloadGraph</class>
    <extends>QWidget</extends>
-   <header>Widgets/hprcdisplaywidget.h</header>
+   <header>Widgets/hprcPayloadGraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
