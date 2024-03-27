@@ -18,6 +18,8 @@ public:
     HPRCSubGraph* accelSubGraph;
 
     explicit hprcGraph(QWidget *parent = nullptr);
+
+    void drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) override;
 };
 
 #endif // HPRCGRAPH_H

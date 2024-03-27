@@ -1,1 +1,1 @@
-#include "hprcDetailedViewWidget.h"
+#include "Widgets/hprcDetailedViewWidget.h"

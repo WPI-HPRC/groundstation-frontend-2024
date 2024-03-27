@@ -1,5 +1,7 @@
 #include "hprcViewer.h"
 
+#include "stylepainters.h"
+
 #include "Windows/mainwindow.h"
 
 #include <QApplication>
@@ -89,4 +91,20 @@ void hprcViewer::updateColors(QColor panel, QColor highlight) const {
 
     // Adjust the background color
     m_view->defaultFrameGraph()->setClearColor(panel);
+}
+
+void HPRCStyle::drawHPRCViewer(QPainter* p, const hprcDisplayWidget* w) {
+    if (w->getType() == hprcDisplayWidget::HPRC_Viewer) {
+        const hprcViewer* viewer = dynamic_cast<const hprcViewer*>(w);
+        if (viewer) {
+            // Update the orientation of the rocket based on the latest data
+            viewer->orientRocket(m_latest->orientation);
+
+            // Resize the 3D viewer to match the container widget
+            viewer->m_view->resize(w->size());
+
+            // Update the colors to match the current color scheme
+            viewer->updateColors(m_panelBrush.color(), m_highlightBrush.color());
+        }
+    }
 }

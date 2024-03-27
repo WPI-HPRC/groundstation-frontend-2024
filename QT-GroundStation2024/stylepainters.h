@@ -97,7 +97,7 @@ public:
     void drawServerConnectionIndicator(QPainter *p, const serverConnectionIndicator *w);
     void drawDetailedView(QPainter* p, hprcDetailedViewWidget* w);
 
-
+    hprcDisplayWidget::DrawResources drawResources;
 
     QBrush m_backgroundBrush;
     QBrush m_panelBrush;

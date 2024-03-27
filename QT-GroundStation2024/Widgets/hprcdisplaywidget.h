@@ -14,6 +14,20 @@ class hprcDisplayWidget : public QWidget
 public:
     explicit hprcDisplayWidget(QWidget *parent = nullptr);
 
+    struct DrawResources {
+        QBrush m_backgroundBrush;
+        QBrush m_panelBrush;
+        QBrush m_textBrush;
+        QBrush m_highlightBrush;
+        QBrush m_buttonBrush;
+        QBrush m_transparentBrush;
+
+        QFont m_widgetFancy;
+        QFont m_widgetLarge;
+        QFont m_widgetMedium;
+        QFont m_widgetSmall;
+    };
+
     enum hprcWidgetType
     {
         HPRC_Timeline,
@@ -66,7 +80,7 @@ public:
     void paintEvent(QPaintEvent *e);
 
     //Can be overwritten to draw custom detailed view
-    virtual void drawDetailedView(QPainter* p) {}
+    virtual void drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) {}
 
 public slots:
 

@@ -8,7 +8,7 @@ public:
 
     explicit hprcGauge(QWidget* parent = nullptr);
 
-    void drawDetailedView(QPainter* p) override;
+    void drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) override;
 
 signals:
 };
