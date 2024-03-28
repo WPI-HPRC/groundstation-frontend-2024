@@ -14,12 +14,6 @@ hprcGauge::hprcGauge(QWidget* parent)
     detailedViewEnabled = true;
 }
 
-void hprcGauge::drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) {
-    p->setPen(QPen(QColor(255, 255, 255)));
-    p->setBrush(QBrush(QColor(255, 0, 0)));
-    p->drawRect(10, 10, 100, 100);
-}
-
 hprcAltitudeGauge::hprcAltitudeGauge(QWidget* parent) :
     hprcGauge{ parent }
 {

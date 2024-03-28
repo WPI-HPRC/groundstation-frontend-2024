@@ -8,6 +8,7 @@
 
 #include "hprcgraphicswidget.h"
 #include <Util/betterqgraphicstextitem.h>
+#include <qabstractsocket.h>
 
 class serverConnectionIndicator : public hprcGraphicsWidget
 {

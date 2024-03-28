@@ -77,8 +77,7 @@ void HPRCSubGraph::hideTooltip() {
 }
 
 
-void
-HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,
+void HPRCStyle::drawHPRCSubGraph(QPainter *p, QRectF rect, QColor bg, GraphPointCircularBuffer *data, GraphType graphType,
                             double range, double start, hprcGraph *w, QGraphicsScene *scene, bool drawTooltip) {
     if (rect.height() < 10)
         return;

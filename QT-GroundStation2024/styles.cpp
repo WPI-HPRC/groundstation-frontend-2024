@@ -4,7 +4,6 @@
 #include "stylepainters.h"
 #include <iostream>
 
-#include "Widgets/hprcAirbrakes.h"
 #include "Widgets/hprcServoStatusWidget.h"
 
 //<--------------------Style Color Definitions--------------------->//

@@ -7,8 +7,8 @@
 #include <QApplication>
 
 hprcAirbrakes::hprcAirbrakes(QWidget* parent) :
-    hprcDisplayWidget(parent)
-{
+    hprcDisplayWidget(parent) {
+    detailedViewEnabled = true;
     // subscribe to any data that needs to cause an update
     foreach(QWidget * w, qApp->topLevelWidgets())
         if (MainWindow* mainWin = qobject_cast<MainWindow*>(w))

@@ -92,5 +92,34 @@ void HPRCStyle::drawFrame(QPainter *p, const QStyleOption *o) {
 
 //Does not build if this function goes inside the detailed view file for some reason
 void HPRCStyle::drawDetailedView(QPainter* p, hprcDetailedViewWidget* w) {
-    w->widget->drawDetailedView(p, &drawResources, m_latest);
+    //w->widget->drawDetailedView(p, w, &drawResources, m_latest);
+    switch (w->widget->getType()) {
+    case hprcDisplayWidget::HPRC_Graph:
+        drawGraphDetailedView(p, (hprcGraph*) w->widget);
+        break;
+    case hprcDisplayWidget::HPRC_Gauge:
+        drawGaugeDetailedView(p, (hprcGauge*) w->widget);
+        break;
+    case hprcDisplayWidget::HPRC_AIRBRAKES:
+        drawAirbrakesDetailedView(p, (hprcAirbrakes*)w->widget);
+        break;
+    }
+}
+
+void HPRCStyle::drawGraphDetailedView(QPainter* p, hprcGraph* w) {
+
+}
+
+void HPRCStyle::drawGaugeDetailedView(QPainter* p, hprcGauge* w) {
+    p->setPen(QPen(QColor(255, 255, 255)));
+    p->setBrush(QBrush(QColor(255, 0, 0)));
+    p->drawRect(10, 10, 100, 100);
+}
+
+void HPRCStyle::drawAirbrakesDetailedView(QPainter* p, hprcAirbrakes* w) {
+    p->setFont(m_widgetMedium);
+    p->setPen(QPen(m_textBrush, 3));
+    p->drawText(QPoint(100, 100), "Servo");
+
+    //Good idea: put a graph of the airbrakes over time here
 }

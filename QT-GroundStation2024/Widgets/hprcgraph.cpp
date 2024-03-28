@@ -278,7 +278,3 @@ HPRCStyle::drawHPRCSubGraph(QPainter* p, QRectF rect, QColor bg, QList<MainWindo
 
     return Range{ scaleMin, scaleMax };
 }
-
-void hprcGraph::drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) {
-    
-}

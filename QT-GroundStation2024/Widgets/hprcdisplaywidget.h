@@ -1,8 +1,6 @@
 #ifndef HPRCDISPLAYWIDGET_H
 #define HPRCDISPLAYWIDGET_H
 
-#include "../Windows/mainwindow.h"
-
 #include <QObject>
 #include <QWidget>
 
@@ -80,7 +78,7 @@ public:
     void paintEvent(QPaintEvent *e);
 
     //Can be overwritten to draw custom detailed view
-    virtual void drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) {}
+    //virtual void drawDetailedView(QPainter* p, hprcDisplayWidget* w, DrawResources* drawResources, MainWindow::dataPoint* m_latest) {}
 
 public slots:
 

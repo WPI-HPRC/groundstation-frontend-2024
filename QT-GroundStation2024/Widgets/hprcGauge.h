@@ -1,4 +1,7 @@
-#include "./hprcdisplaywidget.h"
+#include "hprcdisplaywidget.h"
+
+#ifndef GAUGEWIDGET_H
+#define GAUGEWIDGET_H
 
 class hprcGauge : public hprcDisplayWidget
 {
@@ -8,7 +11,7 @@ public:
 
     explicit hprcGauge(QWidget* parent = nullptr);
 
-    void drawDetailedView(QPainter* p, DrawResources* drawResources, MainWindow::dataPoint* m_latest) override;
+    //void drawDetailedView(QPainter* p, hprcDisplayWidget* w, DrawResources* drawResources, MainWindow::dataPoint* m_latest) override;
 
 signals:
 };
@@ -62,3 +65,5 @@ public:
     explicit hprcPitchGauge(QWidget* parent = nullptr);
 
 };
+
+#endif

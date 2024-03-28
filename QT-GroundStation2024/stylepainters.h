@@ -1,7 +1,7 @@
 #ifndef HPRCSTYLE_H
 #define HPRCSTYLE_H
 
-#include "Widgets/hprcdisplaywidget.h"
+
 #include "Widgets/hprcgraph.h"
 #include "Widgets/hprcgpslockindicator.h"
 #include <QStyle>
@@ -12,6 +12,8 @@
 #include "Widgets/p_debugwidget.h"
 #include "Widgets/serverConnectionIndicator.h"
 #include "Widgets/hprcDetailedViewWidget.h"
+#include "Widgets/hprcGauge.h"
+#include "Widgets/hprcAirbrakes.h"
 
 #define TOOLTIP_WIDTH 50
 #define TOOLTIP_WIDTH_HALF 25
@@ -77,8 +79,8 @@ public:
     void drawHPRCTimeline(QPainter *p, const hprcTimeline *w);
     void drawHPRCGauge(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
-    void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
-    void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
+    //void drawHPRCPayloadAttitudeWidget(QPainter* p, const hprcDisplayWidget *w);
+    //void drawHPRCGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCPayloadGraph(QPainter *p, const hprcDisplayWidget *w);
     void drawHPRCGraph(QPainter *p, hprcGraph *w);
     void drawHPRCAlarmPanel(QPainter *p, const hprcDisplayWidget *w);
@@ -96,6 +98,9 @@ public:
     void drawp_DebugWidget(QPainter *p, p_debugWidget *w);
     void drawServerConnectionIndicator(QPainter *p, const serverConnectionIndicator *w);
     void drawDetailedView(QPainter* p, hprcDetailedViewWidget* w);
+    void drawGraphDetailedView(QPainter* p, hprcGraph* w);
+    void drawGaugeDetailedView(QPainter* p, hprcGauge* w);
+    void drawAirbrakesDetailedView(QPainter* p, hprcAirbrakes* w);
 
     hprcDisplayWidget::DrawResources drawResources;
 
