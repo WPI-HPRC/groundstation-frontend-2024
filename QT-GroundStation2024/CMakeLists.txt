@@ -61,6 +61,16 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Windows/p_debugwindow.ui
         Widgets/p_debugwidget.h Widgets/p_debugwidget.cpp
         Windows/p_debugwindow.h Windows/p_debugwindow.cpp
+        Widgets/hprcAirbrakes.h Widgets/hprcAirbrakes.cpp
+        Widgets/hprcGauge.h Widgets/hprcGauge.cpp
+        Widgets/hprcAlarmPanel.h Widgets/hprcAlarmPanel.cpp
+        Widgets/hprcPayloadMap.h Widgets/hprcPayloadMap.cpp
+        Widgets/hprcPayloadGraph.h Widgets/hprcPayloadGraph.cpp
+        Widgets/hprcAttitudeWidget.h Widgets/hprcAttitudeWidget.cpp
+        Widgets/hprcRocketVisualizer.h Widgets/hprcRocketVisualizer.cpp
+        Widgets/hprcServoStatusWidget.h Widgets/hprcServoStatusWidget.cpp
+        Widgets/hprcPayloadBatteryVoltage.h Widgets/hprcPayloadBatteryVoltage.cpp
+        Widgets/hprcClock.h Widgets/hprcClock.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT-GroundStation2024 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
