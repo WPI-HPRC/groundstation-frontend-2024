@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(TIMER_TICK_MS);
 
-    m_websocket = new HPRCWebSocket("hprc-test.entflammen.com", 8000);
+    m_websocket = new HPRCWebSocket("wss://localhost", 8000); //hprc-test.entflammen.com
     connect(m_websocket, SIGNAL(onTextMessageReceived(QString)), this, SLOT(onTextMessageReceived(QString)));
     connect(m_websocket, SIGNAL(socketStateChanged(QAbstractSocket::SocketState)), this,
             SLOT(socketStateChanged(QAbstractSocket::SocketState)));

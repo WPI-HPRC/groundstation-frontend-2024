@@ -95,28 +95,92 @@ void HPRCStyle::drawDetailedView(QPainter* p, hprcDetailedViewWidget* w) {
     //w->widget->drawDetailedView(p, w, &drawResources, m_latest);
     switch (w->widget->getType()) {
     case hprcDisplayWidget::HPRC_Graph:
-        drawGraphDetailedView(p, (hprcGraph*) w->widget);
+        drawGraphDetailedView(p, (hprcGraphicsDetailedViewWidget*) w);
         break;
     case hprcDisplayWidget::HPRC_Gauge:
-        drawGaugeDetailedView(p, (hprcGauge*) w->widget);
+        drawGaugeDetailedView(p, w);
         break;
     case hprcDisplayWidget::HPRC_AIRBRAKES:
-        drawAirbrakesDetailedView(p, (hprcAirbrakes*)w->widget);
+        drawAirbrakesDetailedView(p, w);
         break;
     }
 }
 
-void HPRCStyle::drawGraphDetailedView(QPainter* p, hprcGraph* w) {
+void HPRCStyle::drawGraphDetailedView(QPainter* p, hprcGraphicsDetailedViewWidget* dw) {
+    int width = dw->rect().width();
+    int height = dw->rect().height();
 
+    double scaleF = 0.75;
+    double paddingRatio = (1 - scaleF) / 2.0;
+
+    int margin = fmin(paddingRatio * width, paddingRatio * height);
+
+    QRectF drawBox = dw->layout()->geometry().adjusted(margin, margin, -margin, -margin);
+
+    dw->graphicsView->setSceneRect(dw->layout()->geometry());
+
+    // label padding = 7.5%
+    int lMargin = drawBox.height() * 0.075;
+    drawBox.adjust(lMargin, 0, 0, -lMargin);
+
+    QPointF topLeftTop = drawBox.topLeft();
+    QPointF bottomRightBottom = drawBox.bottomRight();
+
+    int row2Top = drawBox.y() + drawBox.height() / 3;
+    int row3Top = drawBox.y() + 2 * drawBox.height() / 3;
+
+    QPointF bottomRightTop(drawBox.right(), row2Top);
+    QPointF topLeftMiddle(drawBox.left(), row2Top);
+    QPointF bottomRightMiddle(drawBox.right(), row3Top);
+    QPointF topLeftBottom(drawBox.left(), row3Top);
+
+    QRectF top(topLeftTop, bottomRightTop);
+    QRectF middle(topLeftMiddle, bottomRightMiddle);
+    QRectF bottom(topLeftBottom, bottomRightBottom);
+
+    double start = graphPointCircularBufferGetValueAtIndex(m_latest->altData, 0)->time;
+    double range = graphPointCircularBufferGetValueAtIndex(m_latest->altData, m_latest->altData->length - 1)->time - start;
+
+
+    bool drawT = false;
+    if (drawBox.contains(dw->m_mousePos))
+    {
+        drawT = true;
+
+        dw->m_mousePos.setX(fmin(fmax(dw->m_mousePos.x(), drawBox.x() + TOOLTIP_WIDTH_HALF + 2), drawBox.right() - TOOLTIP_WIDTH_HALF - 2));
+    }
+
+    // <---- draw ----> //
+
+    dw->graphicsScene->setBackgroundBrush(m_transparentBrush);
+
+    // Do a little adjusting to help with tooltip rendering
+    ((hprcGraph*) dw->widget)->bgRect->setRect(drawBox.adjusted(0, 0, 0, 2));
+    ((hprcGraph*)dw->widget)->bgRect->setPen(QPen(m_backgroundBrush, 6));
+    ((hprcGraph*)dw->widget)->bgRect->setBrush(m_backgroundBrush);
+    ((hprcGraph*)dw->widget)->bgRect->setZValue(-1);
+
+    // Do a little adjusting to help with tooltip rendering
+    drawHPRCSubGraph(p, top, m_highlightBrush.color(), m_latest->accData, GRAPH_Acceleration, range, start, ((hprcGraph*) dw->widget), dw->graphicsScene, drawT);
+    drawHPRCSubGraph(p, middle.adjusted(0, 1, 0, 1), QColor("#2c4985"), m_latest->velData, GRAPH_Velocity, range, start, ((hprcGraph*)dw->widget), dw->graphicsScene, drawT);
+    drawHPRCSubGraph(p, bottom.adjusted(0, 2, 0, 2), QColor("#471d57"), m_latest->altData, GRAPH_Altitude, range, start, ((hprcGraph*)dw->widget), dw->graphicsScene, drawT);
+
+    // Draw an outline to clean up weird border rendering
+    ((hprcGraph*)dw->widget)->outlineRect->setRect(drawBox.adjusted(0, 0, 0, 3));
+    ((hprcGraph*)dw->widget)->outlineRect->setBrush(m_transparentBrush);
+    ((hprcGraph*)dw->widget)->outlineRect->setPen(QPen(m_backgroundBrush, 4));
+    ((hprcGraph*)dw->widget)->outlineRect->setZValue(100);
+
+    dw->graphicsView->viewport()->update();
 }
 
-void HPRCStyle::drawGaugeDetailedView(QPainter* p, hprcGauge* w) {
+void HPRCStyle::drawGaugeDetailedView(QPainter* p, hprcDetailedViewWidget* dw) {
     p->setPen(QPen(QColor(255, 255, 255)));
     p->setBrush(QBrush(QColor(255, 0, 0)));
     p->drawRect(10, 10, 100, 100);
 }
 
-void HPRCStyle::drawAirbrakesDetailedView(QPainter* p, hprcAirbrakes* w) {
+void HPRCStyle::drawAirbrakesDetailedView(QPainter* p, hprcDetailedViewWidget* dw) {
     p->setFont(m_widgetMedium);
     p->setPen(QPen(m_textBrush, 3));
     p->drawText(QPoint(100, 100), "Servo");

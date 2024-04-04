@@ -37,7 +37,13 @@ void hprcDisplayWidget::makeDetailedWidget(hprcDisplayWidget *baseWidget)
         window->setBackgroundRole(QPalette::Window);
 
         // Set the widget to use the entire new window
-        hprcDetailedViewWidget* detailedViewWidget = new hprcDetailedViewWidget(baseWidget);
+        hprcDisplayWidget* detailedViewWidget;
+        if (QString(typeid(*baseWidget).name()).remove("class ") == "hprcGraph") { //If it is a widget that uses graphics view
+            detailedViewWidget = new hprcGraphicsDetailedViewWidget((hprcGraphicsWidget*) baseWidget);
+        }
+        else {
+            detailedViewWidget = new hprcDetailedViewWidget(baseWidget);
+        }
         window->setWindowTitle(QString(typeid(*baseWidget).name()).remove("class "));
         window->setCentralWidget((QWidget*)detailedViewWidget);
         window->resize(windowWidth, windowHeight);

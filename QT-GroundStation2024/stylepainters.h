@@ -97,10 +97,10 @@ public:
     void drawDebugWidget(QPainter *p, debugWidget *w);
     void drawp_DebugWidget(QPainter *p, p_debugWidget *w);
     void drawServerConnectionIndicator(QPainter *p, const serverConnectionIndicator *w);
-    void drawDetailedView(QPainter* p, hprcDetailedViewWidget* w);
-    void drawGraphDetailedView(QPainter* p, hprcGraph* w);
-    void drawGaugeDetailedView(QPainter* p, hprcGauge* w);
-    void drawAirbrakesDetailedView(QPainter* p, hprcAirbrakes* w);
+    void drawDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
+    void drawGraphDetailedView(QPainter* p, hprcGraphicsDetailedViewWidget* dw);
+    void drawGaugeDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
+    void drawAirbrakesDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
 
     hprcDisplayWidget::DrawResources drawResources;
 

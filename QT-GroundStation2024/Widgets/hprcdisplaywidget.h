@@ -47,7 +47,8 @@ public:
         HPRC_DebugWidget,
         HPRC_p_DebugWidget,
         HPRC_serverConnection,
-        HPRC_DETAILED_VIEW_WIDGET
+        HPRC_DETAILED_VIEW_WIDGET,
+        HPRC_GRAPHICS_DETAILED_VIEW_WIDGET
     };
 
     enum hprcDataType // TODO
