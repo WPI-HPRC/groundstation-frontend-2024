@@ -73,6 +73,10 @@ public:
 
     QString m_label;
 
+    // Detailed View Config
+    int detailedViewWindowWidth = 500;
+    int detailedViewWindowHeight = 500;
+
     hprcWidgetType getType() const { return m_widgetType; }
     hprcDataType getDataType() const { return m_dataType; }
 

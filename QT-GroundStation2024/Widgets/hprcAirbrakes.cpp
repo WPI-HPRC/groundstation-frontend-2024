@@ -22,6 +22,8 @@ hprcAirbrakes::hprcAirbrakes(QWidget* parent) :
 }
 
 void HPRCStyle::drawHPRCAirbrakes(QPainter* p, const hprcDisplayWidget* w) {
+    this->drawFullscreenIcon(p);
+
     /*
     if(w->width() < 100)
         return;

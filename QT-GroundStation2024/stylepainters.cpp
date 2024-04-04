@@ -68,6 +68,22 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d) {
     m_latest = d;
 }
 
+void HPRCStyle::drawFullscreenIcon(QPainter *p) {
+    // Draw open window icon
+    QPen fullscreenPen(m_textBrush, 1);
+    p->setPen(fullscreenPen);
+    int l = 10;
+    // Draw box part
+    p->drawLine(0, 0, l/2, 0);
+    p->drawLine(0, 0, 0, l);
+    p->drawLine(0, l, l, l);
+    p->drawLine(l, l, l, l/2);
+    // Draw arrow part
+    p->drawLine(l, 0, 0.8 * l, 0);
+    p->drawLine(l, 0, l, l * 0.2);
+    p->drawLine(l, 0, 0.3 * l, 0.7 * l);
+}
+
 
 void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o) {
 
@@ -102,6 +118,9 @@ void HPRCStyle::drawDetailedView(QPainter* p, hprcDetailedViewWidget* w) {
         break;
     case hprcDisplayWidget::HPRC_AIRBRAKES:
         drawAirbrakesDetailedView(p, w);
+        break;
+    case hprcDisplayWidget::HPRC_SERVO_STATUS:
+        drawPayloadServoDetailedView(p, (hprcDisplayWidget*)w->widget);
         break;
     }
 }
@@ -170,9 +189,25 @@ void HPRCStyle::drawGraphDetailedView(QPainter* p, hprcGraphicsDetailedViewWidge
     ((hprcGraph*)dw->widget)->outlineRect->setBrush(m_transparentBrush);
     ((hprcGraph*)dw->widget)->outlineRect->setPen(QPen(m_backgroundBrush, 4));
     ((hprcGraph*)dw->widget)->outlineRect->setZValue(100);
-
+    
     dw->graphicsView->viewport()->update();
 }
+
+void HPRCStyle::drawPayloadServoDetailedView(QPainter* p, hprcDisplayWidget* w) {
+    p->setRenderHint(QPainter::Antialiasing);
+
+    drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1,
+                         (w->rect().center().x() - w->rect().x()) / 2, 4, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", m_latest->p_actualServoPos2, m_latest->p_desiredServoPos2,
+                         w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, 4,
+                         w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 3", m_latest->p_actualServoPos3, m_latest->p_desiredServoPos3,
+                         (w->rect().center().x() - w->rect().x()) / 2, 0, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 4", m_latest->p_actualServoPos4, m_latest->p_desiredServoPos4,
+                         w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, 0,
+                         w->rect().center().x() - w->rect().x());
+}
+
 
 void HPRCStyle::drawGaugeDetailedView(QPainter* p, hprcDetailedViewWidget* dw) {
     p->setPen(QPen(QColor(255, 255, 255)));

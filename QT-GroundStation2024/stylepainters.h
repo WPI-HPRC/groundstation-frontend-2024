@@ -71,6 +71,9 @@ public:
         GRAPH_Acceleration
     };
 
+    // static draw helper methods
+    void drawFullscreenIcon(QPainter *p);
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);
@@ -97,10 +100,15 @@ public:
     void drawDebugWidget(QPainter *p, debugWidget *w);
     void drawp_DebugWidget(QPainter *p, p_debugWidget *w);
     void drawServerConnectionIndicator(QPainter *p, const serverConnectionIndicator *w);
+    
+    //Detailed view sections
     void drawDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
     void drawGraphDetailedView(QPainter* p, hprcGraphicsDetailedViewWidget* dw);
     void drawGaugeDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
     void drawAirbrakesDetailedView(QPainter* p, hprcDetailedViewWidget* dw);
+
+
+    void drawPayloadServoDetailedView(QPainter* p, hprcDisplayWidget* w);
 
     hprcDisplayWidget::DrawResources drawResources;
 

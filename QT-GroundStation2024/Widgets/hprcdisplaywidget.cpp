@@ -27,10 +27,6 @@ hprcDisplayWidget::hprcDisplayWidget(QWidget *parent)
 void hprcDisplayWidget::makeDetailedWidget(hprcDisplayWidget *baseWidget)
 {
     if(baseWidget->detailedViewEnabled) {
-        // Store default dimensions for the detailed window
-        int windowWidth = 500;
-        int windowHeight = 500;
-
         // Create a new window
         QMainWindow* window = new QMainWindow();
         window->setPalette(QApplication::style()->standardPalette());
@@ -46,7 +42,7 @@ void hprcDisplayWidget::makeDetailedWidget(hprcDisplayWidget *baseWidget)
         }
         window->setWindowTitle(QString(typeid(*baseWidget).name()).remove("class "));
         window->setCentralWidget((QWidget*)detailedViewWidget);
-        window->resize(windowWidth, windowHeight);
+        window->resize(detailedViewWindowWidth, detailedViewWindowHeight);
         window->show();
     }
 }
