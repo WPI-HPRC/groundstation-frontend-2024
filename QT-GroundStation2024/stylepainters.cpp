@@ -119,7 +119,25 @@ void HPRCStyle::drawDetailedView(QPainter* p, hprcDetailedViewWidget* w) {
     case hprcDisplayWidget::HPRC_AIRBRAKES:
         drawAirbrakesDetailedView(p, (hprcAirbrakes*)w->widget);
         break;
+    case hprcDisplayWidget::HPRC_SERVO_STATUS:
+        drawPayloadServoDetailedView(p, (hprcDisplayWidget*)w->widget);
+        break;
     }
+}
+
+void HPRCStyle::drawPayloadServoDetailedView(QPainter* p, hprcDisplayWidget* w) {
+    p->setRenderHint(QPainter::Antialiasing);
+
+    drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1,
+                         (w->rect().center().x() - w->rect().x()) / 2, 4, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 2", m_latest->p_actualServoPos2, m_latest->p_desiredServoPos2,
+                         w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, 4,
+                         w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 3", m_latest->p_actualServoPos3, m_latest->p_desiredServoPos3,
+                         (w->rect().center().x() - w->rect().x()) / 2, 0, w->rect().center().x() - w->rect().x());
+    drawServoStatusServo(p, w, "Servo 4", m_latest->p_actualServoPos4, m_latest->p_desiredServoPos4,
+                         w->rect().center().x() + (w->rect().center().x() - w->rect().x()) / 2, 0,
+                         w->rect().center().x() - w->rect().x());
 }
 
 void HPRCStyle::drawGraphDetailedView(QPainter* p, hprcGraph* w) {

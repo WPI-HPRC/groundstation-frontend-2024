@@ -15,6 +15,11 @@ hprcServoStatusWidget::hprcServoStatusWidget(QWidget* parent) {
             connect(mainWin, SIGNAL(desiredPayloadServo1PositionUpdated(float)), this, SLOT(repaint()));
         }
     m_widgetType = HPRC_SERVO_STATUS;
+    detailedViewEnabled = true;
+
+    // Configure the detailed view
+    detailedViewWindowWidth = 420;
+    detailedViewWindowHeight = 350;
 }
 
 void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QString title, int position,
@@ -26,7 +31,12 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
     float servoRectHeight = w->rect().width() / 8;
     float servoRect2Width = servoRectHeight / 4;
     float yMargin = servoRectHeight * 2;
-    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, w->rect().bottom() - yMargin - yOffset * servoRectHeight, servoRectWidth,
+
+    // Calculate the distance to the top of the widget
+//    float atop = w->rect().bottom() - yMargin - yOffset * servoRectHeight;
+    float atop = servoRectHeight + yOffset * servoRectHeight;
+
+    QRect servoRect = QRect(x - (servoRectWidth + servoRect2Width) / 2, atop, servoRectWidth,
         servoRectHeight);
     p->drawRect(servoRect);
     p->drawRect(QRect(servoRect.x() + servoRect.width() / 4, servoRect.top(), servoRect.width() / 12,
@@ -61,6 +71,8 @@ void HPRCStyle::drawServoStatusServo(QPainter* p, const hprcDisplayWidget* w, QS
 }
 
 void HPRCStyle::drawHprcServoStatus(QPainter* p, const hprcDisplayWidget* w) {
+    this->drawFullscreenIcon(p);
+
     p->setRenderHint(QPainter::Antialiasing);
 
     drawServoStatusServo(p, w, "Servo 1", m_latest->p_actualServoPos1, m_latest->p_desiredServoPos1,
