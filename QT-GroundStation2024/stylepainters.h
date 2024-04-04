@@ -71,6 +71,9 @@ public:
         GRAPH_Acceleration
     };
 
+    // static draw helper methods
+    void drawFullscreenIcon(QPainter *p);
+
     // redraw existing components
     void drawPushButton(QPainter *p, const QStyleOption *o);
     void drawFrame(QPainter *p, const QStyleOption *o);

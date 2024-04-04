@@ -44,6 +44,8 @@ hprcPayloadMap::hprcPayloadMap(QWidget* parent) :
 }
 
 void HPRCStyle::drawHPRCPayloadMap(QPainter* p, const hprcDisplayWidget* w) {
+    this->drawFullscreenIcon(p);
+
     if (w->getType() == hprcDisplayWidget::HPRC_PayloadMap) {
         const hprcPayloadMap* mapWidget = dynamic_cast<const hprcPayloadMap*>(w);
 

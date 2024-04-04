@@ -68,6 +68,22 @@ HPRCStyle::HPRCStyle(const QStyle *style, MainWindow::dataPoint *d) {
     m_latest = d;
 }
 
+void HPRCStyle::drawFullscreenIcon(QPainter *p) {
+    // Draw open window icon
+    QPen fullscreenPen(m_textBrush, 1);
+    p->setPen(fullscreenPen);
+    int l = 10;
+    // Draw box part
+    p->drawLine(0, 0, l/2, 0);
+    p->drawLine(0, 0, 0, l);
+    p->drawLine(0, l, l, l);
+    p->drawLine(l, l, l, l/2);
+    // Draw arrow part
+    p->drawLine(l, 0, 0.8 * l, 0);
+    p->drawLine(l, 0, l, l * 0.2);
+    p->drawLine(l, 0, 0.3 * l, 0.7 * l);
+}
+
 
 void HPRCStyle::drawPushButton(QPainter *p, const QStyleOption *o) {
 
