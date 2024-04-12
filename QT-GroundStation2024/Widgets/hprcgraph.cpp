@@ -9,7 +9,7 @@ hprcGraph::hprcGraph(QWidget *parent) :
 
     this->altSubGraph = new HPRCSubGraph("Alt (m)", graphicsScene);
     this->velSubGraph = new HPRCSubGraph("VEL (m/s)", graphicsScene);
-    this->accelSubGraph = new HPRCSubGraph("ACCEL (m/s²)", graphicsScene);
+    this->accelSubGraph = new HPRCSubGraph("ACCEL (G)", graphicsScene);
 
         bgRect = new QGraphicsRectItem();
     outlineRect = new QGraphicsRectItem();
