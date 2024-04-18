@@ -43,8 +43,8 @@ void HPRCWebSocket::_connectToServer() {
 #if DEBUG_WEBSOCKETS
     qDebug("Attemtping to connect to server");
 #endif
-    emit open(QUrl("wss://hprc-test.entflammen.com:8000"));
-//    emit open(QUrl("ws://localhost:8001"));
+//    emit open(QUrl("wss://hprc-test.entflammen.com:8000"));
+    emit open(QUrl("ws://localhost:8001"));
 
 }
 

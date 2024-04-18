@@ -182,9 +182,9 @@ public:
             {"p_gyroY",               [](dataPoint &dp, const QJsonValue &value) { dp.p_gyroY = value.toDouble(); }},
             {"p_gyroZ",               [](dataPoint &dp, const QJsonValue &value) { dp.p_gyroZ = value.toDouble(); }},
 
-            {"p_magX",                [](dataPoint &dp, const QJsonValue &value) { dp.magX = value.toDouble(); }},
-            {"p_magY",                [](dataPoint &dp, const QJsonValue &value) { dp.magY = value.toDouble(); }},
-            {"p_magZ",                [](dataPoint &dp, const QJsonValue &value) { dp.magZ = value.toDouble(); }},
+            {"p_magX",                [](dataPoint &dp, const QJsonValue &value) { dp.p_magX = value.toDouble(); }},
+            {"p_magY",                [](dataPoint &dp, const QJsonValue &value) { dp.p_magY = value.toDouble(); }},
+            {"p_magZ",                [](dataPoint &dp, const QJsonValue &value) { dp.p_magZ = value.toDouble(); }},
             {"p_i",                   [](dataPoint &dp, const QJsonValue &value) {
                 dp.p_i = value.toDouble();
                 dp.p_orientation.setX(value.toDouble());
