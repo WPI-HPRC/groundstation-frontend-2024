@@ -93,7 +93,7 @@ public:
     void drawHprcGpsLockIndicator(QPainter *p, const hprcGpsLockIndicator *w);
     void drawDebugWidget(QPainter *p, debugWidget *w);
     void drawp_DebugWidget(QPainter *p, p_debugWidget *w);
-    void drawConnectionIndicator(QPainter *p, const ConnectionIndicator *w);
+    void drawConnectionIndicator(QPainter *p, ConnectionIndicator *w);
 
 
 

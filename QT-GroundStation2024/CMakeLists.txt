@@ -26,6 +26,10 @@ set(PROJECT_SOURCES
         Widgets/ConnectionIndicator.cpp
         Widgets/ServerConnectionIndicator.cpp
         Widgets/ServerConnectionIndicator.h
+        Widgets/RocketConnectionIndicator.cpp
+        Widgets/RocketConnectionIndicator.h
+        Widgets/PayloadConnectionIndicator.cpp
+        Widgets/PayloadConnectionIndicator.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

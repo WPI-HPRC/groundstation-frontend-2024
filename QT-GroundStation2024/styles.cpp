@@ -98,7 +98,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                         m_drawer->drawp_DebugWidget(painter, (p_debugWidget *) w);
                         return;
 
-                    case hprcDisplayWidget::HPRC_serverConnection:
+                    case hprcDisplayWidget::HPRC_connectionIndicator:
                         m_drawer->drawConnectionIndicator(painter, (ConnectionIndicator *) w);
                         return;
                     default:

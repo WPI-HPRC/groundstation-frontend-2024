@@ -17,6 +17,7 @@ public:
     QGraphicsEllipseItem *indicator;
     BetterQGraphicsTextItem *connectionLabel;
     QString label;
+    QGraphicsRectItem *bg;
 
     enum ConnectionState
     {

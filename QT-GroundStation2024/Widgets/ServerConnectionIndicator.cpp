@@ -8,9 +8,6 @@
 ServerConnectionIndicator::ServerConnectionIndicator(QWidget *parent): ConnectionIndicator(parent)
 {
     label = "Server";
-    m_widgetType = HPRC_serverConnection;
-
-    m_widgetType = hprcDisplayWidget::HPRC_serverConnection;
 
     foreach (QWidget *w, qApp->topLevelWidgets()) {
             if (MainWindow *mainWin = qobject_cast<MainWindow *>(w)) {

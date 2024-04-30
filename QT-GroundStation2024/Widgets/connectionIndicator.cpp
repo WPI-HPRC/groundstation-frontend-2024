@@ -9,28 +9,40 @@ ConnectionIndicator::ConnectionIndicator(QWidget *parent) : hprcGraphicsWidget(p
     indicator = new QGraphicsEllipseItem();
     connectionLabel = new BetterQGraphicsTextItem(parent->geometry(), Qt::AlignVCenter | Qt::AlignLeft,
                                                   "");
+    bg = new QGraphicsRectItem();
+    bg->setPen(QPen(Qt::darkGreen));
+    bg->setBrush(QBrush(Qt::darkGreen));
 
+//    graphicsScene->addItem(bg);
     graphicsScene->addItem(indicator);
     graphicsScene->addItem(connectionLabel);
+
+    m_widgetType = HPRC_connectionIndicator;
 }
 
-void HPRCStyle::drawConnectionIndicator(QPainter *p, const ConnectionIndicator *w)
+void HPRCStyle::drawConnectionIndicator(QPainter *p, ConnectionIndicator *w)
 {
-    int width = w->rect().width();
-    int height = w->rect().height();
+    w->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    double scaleF = 0.75;
+    int width = w->layout()->sizeHint().width();
+    int height = w->layout()->sizeHint().height();
+
+    double scaleF = 1;
     double paddingRatio = (1 - scaleF) / 2.0;
 
-    int margin = fmin(paddingRatio * width, paddingRatio * height);
+    int margin = paddingRatio * width;
 
-    QRectF drawBox = w->layout()->geometry().adjusted(margin, margin, -margin, -margin);
+    QRectF drawBox = QRectF(w->layout()->geometry().topLeft(), QSizeF(w->layout()->geometry().width(), w->layout()->sizeHint().height())).adjusted(width/4, 0, 0, -height/1.5);
+    w->setFixedHeight(drawBox.height());
 
-    float indicatorSize = drawBox.width() / 15;
+    w->graphicsView->setGeometry(drawBox.toRect());
+    w->graphicsView->setSceneRect(drawBox);
 
-    m_widgetMedium.setPointSize(drawBox.height() * 1 / 4);
+    w->bg->setRect(w->graphicsView->sceneRect());
 
-    w->graphicsView->setSceneRect(w->layout()->geometry());
+    float indicatorSize = drawBox.height() / 2.5;
+
+    m_widgetMedium.setPointSize(drawBox.width() / 10);
 
     QColor color;
 
@@ -52,12 +64,11 @@ void HPRCStyle::drawConnectionIndicator(QPainter *p, const ConnectionIndicator *
 
     w->indicator->setBrush(QBrush(color));
     w->indicator->setPen(QPen(color));
-    w->indicator->setRect(drawBox.x(), round(drawBox.y() + drawBox.height() * 1 / 8 - indicatorSize / 2 - 2),
+    w->indicator->setRect(drawBox.x() + 2, drawBox.y() + (drawBox.height() - indicatorSize) / 2,
                           indicatorSize, indicatorSize);
 
     w->connectionLabel->setDefaultTextColor(m_textBrush.color());
-    w->connectionLabel->geometry = QRect(drawBox.x() + indicatorSize * 2, drawBox.y(), drawBox.width(),
-                                         drawBox.height() * 1 / 4);
+    w->connectionLabel->geometry = drawBox.toRect().adjusted(indicatorSize + 15, 2, 0, 0);
     w->connectionLabel->setFont(m_widgetMedium);
     w->connectionLabel->setPlainText(w->label);
 
