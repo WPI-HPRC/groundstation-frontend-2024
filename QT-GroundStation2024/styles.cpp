@@ -99,7 +99,7 @@ void Style::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *
                         return;
 
                     case hprcDisplayWidget::HPRC_serverConnection:
-                        m_drawer->drawServerConnectionIndicator(painter, (serverConnectionIndicator *) w);
+                        m_drawer->drawConnectionIndicator(painter, (connectionIndicator *) w, "Server");
                         return;
                     default:
                         return;

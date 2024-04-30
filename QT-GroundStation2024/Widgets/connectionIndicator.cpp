@@ -2,10 +2,10 @@
 // Created by William Scheirey on 2/23/24.
 //
 
-#include "serverConnectionIndicator.h"
+#include "connectionIndicator.h"
 #include "../styles.h"
 
-serverConnectionIndicator::serverConnectionIndicator(QWidget *parent) : hprcGraphicsWidget(parent) {
+connectionIndicator::connectionIndicator(QWidget *parent) : hprcGraphicsWidget(parent) {
     indicator = new QGraphicsEllipseItem();
     connectionLabel = new BetterQGraphicsTextItem(parent->geometry(), Qt::AlignVCenter | Qt::AlignLeft,
                                                   "Not Connected");
@@ -23,12 +23,13 @@ serverConnectionIndicator::serverConnectionIndicator(QWidget *parent) : hprcGrap
         }
 }
 
-void serverConnectionIndicator::socketStateChanged(QAbstractSocket::SocketState state) {
+void connectionIndicator::socketStateChanged(QAbstractSocket::SocketState state) {
     this->socketState = state;
     this->repaint();
 }
 
-void HPRCStyle::drawServerConnectionIndicator(QPainter *p, const serverConnectionIndicator *w) {
+void HPRCStyle::drawConnectionIndicator(QPainter *p, const connectionIndicator *w, QString label)
+{
     int width = w->rect().width();
     int height = w->rect().height();
 
@@ -46,19 +47,15 @@ void HPRCStyle::drawServerConnectionIndicator(QPainter *p, const serverConnectio
     w->graphicsView->setSceneRect(w->layout()->geometry());
 
     QColor color;
-    QString label;
 
     switch (w->socketState) {
         case QAbstractSocket::ConnectedState:
             color = Qt::green;
-            label = "Connected";
             break;
         case QAbstractSocket::ConnectingState:
             color = Qt::yellow;
-            label = "Connecting";
             break;
         default:
-            label = "Not Connected";
             color = Qt::red;
             break;
     }

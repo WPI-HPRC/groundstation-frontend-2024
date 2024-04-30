@@ -2,17 +2,17 @@
 // Created by William Scheirey on 2/23/24.
 //
 
-#ifndef QT_GROUNDSTATION2024_SERVERCONNECTIONINDICATOR_H
-#define QT_GROUNDSTATION2024_SERVERCONNECTIONINDICATOR_H
+#ifndef QT_GROUNDSTATION2024_CONNECTIONINDICATOR_H
+#define QT_GROUNDSTATION2024_CONNECTIONINDICATOR_H
 
 
 #include "hprcgraphicswidget.h"
 
-class serverConnectionIndicator : public hprcGraphicsWidget
+class connectionIndicator : public hprcGraphicsWidget
 {
 Q_OBJECT
 public:
-    explicit serverConnectionIndicator(QWidget *parent = nullptr);
+    explicit connectionIndicator(QWidget *parent = nullptr);
 
     QGraphicsEllipseItem *indicator;
     BetterQGraphicsTextItem *connectionLabel;
@@ -23,4 +23,4 @@ public slots:
 };
 
 
-#endif //QT_GROUNDSTATION2024_SERVERCONNECTIONINDICATOR_H
+#endif //QT_GROUNDSTATION2024_CONNECTIONINDICATOR_H
