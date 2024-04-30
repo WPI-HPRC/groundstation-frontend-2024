@@ -101,7 +101,10 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <widget class="connectionIndicator" name="widget_2" native="true"/>
+              <widget class="ServerConnectionIndicator" name="widget_2" native="true"/>
+             </item>
+             <item>
+              <widget class="QWidget" name="RocketIndicator" native="true"/>
              </item>
             </layout>
            </widget>
@@ -233,9 +236,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>connectionIndicator</class>
+   <class>ServerConnectionIndicator</class>
    <extends>QWidget</extends>
-   <header>Widgets/connectionIndicator.h</header>
+   <header>Widgets/ServerConnectionIndicator.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

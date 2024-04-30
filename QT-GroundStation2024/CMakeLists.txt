@@ -21,9 +21,11 @@ set(PROJECT_SOURCES
         Windows/mainwindow.cpp
         Windows/mainwindow.h
         Windows/mainwindow.ui
-        Widgets/connectionIndicator.cpp
-        Widgets/connectionIndicator.h
-        Widgets/connectionIndicator.cpp
+        Widgets/ConnectionIndicator.cpp
+        Widgets/ConnectionIndicator.h
+        Widgets/ConnectionIndicator.cpp
+        Widgets/ServerConnectionIndicator.cpp
+        Widgets/ServerConnectionIndicator.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
