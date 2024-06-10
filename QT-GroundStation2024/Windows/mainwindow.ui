@@ -231,19 +231,6 @@
         </property>
         <layout class="QVBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="hprcGpsLockIndicator" name="widget" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="hprcTimeline" name="timeline" native="true"/>
          </item>
         </layout>
@@ -301,12 +288,6 @@
    <class>hprcGraph</class>
    <extends>QWidget</extends>
    <header>Widgets/hprcgraph.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>hprcGpsLockIndicator</class>
-   <extends>QWidget</extends>
-   <header>Widgets/hprcgpslockindicator.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
