@@ -429,7 +429,7 @@ void MainWindow::onTextMessageReceived(QString message) {
                 // Use the conversion function to update the struct member
                 elementMap[elementName](m_dataBuffer, elementValue);
             } else {
-                qDebug() << "Key not recognized: " << elementName;
+//                qDebug() << "Key not recognized: " << elementName;
             }
             // Handle other cases if needed
         }

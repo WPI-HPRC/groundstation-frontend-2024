@@ -5,7 +5,7 @@
 #ifndef QT_GROUNDSTATION2024_ROCKETCONNECTIONINDICATOR_H
 #define QT_GROUNDSTATION2024_ROCKETCONNECTIONINDICATOR_H
 
-#include "ConnectionIndicator.h"
+#include "connectionIndicator.h"
 
 class RocketConnectionIndicator: public ConnectionIndicator
 {

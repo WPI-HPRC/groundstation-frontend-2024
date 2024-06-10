@@ -35,7 +35,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,6">
         <item>
-         <widget class="QFrame" name="">
+         <widget class="QFrame" name="frame">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -312,19 +312,19 @@
   <customwidget>
    <class>ServerConnectionIndicator</class>
    <extends>QWidget</extends>
-   <header>Widgets/ServerConnectionIndicator.h</header>
+   <header>Widgets/Indicators/ServerConnectionIndicator.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PayloadConnectionIndicator</class>
    <extends>QWidget</extends>
-   <header>Widgets/PayloadConnectionIndicator.h</header>
+   <header>Widgets/Indicators/PayloadConnectionIndicator.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>RocketConnectionIndicator</class>
    <extends>QWidget</extends>
-   <header>Widgets/RocketConnectionIndicator.h</header>
+   <header>Widgets/Indicators/RocketConnectionIndicator.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

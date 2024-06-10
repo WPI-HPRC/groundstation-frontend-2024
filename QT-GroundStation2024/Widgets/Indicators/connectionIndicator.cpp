@@ -2,8 +2,8 @@
 // Created by William Scheirey on 2/23/24.
 //
 
-#include "ConnectionIndicator.h"
-#include "../styles.h"
+#include "connectionIndicator.h"
+#include "styles.h"
 
 ConnectionIndicator::ConnectionIndicator(QWidget *parent) : hprcGraphicsWidget(parent) {
     indicator = new QGraphicsEllipseItem();

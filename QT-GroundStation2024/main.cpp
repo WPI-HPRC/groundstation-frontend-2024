@@ -33,10 +33,10 @@ int main(int argc, char *argv[]) {
     p_debugWindow.centralWidget()->setBackgroundRole(QPalette::Window);
 
     mainWindow.showMaximized();
-//    rocketWindow.showMaximized();
-//    payloadWindow.showMaximized();
-//    p_debugWindow.showMaximized();
-//    debugWindow.showMaximized();
+    rocketWindow.showMaximized();
+    payloadWindow.showMaximized();
+    p_debugWindow.showMaximized();
+    debugWindow.showMaximized();
 
     mainWindow.update();
     rocketWindow.update();

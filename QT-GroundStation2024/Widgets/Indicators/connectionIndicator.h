@@ -6,7 +6,7 @@
 #define QT_GROUNDSTATION2024_CONNECTIONINDICATOR_H
 
 
-#include "hprcgraphicswidget.h"
+#include "Widgets/hprcgraphicswidget.h"
 
 class ConnectionIndicator : public hprcGraphicsWidget
 {

@@ -689,7 +689,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w) 
 
     if (w->objectName() == QString("p_attitude"))
     {
-        qDebug("Attitude");
         pitch = qRadiansToDegrees(atan2(2 * (m_latest->p_w * m_latest->p_i + m_latest->p_j * m_latest->p_k),
                                         1 - 2 * (pow(m_latest->p_i, 2) + pow(m_latest->p_j, 2))));
 
@@ -699,10 +698,6 @@ void HPRCStyle::drawHPRCAttitudeWidget(QPainter *p, const hprcDisplayWidget *w) 
 
         roll = qRadiansToDegrees(atan2(2 * (m_latest->p_w * m_latest->p_k + m_latest->p_i * m_latest->p_j),
                                              1 - 2 * (pow(m_latest->p_j, 2) + pow(m_latest->p_k, 2))));
-    }
-    else
-    {
-        qDebug("Not attitude");
     }
 
 

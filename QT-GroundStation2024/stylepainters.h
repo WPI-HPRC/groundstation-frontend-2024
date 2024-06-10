@@ -10,7 +10,7 @@
 #include "Widgets/hprctimeline.h"
 #include "Widgets/debugwidget.h"
 #include "Widgets/p_debugwidget.h"
-#include "Widgets/ConnectionIndicator.h"
+#include "Widgets/Indicators/connectionIndicator.h"
 
 #define TOOLTIP_WIDTH 50
 #define TOOLTIP_WIDTH_HALF 25

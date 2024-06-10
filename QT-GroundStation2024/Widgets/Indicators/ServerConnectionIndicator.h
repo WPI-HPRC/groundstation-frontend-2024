@@ -4,7 +4,7 @@
 
 #ifndef QT_GROUNDSTATION2024_SERVERCONNECTIONINDICATOR_H
 #define QT_GROUNDSTATION2024_SERVERCONNECTIONINDICATOR_H
-#include "ConnectionIndicator.h"
+#include "connectionIndicator.h"
 
 
 class ServerConnectionIndicator: public ConnectionIndicator

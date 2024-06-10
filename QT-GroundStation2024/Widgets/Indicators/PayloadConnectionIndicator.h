@@ -4,7 +4,7 @@
 
 #ifndef QT_GROUNDSTATION2024_PAYLOADCONNECTIONINDICATOR_H
 #define QT_GROUNDSTATION2024_PAYLOADCONNECTIONINDICATOR_H
-#include "ConnectionIndicator.h"
+#include "connectionIndicator.h"
 
 class PayloadConnectionIndicator: public ConnectionIndicator
 {
