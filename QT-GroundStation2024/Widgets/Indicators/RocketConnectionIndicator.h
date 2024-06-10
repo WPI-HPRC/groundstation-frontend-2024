@@ -11,6 +11,14 @@ class RocketConnectionIndicator: public ConnectionIndicator
 {
 public:
     RocketConnectionIndicator(QWidget *parent = nullptr);
+    unsigned long long lastPacketTime;
+
+public slots:
+    void packetReceived();
+    void tick();
+
+private:
+    QTimer updateTimer;
 };
 
 

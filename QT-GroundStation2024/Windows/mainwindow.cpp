@@ -415,6 +415,15 @@ void MainWindow::onTextMessageReceived(QString message) {
     // Attempt to parse the string as JSON
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8());
 
+    if(jsonDocument.object().contains("p_timestamp"))
+    {
+        emit payloadPacketReceived();
+    }
+    else if(jsonDocument.object().contains("timestamp"))
+    {
+        emit rocketPacketReceived();
+    }
+
     if (jsonDocument.isObject()) {
         // Extract the JSON object
         QJsonObject jsonObject = jsonDocument.object();

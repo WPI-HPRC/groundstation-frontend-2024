@@ -10,6 +10,14 @@ class PayloadConnectionIndicator: public ConnectionIndicator
 {
 public:
     PayloadConnectionIndicator(QWidget *parent = nullptr);
+    unsigned long long lastPacketTime;
+
+public slots:
+    void packetReceived();
+    void tick();
+
+private:
+    QTimer updateTimer;
 };
 
 

@@ -293,6 +293,10 @@ signals:
 
     void desiredAirbrakesUpdated(float);
 
+    void payloadPacketReceived();
+
+    void rocketPacketReceived();
+
     void tick();
 
     void speedTick(int);
