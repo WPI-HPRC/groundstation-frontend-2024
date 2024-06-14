@@ -13,9 +13,11 @@
 int main(int argc, char *argv[]) {
     hprcStateMaps::makeMaps();
 
+
     qputenv("QT3D_RENDERER", "opengl");
     QApplication application(argc, argv);
     application.setStyle(new HPRCDarkStyle(nullptr));
+    QIcon appIcon = QIcon(":/Icons/logo.ico");
 
     MainWindow mainWindow;
     RocketWindow rocketWindow;
@@ -25,6 +27,13 @@ int main(int argc, char *argv[]) {
 
 
     application.setStyle(new HPRCDarkStyle(mainWindow.getCurrentData()));
+
+    mainWindow.setWindowIcon(appIcon);
+    rocketWindow.setWindowIcon(appIcon);
+    payloadWindow.setWindowIcon(appIcon);
+    debugWindow.setWindowIcon(appIcon);
+    p_debugWindow.setWindowIcon(appIcon);
+
 
     mainWindow.centralWidget()->setBackgroundRole(QPalette::Window);
     rocketWindow.centralWidget()->setBackgroundRole(QPalette::Window);
