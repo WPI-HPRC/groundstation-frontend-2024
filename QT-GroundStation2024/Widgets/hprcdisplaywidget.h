@@ -43,7 +43,7 @@ public:
         HPRC_GpsLock,
         HPRC_DebugWidget,
         HPRC_p_DebugWidget,
-        HPRC_serverConnection
+        HPRC_connectionIndicator,
     };
 
     enum hprcDataType // TODO
