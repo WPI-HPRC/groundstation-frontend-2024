@@ -43,6 +43,8 @@ public:
         float rocketTimeSinceLaunch = 0;
         int state = 0;
 
+        uint32_t rocketServoPos;
+
         bool gpsLock = false;
         int numSatellites = 0;
         float gpsLat = 0, gpsLong = 0;
@@ -117,6 +119,7 @@ public:
     };
 
     QMap<QString, std::function<void(dataPoint &, const QJsonValue &)>> elementMap = {
+            {"servoPosition",             [](dataPoint &dp, const QJsonValue &value) { dp.rocketServoPos = value.toInt(); }},
             {"epochTime",             [](dataPoint &dp, const QJsonValue &value) { dp.epochTime = value.toInt(); }},
             {"timestamp",             [](dataPoint &dp, const QJsonValue &value) { dp.rocketTime = value.toDouble(); }},
             {"gpsLock",               [](dataPoint &dp, const QJsonValue &value) { dp.gpsLock = value.toBool(); }},

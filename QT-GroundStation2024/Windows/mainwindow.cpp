@@ -338,6 +338,8 @@ void MainWindow::updateData(dataPoint p) {
     m_currentData.velY = p.velY;
     m_currentData.velZ = p.velZ;
 
+    m_currentData.rocketServoPos = p.rocketServoPos;
+
     m_currentData.desiredAirbrakes = p.desiredAirbrakes;
     m_currentData.currentAirbrakes = p.currentAirbrakes;
 

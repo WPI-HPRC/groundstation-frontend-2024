@@ -45,6 +45,8 @@ void HPRCWebSocket::_connectToServer() {
 #endif
 //    emit open(QUrl("wss://hprc-test.entflammen.com:8000"));
     emit open(QUrl("ws://localhost:8001"));
+//    emit open(QUrl("ws://172.20.10.5:8001"));
+
 
 }
 

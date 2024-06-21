@@ -36,6 +36,8 @@ debugWidget::debugWidget(QWidget *parent): hprcGraphicsWidget(parent, false)
         "Mag Y",
         "Mag Z",
 
+        "Servo",
+
         "i",
         "j",
         "k",
@@ -139,6 +141,7 @@ void HPRCStyle::drawDebugWidget(QPainter *p, debugWidget *w)
     w->drawData("Mag X", QString::asprintf("%0.4f", m_latest->magX), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Mag Y", QString::asprintf("%0.4f", m_latest->magY), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
     w->drawData("Mag Z", QString::asprintf("%0.4f", m_latest->magZ), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
+    w->drawData("Servo", QString::asprintf("%d", m_latest->rocketServoPos), xIndex, yIndex++, drawBox, itemSpacing, textItemWidth, textItemHeight);
 
     yIndex = 0;
     xIndex = 4;
